@@ -41,7 +41,7 @@ def setting():
         encrypt_file=request.form.get('encrypt_file','no')
         set('title',title)
         set('title_pre',title_pre)
-        set('testing_filed', testing_filed)
+        set('title', testing_filed)
         set('theme',theme)
         set('downloadUrl_timeout',downloadUrl_timeout)
         set('allow_site',allow_site)
@@ -69,7 +69,7 @@ def setting():
         # reload()
         redis_client.set('title',title)
         redis_client.set('title_pre',title_pre)
-        redis_client.set('testing_filed',testing_filed)
+        redis_client.set('title',testing_filed)
         
         redis_client.set('theme',theme)
         redis_client.set('downloadUrl_timeout',downloadUrl_timeout)
