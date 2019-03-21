@@ -12,6 +12,9 @@ def setting():
         title=request.form.get('title','PyOne')
         theme=request.form.get('theme','material')
         title_pre=request.form.get('title_pre','index of ')
+
+        testing_filed=request.form.get('testing_filed','testing testing')
+
         downloadUrl_timeout=request.form.get('downloadUrl_timeout',5*60)
         allow_site=request.form.get('allow_site','no-referrer')
         #Aria2
@@ -38,6 +41,7 @@ def setting():
         encrypt_file=request.form.get('encrypt_file','no')
         set('title',title)
         set('title_pre',title_pre)
+        set('testing_filed', testing_filed)
         set('theme',theme)
         set('downloadUrl_timeout',downloadUrl_timeout)
         set('allow_site',allow_site)
@@ -65,6 +69,8 @@ def setting():
         # reload()
         redis_client.set('title',title)
         redis_client.set('title_pre',title_pre)
+        redis_client.set('testing_filed',testing_filed)
+        
         redis_client.set('theme',theme)
         redis_client.set('downloadUrl_timeout',downloadUrl_timeout)
         redis_client.set('allow_site',','.join(allow_site.split(',')))
