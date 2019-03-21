@@ -1,0 +1,29 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+
+{%block content%}
+<div class="layui-container">
+    <!-- 文件列表 -->
+    <table class="layui-table" lay-data="{url:'{{url_for('front.find',ajax="yes",key_word=key_word)}}', page:true,limit:50, id:'test'}" lay-filter="filelist">
+      <thead>
+        <tr>
+          <th lay-data="{field: 'name', width:600, sort: true, fixed: 'left',unresize:true}">标题</th>
+          <th lay-data="{field: 'lastModtime',  width:200,unresize:true}" class="layui-hide-xs">修改时间</th>
+          <th lay-data="{field: 'type', width:150, sort: true,unresize:true}" class="layui-hide-xs">类型</th>
+          <th lay-data="{field: 'size', sort: true,unresize:true}", fixed: 'right'>大小</th>
+        </tr>
+      </thead>
+    </table>
+</div>
+{%endblock content%}
+
+{%block script%}
+<script>
+layui.use('table', function(){
+  var table = layui.table;
+    table.render({
+    elem: '#filelist',
+    loading:true
+    });
+});
+</script>
+{%endblock script%}

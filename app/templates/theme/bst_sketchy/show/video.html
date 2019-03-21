@@ -1,0 +1,56 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+
+{%block content%}
+<div class="container">
+<link class="dplayer-css" rel="stylesheet" href="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.css">
+<script src="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.js"></script>
+  <br>
+  <div id="dplayer"></div>
+  <br>
+    <!-- 固定标签 -->
+    <div class="form-horizontal">
+        <div class="form-group">
+          <div class="form-group">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-share-alt" aria-hidden="true"></i>分享地址</span>
+              </div>
+              <input type="text" class="form-control" value='{{url}}?action=share' id="share">
+              <a onclick="copyUrl('share')">
+              <div class="input-group-append">
+                <span class="input-group-text">点击复制</span>
+              </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-group">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-share-alt" aria-hidden="true"></i>调用地址</span>
+              </div>
+              <input type="text" class="form-control" value='{{url}}' id="use_outer">
+              <a onclick="copyUrl('use_outer')">
+              <div class="input-group-append">
+                <span class="input-group-text">点击复制</span>
+              </div>
+              </a>
+            </div>
+          </div>
+        </div>
+    </div>
+<script>
+const dp = new DPlayer({
+  container: document.getElementById('dplayer'),
+  lang:'zh-cn',
+  video: {
+      url: '{{inner_url}}',
+      type: 'auto'
+  }
+});
+</script>
+ <a href="{{inner_url}}" class="fab-fixed"><i class="fa fa-download fa-3x" aria-hidden="true"></i></a>
+</div>
+{%endblock content%}

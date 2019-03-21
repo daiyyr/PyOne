@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>{{GetConfig('title_pre')}} {{path}} - {{GetConfig('title')}}</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/bootstrap-switch/3.3.4/css/bootstrap2/bootstrap-switch.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel='stylesheet' href='/static/theme/bst4/css/style.css?t=20190130' type='text/css' />
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/layer/2.3/layer.js"></script>
+    <style>
+        .cut {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .mt-15 {margin-top: 15px;margin-bottom: 15px;font-size: 15px;}
+        /* 固定到右下角的 FAB 按钮 */
+        .fab-fixed {
+          position: fixed !important;
+          /* 手机平板上距离屏幕右下角 16px */
+          right: 16px;
+          bottom: 16px;
+        }
+        @media (min-width: 1024px) {
+          .fab-fixed {
+            /* 电脑上距离屏幕右下角 24px */
+            right: 24px;
+            bottom: 24px;
+          }
+        }
+
+    </style>
+    {{GetConfig('headCode')|safe}}
+</head>
+
+<body>
+    {%include 'theme/'+GetConfig('theme')+'/header.html'%}
+    <div class="container">
+        <div class="alert alert-warning alert-dismissible" role="alert"  style="display: none;">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <div id="error_msg"></div>
+        </div>
+    </div>
+    {%block content%}
+    {%endblock content%}
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"></script>
+    <script type="text/javascript">
+    function py_find() {
+        var key_word = document.getElementById("key_word"); //获取key_word那个div
+        var patrn = /[@#\$%\^&\*\\/]+/g; //正则表达式
+        if (patrn.exec(key_word.value)) {
+            $('.alert').css('display', '');
+            $('#error_msg').html('关键词不能包含特殊字符！');
+            return false;
+        }
+        if (key_word.value == '') {
+            $('.alert').css('display', '');
+            $('#error_msg').html('关键词不能为空！');
+            return false;
+        }
+        $('.alert').css('display', 'none');
+        window.location.href = "/py_find/" + key_word.value;
+    }
+
+    $('.sitenav-on').on('click', function() {
+        $('body').toggleClass('sitenav-active')
+    })
+
+    $('.sitenav-mask').on('click', function() {
+        $('body').removeClass('sitenav-active')
+    })
+
+
+    $('.searchstart-on').on('click', function() {
+        $(this).hide()
+        $('.searchstart-off').show()
+        $('body').addClass('searchform-active')
+        $('.sinput').focus()
+    })
+
+    $('.searchstart-off').on('click', function() {
+        $(this).hide()
+        $('.searchstart-on').show()
+        $('body').removeClass('searchform-active')
+    })
+    function copyUrl(eid) {
+        var Url=document.getElementById(eid);
+        Url.select();
+        document.execCommand("Copy");
+        $('.alert').css('display', '');
+        $('#error_msg').html('复制成功');
+    }
+    </script>
+    {%block script%}
+    {%endblock script%}
+    {%include 'theme/'+GetConfig('theme')+'/footer.html'%}
+</body>
+
+</html>

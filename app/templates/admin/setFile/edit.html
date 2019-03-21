@@ -1,0 +1,66 @@
+{%extends 'admin/layout.html'%}
+
+{%block content%}
+<style type="text/css" media="screen">
+    #editor {
+        /*height:800px;*/
+    }
+</style>
+<div class="mdui-container">
+<pre id="editor" >{{content}}</pre>
+<button class="mdui-btn mdui-btn-icon" onclick="SubmitEdit('{{fileid}}')">
+    <i class="mdui-icon material-icons">&#xe5ca;</i>
+</button>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ext-language_tools.js"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/ambiance");
+    editor.setFontSize(18);
+    editor.session.setMode("ace/mode/{{language}}");
+
+    //Autocompletion
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        maxLines: Infinity
+    });
+
+    function SubmitEdit(fileid){
+        if(!confirm("将直接更改onedrive内容！！！确定修改？")){
+            return ;
+        }
+        content=editor.getValue();
+        $.ajax({
+              type: "POST",
+              url: "{{url_for('admin.edit')}}",
+              dataType:'json',
+              data: {fileid:fileid,content:content,user:"{{cur_user}}"},
+              beforeSend:function(xhr){
+                  var index = layer.load(2, {
+                    shade: [0.1,'#fff'] //0.1透明度的白色背景
+                  });
+              },
+              success: function(result){
+                  if(result.status==0){
+                    alert(result.msg);
+                    window.location.reload();
+                  }
+                  else{
+                    alert('修改成功');
+                    window.location.reload();
+                  }
+              },
+              complete:function(xhr){
+                  $('#layui-layer-shade1').remove();
+              }
+
+          });
+
+    }
+</script>
+{%endblock content%}

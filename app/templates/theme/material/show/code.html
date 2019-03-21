@@ -1,0 +1,38 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+
+{%block content%}
+<style type="text/css" media="screen">
+    #editor {
+        /*height:800px;*/
+    }
+</style>
+<div class="mdui-container">
+<pre id="editor" >{{content|safe}}</pre>
+</div>
+<div class="mdui-textfield">
+  <label class="mdui-textfield-label">分享地址</label>
+  <input class="mdui-textfield-input" type="text" id="share" value="{{url}}?action=share" onclick="copyUrl('share')"/>
+</div>
+<div class="mdui-textfield">
+  <label class="mdui-textfield-label">调用地址</label>
+  <input class="mdui-textfield-input" type="text" id="out_use" value="{{url}}" onclick="copyUrl('out_use')"/>
+</div>
+<a href="{{url}}" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">file_download</i></a>
+
+<script src="https://cdn.staticfile.org/ace/1.4.2/ace.js"></script>
+<script src="https://cdn.staticfile.org/ace/1.4.2/ext-language_tools.js"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/ambiance");
+    editor.setFontSize(18);
+    editor.session.setMode("ace/mode/{{language}}");
+
+    //Autocompletion
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        maxLines: Infinity
+    });
+</script>
+{%endblock content%}

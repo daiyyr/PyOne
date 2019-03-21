@@ -1,0 +1,35 @@
+<header class="header">
+    <div class="container">
+        <div class="sitenav">
+            <ul>
+                {%for user in get_od_user()%}
+                    {%if user[1]!='添加网盘'%}
+                        <li id="menu-item-1" class="menu-item menu-item-type-taxonomy menu-item-object-category {%if cur_user==user[0]%}current-menu-item{%endif%}"><a href="{{user[2]}}">{{user[1]}}</a></li>
+                    {%endif%}
+                {%endfor%}
+            </ul>
+        </div>
+        <span class="sitenav-on"><i class="fa1">&#xe605;</i></span>
+        <span class="sitenav-mask"></span>
+        <span class="searchstart-on"><i class="fa1">&#xe600;</i></span>
+        <span class="searchstart-off"><i class="fa1">&#xe606;</i></span>
+        <div class="searchform">
+            <button taindex="3" class="sbtn" onclick="py_find();"><i class="fa1">&#xe600;</i></button>
+            <input taindex="2" class="sinput" id='key_word' type="text" placeholder="输入关键字" data-toggle="tooltip" title="关键词">
+        </div>
+    </div>
+</header>
+<br>
+<div class="container">
+    <ol class="breadcrumb">
+        {%if path%}
+            {%for name,p,last in breadCrumb(path)%}
+                {%if last==False%}
+                <li><a href="{{p}}">{{name}}</a></li>
+                {%else%}
+                <li><a href="#" class="active">{{name}}</a> </li>
+                {%endif%}
+            {%endfor%}
+        {%endif%}
+    </ol>
+</div>

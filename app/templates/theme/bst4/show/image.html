@@ -1,0 +1,30 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+
+{%block content%}
+<div class="container">
+    <br>
+    <img class="img-responsive" src="{{inner_url}}"/>
+    <br>
+    <!-- 固定标签 -->
+    <div class="form-horizontal">
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-share-alt" aria-hidden="true"></i>分享地址
+                </span>
+            <input id="share" class="form-control" type="text" value="{{url}}?action=share" />
+            <a class="input-group-addon" onclick="copyUrl('share')">点击复制</a>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-link" aria-hidden="true"></i>调用地址
+                </span>
+            <input id="use_outer" class="form-control" type="text" value="{{url}}" />
+            <a class="input-group-addon" onclick="copyUrl('use_outer')">点击复制</a>
+        </div>
+    </div>
+        <br>
+ <a href="{{inner_url}}" class="fab-fixed"><i class="fa fa-download fa-3x" aria-hidden="true"></i></a>
+</div>
+
+
+ {%endblock content%}

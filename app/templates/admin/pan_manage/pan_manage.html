@@ -1,0 +1,73 @@
+{%extends 'admin/layout.html'%}
+
+{%block content%}
+<div class="mdui-container-fluid">
+    <div class="mdui-typo">
+      <h1> 网盘管理 <small>添加网盘/删除网盘/编辑网盘</small></h1>
+    </div>
+    <div class="mdui-row">
+        <div class="mdui-col-xs-2">
+            <button class="mdui-btn mdui-btn-raised mdui-ripple" onclick="window.location.href='{{url_for("admin.add_pan")}}'">添加盘位</button>
+        </div>
+        <div class="mdui-col-xs-2">
+            <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"  onclick="window.location.href='{{url_for("admin.rm_pan")}}'">删除网盘</button>
+        </div>
+        <div class="mdui-col-xs-8"></div>
+    </div>
+    <form action="{{url_for('admin.panage')}}" method="POST">
+        <div class="mdui-textfield">
+          <h4>网盘信息编辑 <small>仅显示已绑定账号网盘</small></h4>
+          {%for user in get_od_user()%}
+          {%if user[1]!='添加网盘'%}
+          <div class="mdui-panel" mdui-panel>
+              <div class="mdui-panel-item">
+                <div class="mdui-panel-item-header">{{user[1]}}</div>
+                <div class="mdui-panel-item-body">
+                  <h5>显示名称</h5>
+                  <input class="mdui-textfield-input" type="text" name="other_name[{{user[0]}}]" placeholder="请输入显示名称" value="{{user[1]}}" />
+                  <h5>分享目录(不再支持设置特定分享目录)</h5>
+                  <input class="mdui-textfield-input" type="text" name="share_path[{{user[0]}}]" placeholder="请输入分享目录" value="{{user[3]}}" disabled />
+                  <h5>设为默认网盘</h5>
+                  {%if user[0]==GetConfig('default_pan')%}
+                  <span class="mdui-color-blue">默认盘</span>
+                  {%else%}
+                  <div class="mdui-btn mdui-color-blue" onclick="setDefaultPan('{{user[0]}}');">设置为默认盘</div>
+                  {%endif%}
+                </div>
+              </div>
+          </div>
+          {%endif%}
+          {%endfor%}
+        </div>
+       <button type="submit" class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right">
+        <i class="mdui-icon material-icons">&#xe161;</i> 保存
+       </button>
+    </form>
+</div>
+<script type="text/javascript">
+function setDefaultPan(pan) {
+    layer.confirm('确定设置【'+pan+'】为默认盘？', {
+      btn: ['确定','取消'] //按钮
+    }, function(index){
+        layer.close(index);
+        var ii = layer.load(2, {shade: [0.1, '#fff']});
+          $.ajax({
+              type: "POST",
+              url: "{{url_for('admin.setDefaultPan')}}",
+              dataType: 'json',
+              data: { pan:pan },
+              success: function(data) {
+                  layer.msg(data.msg);
+              },
+              error: function(){
+                  layer.msg('服务器内部错误！');
+              },
+              complete: function(xhr) {
+                  layer.close(ii);
+                  window.location.reload();
+              }
+          });
+    });
+}
+</script>
+{%endblock content%}

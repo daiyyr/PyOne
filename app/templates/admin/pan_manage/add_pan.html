@@ -1,0 +1,27 @@
+{%extends 'admin/layout.html'%}
+{%block content%}
+<div class="mdui-container-fluid">
+    <div class="mdui-typo">
+        <h1> 添加盘位 <small>3个盘位还满足不了你？</small></h1>
+    </div>
+    <form action="{{url_for('admin.add_pan')}}" method="POST">
+        <div class="mdui-textfield">
+            <h4>盘符 <small>请设置英文字母；不要和之前的冲突！</small></h4>
+            <input class="mdui-textfield-input" type="text" name="pan" placeholder="设置盘符" pattern="[a-zA-Z]{1,5}" required/>
+            <div class="mdui-textfield-error">请设置英文字母，长度1-5</div>
+        </div>
+        <div class="mdui-textfield">
+            <h4>显示名称</h4>
+            <input class="mdui-textfield-input" type="text" name="title" placeholder="设置显示名称" />
+        </div>
+        <div class="mdui-textfield">
+            <h4>顺序</h4>
+            <input class="mdui-textfield-input" type="text" name="order" pattern="\d+" value="{{len(get_od_user())+1}}" required/>
+            <div class="mdui-textfield-error">请输入数字</div>
+        </div>
+        <button type="submit" class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right">
+            <i class="mdui-icon material-icons">&#xe161;</i> 保存
+        </button>
+    </form>
+</div>
+{%endblock content%}

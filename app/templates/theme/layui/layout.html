@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>{{GetConfig('title_pre')}} {{path}} - {{GetConfig('title')}}</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.90so.net/layui/2.4.5/css/layui.css" />
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        .cut {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .mt-15 {margin-top: 15px;margin-bottom: 15px;font-size: 15px;}
+        /* 固定到右下角的 FAB 按钮 */
+        .fab-fixed {
+          position: fixed !important;
+          /* 手机平板上距离屏幕右下角 16px */
+          right: 16px;
+          bottom: 16px;
+        }
+        @media (min-width: 1024px) {
+          .fab-fixed {
+            /* 电脑上距离屏幕右下角 24px */
+            right: 24px;
+            bottom: 24px;
+          }
+        }
+        .img-responsive {
+          display: block;
+          max-width: 100%;
+          height: auto;
+        }
+    </style>
+    {{GetConfig('headCode')|safe}}
+</head>
+
+<body>
+    {%include 'theme/'+GetConfig('theme')+'/header.html'%}
+
+    {%block content%}
+    {%endblock content%}
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="https://cdn.90so.net/layui/2.4.5/layui.js"></script>
+    <script type="text/javascript">
+
+    function py_search() {
+        layui.use('layer', function(){
+          var layer = layui.layer;
+          layer.prompt(function(value, index, elem){
+                var patrn = /[@#\$%\^&\*\\/]+/g; //正则表达式
+                if (patrn.exec(value)) {
+                    layer.alert('关键词不能包含特殊字符！');
+                    return false;
+                }
+                if (value == '') {
+                    layer.alert('关键词不能为空！');
+                    return false;
+                }
+                window.location.href = "/py_find/" + value;
+          });
+        });
+    }
+
+    function copyUrl(eid) {
+        var Url=document.getElementById(eid);
+        Url.select();
+        document.execCommand("Copy");
+        $('.alert').css('display', '');
+        $('#error_msg').html('复制成功');
+    }
+    </script>
+    {%block script%}
+    {%endblock script%}
+    {%include 'theme/'+GetConfig('theme')+'/footer.html'%}
+</body>
+
+</html>

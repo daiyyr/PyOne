@@ -1,0 +1,26 @@
+<div class="mdui-container-fluid">
+    <div class="mdui-appbar mdui-appbar-scroll-hide">
+        <div class="mdui-tab mdui-color-theme" mdui-tab>
+            {%for user in get_od_user()%}
+            {%if user[1]!='添加网盘'%}
+                <a href="{{user[2]}}" class="mdui-ripple mdui-ripple-white{%if cur_user==user[0]%} mdui-tab-active{%endif%}" id="{{user[0]}}">
+                    <i class="mdui-icon material-icons">&#xe2bf;</i>
+                    <label>{{user[1]}}</label>
+                </a>
+            {%endif%}
+            {%endfor%}
+         </div>
+        <div class="mdui-toolbar nexmoe-item">
+            {%if path%}
+                {%for name,p,last in breadCrumb(path)%}
+                    {%if last==False%}
+                    <a href="{{p}}">{{name}}</a>
+                    <i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
+                    {%else%}
+                    <a href="#">{{name}}</a> 
+                    {%endif%}
+                {%endfor%}
+            {%endif%}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+{%extends 'admin/layout.html'%}
+{%block content%}
+<div class="mdui-container-fluid">
+    <div class="mdui-typo">
+        <h1>删除网盘 <small>谨慎操作！</small></h1>
+    </div>
+    <div class="mdui-table-fluid">
+        <table class="mdui-table mdui-table-hoverable">
+            <thead>
+                <tr>
+                    <th>删除</th>
+                    <th>盘符</th>
+                    <th>网盘名称</th>
+                    <th>共享目录</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for user in get_od_user()%}
+                <tr>
+                    <td><i class="mdui-list-item-icon mdui-icon material-icons" onclick="rmPan('{{user[0]}}')">delete</i></td>
+                    <td>{{user[0]}}</td>
+                    <td>{{user[1]}}</td>
+                    <td>{{user[3]}}</td>
+                  </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function rmPan(pan){
+        if (!confirm("确定删除？")) {
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "{{url_for('admin.rm_pan')}}",
+            dataType: 'json',
+            data: {user:pan},
+            beforeSend: function(xhr) {
+                var index = layer.load(2, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+            },
+            success: function(result) {
+                alert(result.msg);
+                window.location.reload();
+            },
+            complete: function(xhr) {
+                $('#layui-layer-shade1').remove();
+            }
+        });
+    }
+</script>
+{%endblock content%}

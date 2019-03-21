@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <title>PyOne系统管理</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/mdui/0.4.2/css/mdui.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/mdui/0.4.2/js/mdui.min.js"></script>
+    <script src="https://cdn.staticfile.org/layer/2.3/layer.js"></script>
+    <script>
+    $$ = mdui.JQ;
+    </script>
+    <style>
+    img {
+        width: 100%;
+        height: auto;
+        max-width: 60%;
+        display: block;
+    }
+
+    /* 固定到右下角的 FAB 按钮 */
+    .mdui-fab-fixed_left {
+        position: fixed !important;
+        /* 手机平板上距离屏幕右下角 16px */
+        left: 16px;
+        bottom: 16px;
+    }
+
+    @media (min-width: 1024px) {
+        .mdui-fab-fixed_left {
+            /* 电脑上距离屏幕右下角 24px */
+            left: 24px;
+            bottom: 24px;
+        }
+    }
+
+    .mdui-container {
+        max-width: 980px
+    }
+
+    .mdui-list>.th {
+        background-color: initial
+    }
+
+    .mdui-list-item>a {
+        width: 100%;
+        line-height: 48px
+    }
+
+    body {
+        background-color: #f2f5fa;
+        padding-bottom: 60px;
+        background-position: 50% 100%;
+        background-repeat: no-repeat;
+        background-attachment: fixed
+    }
+
+    .nexmoe-item {
+        /*margin: 20px -8px 0 !important;*/
+        padding: 15px !important;
+        border-radius: 5px;
+        background-color: #fff;
+        -webkit-box-shadow: 0 .5em 3em rgba(161, 177, 204, .4);
+        box-shadow: 0 .5em 3em rgba(161, 177, 204, .4);
+        background-color: #fff
+    }
+
+    .mdui-img-fluid,
+    .mdui-video-fluid {
+        border-radius: 5px;
+        border: 1px solid #eee
+    }
+
+    .mdui-list {
+        padding: 0
+    }
+
+    .mdui-list-item {
+        margin: 0 !important;
+        border-radius: 5px;
+        padding: 0 10px 0 5px !important;
+        border: 1px solid #eee;
+        margin-bottom: 10px !important
+    }
+
+    .mdui-list-item:last-child {
+        margin-bottom: 0 !important
+    }
+
+    .mdui-list-item:first-child {
+        border: none
+    }
+
+    footer {
+        padding: 16px 0;
+        background-color: #424242;
+        color: #9e9e9e
+    }
+
+    footer a {
+        color: inherit;
+        text-decoration: none
+    }
+
+    footer a:hover {
+        color: #bbb
+    }
+
+    .footer-copyright {
+        text-align: center;
+        font-size: 12px
+    }
+    .layui-btn-disabled,
+    .layui-btn-disabled:active,
+    .layui-btn-disabled:hover {
+        border: 1px solid #e6e6e6;
+        background-color: #FBFBFB;
+        color: #C9C9C9;
+        cursor: not-allowed;
+        opacity: 1
+    }
+    </style>
+</head>
+
+<body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-blue">
+    <header class="mdui-appbar mdui-appbar-fixed">
+        <div class="mdui-toolbar mdui-color-theme">
+            <span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-drawer="{target: '#main-drawer', swipe: true}"><i class="mdui-icon material-icons">menu</i></span>
+            <a href="/" target="_blank" class="mdui-typo-headline mdui-hidden-xs">PyOne</a>
+            <div class="mdui-toolbar-spacer"></div>
+
+        </div>
+    </header>
+    <div class="mdui-drawer" id="main-drawer">
+        <div class="mdui-list">
+            <br><br>
+            <a href="{{url_for('admin.setting')}}" class="mdui-list-item">
+              <i class="mdui-list-item-icon mdui-icon material-icons">&#xe8b8;</i>
+              <div class="mdui-list-item-content">基本设置</div>
+            </a>
+            <a href="{{url_for('admin.setCode')}}" class="mdui-list-item">
+              <i class="mdui-list-item-icon mdui-icon material-icons">&#xe8b8;</i>
+              <div class="mdui-list-item-content">自定义代码</div>
+            </a>
+            <a href="{{url_for('admin.upload')}}" class="mdui-list-item">
+              <i class="mdui-list-item-icon mdui-icon material-icons">&#xe2c6;</i>
+              <div class="mdui-list-item-content">上传文件</div>
+            </a>
+            <a href="{{url_for('admin.cache_control')}}" class="mdui-list-item">
+              <i class="mdui-list-item-icon mdui-icon material-icons">&#xe53b;</i>
+              <div class="mdui-list-item-content">更新列表</div>
+            </a>
+            <a href="{{url_for('admin.panage')}}" class="mdui-list-item">
+              <i class="mdui-list-item-icon mdui-icon material-icons">&#xe2be;</i>
+              <div class="mdui-list-item-content">网盘管理</div>
+            </a>
+            <a href="{{url_for('admin.manage')}}" class="mdui-list-item">
+              <i class="mdui-list-item-icon mdui-icon material-icons">&#xe2bf;</i>
+              <div class="mdui-list-item-content">文件管理</div>
+            </a>
+
+
+            <a href="{{url_for('admin.setCode')}}" class="mdui-list-item">
+                <i class="mdui-list-item-icon mdui-icon material-icons">&#xe8b8;</i>
+                <div class="mdui-list-item-content">用户管理</div>
+            </a>
+
+            <a href="{{url_for('admin.logs')}}" class="mdui-list-item">
+              <i class="mdui-list-item-icon mdui-icon material-icons">&#xe616;</i>
+              <div class="mdui-list-item-content">运行日志</div>
+            </a>
+            <a href="https://wiki.pyone.me/" class="mdui-list-item" target="_blank">
+              <i class="mdui-list-item-icon mdui-icon material-icons">&#xe887;</i>
+              <div class="mdui-list-item-content">使用帮助</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="mdui-container">
+        <div class="mdui-typo">
+            {%for message in get_flashed_messages()%}
+            <p><mark>{{message}}</mark></p>
+            {%endfor%}
+        </div>
+        {%block content%}
+        {%endblock content%}
+        <footer>
+            <div class="mdui-container">
+                <div class="footer-copyright">
+                    <p>Copyright © PyOne <a href="https://www.abbeyok.com">Abbey's Blog</a> All rights reserved.</p>
+                    <p>Version{{version}}</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+    $$("a[href='" + window.location.pathname + "']").addClass("mdui-text-color-blue");
+    {% for message in get_flashed_messages() %}
+    mdui.snackbar({
+        message: '{{message}}',
+        position: 'top',
+        timeout: 1000
+    });
+    {% endfor %}
+    </script>
+</body>
+
+</html>

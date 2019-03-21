@@ -1,0 +1,253 @@
+{%extends 'admin/layout.html'%}
+
+{%block content%}
+<div class="mdui-container-fluid">
+
+    <div class="mdui-typo">
+      <h1> 基本设置 <small>设置PyOne基本参数</small></h1>
+    </div>
+    <form action="{{url_for('admin.setting')}}" method="POST" enctype="multipart/form-data">
+
+        <div class="mdui-textfield">
+          <h4>图标选择</h4>
+          <img src="/favicon.ico" style="width: 20px;height: 20px;">
+          <input class="mdui-textfield-input" type="file" name="favicon" accept="image/vnd.microsoft.icon"/>
+        </div>
+
+        <h4>主题选择</h4>
+        <select class="mdui-select" name="theme" mdui-select>
+          {%for t in GetThemeList()%}
+            <option value="{{t}}"{%if GetConfig('theme')==t%} selected{%endif%}>{{t}}</option>
+          {%endfor%}
+        </select>
+
+        <div class="mdui-textfield">
+          <h4>网站名称</h4>
+          <input class="mdui-textfield-input" type="text" name="title" value="{{GetConfig('title')}}"/>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>网站名称前缀（默认：index of）</h4>
+          <input class="mdui-textfield-input" type="text" name="title_pre" value="{{GetConfig('title_pre')}}"/>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>缓存过期时间(秒)</h4>
+          <input class="mdui-textfield-input" type="text" name="downloadUrl_timeout" value="{{GetConfig('downloadUrl_timeout')}}"/>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>防盗链设置（不限制，则设置：no-referrer；仅限3pp.me调用，则设置：3pp.me；可调用域名通过英文逗号分隔）</h4>
+          <input class="mdui-textfield-input" type="text" name="allow_site" value="{{GetConfig('allow_site')}}"/>
+        </div>
+
+        <h4>默认排序字段</h4>
+        <select class="mdui-select" name="default_sort" mdui-select>
+            <option value="lastModtime"{%if GetConfig('default_sort')=='lastModtime'%} selected{%endif%}>修改时间</option>
+            <option value="name"{%if GetConfig('default_sort')=='name'%} selected{%endif%}>文件名</option>
+            <option value="type"{%if GetConfig('default_sort')=='type'%} selected{%endif%}>文件类型</option>
+            <option value="size"{%if GetConfig('default_sort')=='size'%} selected{%endif%}>文件大小</option>
+        </select>
+
+        <h4>默认排序方法</h4>
+        <select class="mdui-select" name="order_m" mdui-select>
+            <option value="desc"{%if GetConfig('order_m')=='desc'%} selected{%endif%}>降序</option>
+            <option value="asc"{%if GetConfig('order_m')=='asc'%} selected{%endif%}>升序</option>
+        </select>
+
+        <div class="mdui-textfield">
+          <h4>Aria2信息编辑</h4>
+          <div class="mdui-panel" mdui-panel>
+              <div class="mdui-panel-item">
+                <div class="mdui-panel-item-header">点击配置</div>
+                <div class="mdui-panel-item-body">
+                  <h5>Aria2协议</h5>
+                  <select class="mdui-select" name="ARIA2_SCHEME" mdui-select>
+                    <option value="http"{%if GetConfig('ARIA2_SCHEME')=='http'%} selected{%endif%}>http</option>
+                    <option value="https"{%if GetConfig('ARIA2_SCHEME')=='https'%} selected{%endif%}>https</option>
+                  </select>
+                  <h5>主机（默认localhost。如果不是本机的aria2，怎么下载到本机然后上传？？？）</h5>
+                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="ARIA2_HOST" placeholder="请输入aria2主机" value="{{GetConfig('ARIA2_HOST')}}" />
+                  <h5>端口</h5>
+                  <input class="mdui-textfield-input" type="text" name="ARIA2_PORT" placeholder="请输入aria2端口" value="{{GetConfig('ARIA2_PORT')}}" />
+                  <h5>秘钥</h5>
+                  <input class="mdui-textfield-input" type="text" name="ARIA2_SECRET" placeholder="请输入aria2秘钥" value="{{GetConfig('ARIA2_SECRET')}}" />
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>MongoDB信息编辑</h4>
+          <div class="mdui-panel" mdui-panel>
+              <div class="mdui-panel-item">
+                <div class="mdui-panel-item-header">点击配置</div>
+                <div class="mdui-panel-item-body">
+                  <h5>主机（默认localhost）</h5>
+                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="MONGO_HOST" placeholder="请输入MongoDB主机" value="{{GetConfig('MONGO_HOST')}}" />
+                  <h5>端口</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_PORT" placeholder="请输入MongoDB端口" value="{{GetConfig('MONGO_PORT')}}" />
+                  <h5>数据库（原则上不要修改）</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_DB" placeholder="请输入数据库名" value="{{GetConfig('MONGO_DB')}}" />
+                  <h5>用户名（如果有）</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_USER" placeholder="请输入用户名" value="{{GetConfig('MONGO_USER')}}" />
+                  <h5>密码（如果有）</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_PASSWORD" placeholder="请输入密码" value="{{GetConfig('MONGO_PASSWORD')}}" />
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>Redis信息编辑</h4>
+          <div class="mdui-panel" mdui-panel>
+              <div class="mdui-panel-item">
+                <div class="mdui-panel-item-header">点击配置</div>
+                <div class="mdui-panel-item-body">
+                  <h5>主机（默认localhost）</h5>
+                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="REDIS_HOST" placeholder="请输入Redis主机" value="{{GetConfig('REDIS_HOST')}}" />
+                  <h5>端口</h5>
+                  <input class="mdui-textfield-input" type="text" name="REDIS_PORT" placeholder="请输入Redis端口" value="{{GetConfig('REDIS_PORT')}}" />
+                  <h5>数据库（原则上不要修改）</h5>
+                  <input class="mdui-textfield-input" type="text" name="REDIS_DB" placeholder="请输入数据库名" value="{{GetConfig('REDIS_DB')}}" />
+                  <h5>密码（如果有）</h5>
+                  <input class="mdui-textfield-input" type="text" name="REDIS_PASSWORD" placeholder="请输入密码" value="{{GetConfig('REDIS_PASSWORD')}}" />
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>搜索结果是否展示“加密文件”（开启之后，前台搜索结果会展示出加密文件夹及加密文件夹下的文件）</h4>
+          <label class="mdui-switch">
+            <input type="checkbox" name="show_secret" {%if GetConfig('show_secret')=='on'%}checked{%endif%}/>
+            <i class="mdui-switch-icon"></i>
+          </label>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>加密文件夹下的文件是否加密（本选项是配合前一个选项新增的选项，看个人需求开启）</h4>
+          <label class="mdui-switch">
+            <input type="checkbox" name="encrypt_file" {%if GetConfig('encrypt_file')=='on'%}checked{%endif%}/>
+            <i class="mdui-switch-icon"></i>
+          </label>
+        </div>
+       <button type="submit" class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right">
+        <i class="mdui-icon material-icons">&#xe161;</i> 保存
+       </button>
+    </form>
+</div>
+<div class="mdui-fab-wrapper" id="exampleFab">
+  <button class="mdui-fab mdui-ripple mdui-color-theme-accent">
+    <!-- 默认显示的图标 -->
+    <i class="mdui-icon material-icons">add</i>
+
+    <!-- 在拨号菜单开始打开时，平滑切换到该图标，若不需要切换图标，则可以省略该元素 -->
+    <i class="mdui-icon mdui-fab-opened material-icons">add</i>
+  </button>
+  <div class="mdui-fab-dial">
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-pink" href="{{url_for('admin.logout')}}" mdui-tooltip="{content: '退出'}"><i class="mdui-icon material-icons">&#xe8ac;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red" href="{{url_for('admin.reload')}}" mdui-tooltip="{content: '重启网站'}"><i class="mdui-icon material-icons">&#xe5d5;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-orange" href="javascript:void(0);" onclick="uninstall();" mdui-tooltip="{content: '卸载PyOne'}"><i class="mdui-icon material-icons">&#xe16c;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue" href="javascript:void(0);" onclick="ChangePass();" mdui-tooltip="{content: '修改密码'}"><i class="mdui-icon material-icons">&#xe63f;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue" href="javascript:void(0);" onclick="UpdatePyOne();" mdui-tooltip="{content: '升级PyOne'}"><i class="mdui-icon material-icons">&#xe031;</i></a>
+  </div>
+</div>
+<script type="text/javascript">
+
+    var inst = new mdui.Fab('#exampleFab');
+
+    function UpdatePyOne() {
+        layer.confirm('确定升级PyOne？',
+            function(index){
+                layer.close(index);
+                layer.open({
+                    type: 2,
+                    shade: false,
+                    area: ['50%','400px'],
+                    maxmin: true,
+                    content: '{{url_for("admin.UpdatePyOne")}}',
+                    zIndex: layer.zIndex, //重点1
+                    success: function(layero){
+                        layer.setTop(layero); //重点2
+                    }
+                });
+        });
+    }
+
+    function ChangePass() {
+        layer.prompt({
+              formType: 0,
+              title: '请输入新密码',
+        }, function(value1, index, elem){
+              layer.close(index);
+              layer.prompt({
+                    formType: 0,
+                    title: '请输入旧密码核对身份',
+              }, function(value2, index, elem){
+                    layer.close(index);
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url_for('admin.setPass')}}",
+                        data:{new_password:value1,old_password:value2},
+                        dataType: "json",
+                        success: function(data) {
+                            layer.msg(data.msg, {icon: 1});
+                        }
+                    });
+              });
+        });
+    }
+    function uninstall() {
+        layer.confirm('真的要卸载PyOne？',
+            {
+                icon: 3,
+                title:'卸载',
+                success: function (layero, index) {
+                    var msg = '确认';
+                    var i = 5;
+                    var timer = null;
+                    $(".layui-layer-btn0").addClass("layui-btn-disabled");
+                    var fn = function () {
+                        layero.find(".layui-layer-btn0").text(msg + '(' + i + ')');
+                        if (!i) {
+                            $(".layui-layer-btn0").removeClass("layui-btn-disabled");
+                            layero.find(".layui-layer-btn0").text(msg);
+                            clearInterval(timer);
+                        }
+                        i--;
+                    };
+                    timer = setInterval(fn, 1000);
+                    fn();
+                },
+            },
+            function(index){
+                layer.close(index);
+                layer.msg('删除mongodb数据中...', {icon: 1});
+                uninstall_action('mongodb');
+                uninstall_action('redis');
+                uninstall_action('directory');
+                $.ajax({
+                    type: "POST",
+                    url: "{{url_for('admin.uninstall')}}",
+                    data:{type:'done'},
+                    dataType: "json",
+                    success: function(data) {
+                        layer.alert(data.msg, {icon: 1});
+                    }
+            });
+        });
+    }
+    function uninstall_action(type){
+        $.ajax({
+            type: "POST",
+            url: "{{url_for('admin.uninstall')}}",
+            data:{type:type},
+            dataType: "json",
+            success: function(data) {
+                layer.msg(data.msg, {icon: 1});
+            }
+        });
+    }
+</script>
+{%endblock content%}

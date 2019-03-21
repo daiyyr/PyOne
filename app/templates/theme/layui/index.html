@@ -1,0 +1,149 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+{% import 'theme/'+GetConfig('theme')+'/_macro.html' as macros %}
+
+{%block content%}
+<div class="layui-container">
+    <!-- 看图模式 -->
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <input type="checkbox" name="switch" title="看图模式" lay-filter="image_view" {%if image_mode==1%}checked{%endif%}>
+        </div>
+    </div>
+    <!-- head -->
+     {%include 'theme/'+GetConfig('theme')+'/head.html'%}
+    <!-- 文件列表 -->
+    {%if all_image!=True or image_mode==0%}
+    <div class="layui-row">
+        <div class="layui-col-lg12">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="60%">
+                    <col width="15%" class="layui-hide-xs">
+                    <col width="15%" class="layui-hide-xs">
+                    <col class="layui-hide-xs">
+                </colgroup>
+                <thead>
+                    <tr>
+                        {{ macros.Arraw(endpoint=endpoint,name='标题',cur_type='name',sortby=sortby,order=order,path=path) }}
+                        {{ macros.Arraw(endpoint=endpoint,name='修改时间',cur_type='lastModtime',sortby=sortby,order=order,path=path,class="layui-hide-xs") }}
+                        {{ macros.Arraw(endpoint=endpoint,name='类型',cur_type='type',sortby=sortby,order=order,path=path,class="layui-hide-xs") }}
+                        {{ macros.Arraw(endpoint=endpoint,name='大小',cur_type='size',sortby=sortby,order=order,path=path,class="layui-hide-xs") }}
+                    </tr>
+                </thead>
+                <tbody>
+                    {%if path.split(':')[-1]!=''%}
+                    <tr>
+                        <td>
+                            <div class="layui-table-cell laytable-cell-1-0-0">
+                                <a href="{{list(breadCrumb(path))[-2][1]}}">
+                                <i class="fa fa-level-up" aria-hidden="true"></i> 返回上一层
+                                </a>
+                            </div>
+                        </td>
+                        <td class="layui-hide-xs"></td>
+                        <td class="layui-hide-xs"></td>
+                        <td class="layui-hide-xs"></td>
+                    </tr>
+                    {%endif%}
+
+                    {%for data in items%}
+                        {%if data['type']=='folder' %}
+                            <tr>
+                                <td>
+                                        <a href="{{url_for('front.index',path=data['path'])}}"><i class="fa fa-folder-o"></i> {{CutText(data['name'])}}</a>
+                                </td>
+                                <td class="layui-hide-xs">{{data['lastModtime']}}</td>
+                                <td class="layui-hide-xs">{{data['type']}}</td>
+                                <td class="layui-hide-xs">{{data['size']}}</td>
+                            </tr>
+                        {%else%}
+                            {%if image_mode==1%}
+                                {%if file_ico(data)!='image'%}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('front.index',path=data['path'],action='share')}}" target="_blank">
+                                                {{ macros.get_ico(file_ico(data)) }} {{CutText(data['name'])}}
+                                            </a>
+                                        </td>
+                                        <td class="layui-hide-xs">{{data['lastModtime']}}</td>
+                                        <td class="layui-hide-xs">{{data['type']}}</td>
+                                        <td class="layui-hide-xs">{{data['size']}}</td>
+                                    </tr>
+                                {%endif%}
+                            {%else%}
+                                <tr>
+                                    <td>
+                                        <a href="{{url_for('front.index',path=data['path'],action='share')}}" target="_blank">
+                                            {{ macros.get_ico(file_ico(data)) }} {{CutText(data['name'])}}
+                                        </a>
+                                    </td>
+                                    <td class="layui-hide-xs">{{data['lastModtime']}}</td>
+                                    <td class="layui-hide-xs">{{data['type']}}</td>
+                                    <td class="layui-hide-xs">{{data['size']}}</td>
+                                </tr>
+                            {%endif%}
+                        {%endif%}
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {%endif%}
+    {%if image_mode==1%}
+    <center>
+        <div style="max-width: 600px;">
+        {%for data in items%}
+            {%if file_ico(data)=='image'%}
+                <a href="{{url_for('front.index',path=data['path'],action='share')}}" target="_blank">
+                <img class="img-responsive" src="{{url_for('front.show',fileid=data['id'],user=cur_user,action='download')}}"/>
+                </a>
+            {%endif%}
+        {%endfor%}
+        </div>
+    </center>
+    {%endif%}
+    {%if pagination%}
+    <center>
+        {% if pagination %}
+            {{ macros.pagination_widget(pagination, endpoint,path=path,sortby=sortby,order=order) }}
+        {% endif %}
+    </center>
+    {%endif%}
+
+    <!-- readme -->
+    {%include 'theme/'+GetConfig('theme')+'/readme.html'%}
+</div>
+{%endblock content%}
+{%block script%}
+<script>
+layui.use('table', function(){
+    var table = layui.table;
+    table.init('filelist', {
+        limit: 50 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+    });
+});
+
+function setCookie(c_name, value, exdays) {
+    var exdate = new Date();
+    exdate.setDate(exdate.getDate() + exdays);
+    var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+    document.cookie = c_name + "=" + c_value;
+}
+
+layui.use('form', function() {
+    var form = layui.form;
+    form.on('checkbox(image_view)', function(data) {
+        var ckname = 'image_mode';
+        if (data.elem.checked) {
+            setCookie(ckname, 0, 1);
+            window.location.href = "{{url_for('front.index',path=path,image_mode=1)}}";
+        } else {
+            setCookie(ckname, 1, 1);
+            window.location.href = "{{url_for('front.index',path=path,image_mode=0)}}";
+        }
+    });
+});
+
+
+</script>
+{%endblock script%}

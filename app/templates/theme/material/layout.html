@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <title>{{GetConfig('title_pre')}} {{path}} - {{GetConfig('title')}}</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/mdui/0.4.2/css/mdui.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/mdui/0.4.2/js/mdui.min.js"></script>
+    <script src="https://cdn.staticfile.org/layer/2.3/layer.js"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/theme.css')}}?t=0305">
+    <style>
+    img { height: auto;max-width: 60%; display: block; }
+    /* 固定到右下角的 FAB 按钮 */
+    .mdui-fab-fixed_left {
+      position: fixed !important;
+      /* 手机平板上距离屏幕右下角 16px */
+      left: 16px;
+      bottom: 16px;
+    }
+    @media (min-width: 1024px) {
+      .mdui-fab-fixed_left {
+        /* 电脑上距离屏幕右下角 24px */
+        left: 24px;
+        bottom: 24px;
+      }
+    }
+    {{GetConfig('cssCode')|safe}}
+    </style>
+    {{GetConfig('headCode')|safe}}
+</head>
+
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-blue">
+    <div class="mdui-container">
+    {%include 'theme/'+GetConfig('theme')+'/header.html'%}
+    {%block content%}
+    {%endblock content%}
+    </div>
+    {%include 'theme/'+GetConfig('theme')+'/footer.html'%}
+    <script type="text/javascript">
+        function copyUrl(eid) {
+            var Url=document.getElementById(eid);
+            Url.select();
+            document.execCommand("Copy");
+            $('.alert').css('display', '');
+            $('#error_msg').html('复制成功');
+        }
+    </script>
+</body>
+
+</html>

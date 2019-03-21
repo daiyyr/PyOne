@@ -1,0 +1,35 @@
+<div class="layui-container">
+    <div class="layui-header">
+        <ul class="layui-nav" lay-filter="">
+            {%for user in get_od_user()%}
+            {%if user[1]!='添加网盘'%}
+            <li class="layui-nav-item {%if cur_user==user[0]%}layui-this{%endif%}"><a href="{{user[2]}}">{{user[1]}}</a></li>
+            {%endif%}
+            {%endfor%}
+        </ul>
+        <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+            <li class="layui-nav-item" lay-unselect="">
+                <button class="layui-btn layui-btn-sm" onclick="py_search();">
+                    <i class="layui-icon">&#xe615;</i> 搜索
+                </button>
+            </li>
+        </ul>
+    </div>
+    <br>
+    <div class="layui-row">
+        <div class="layui-col-lg12">
+            <p>
+                当前位置：
+                {%if path%}
+                    {%for name,p,last in breadCrumb(path)%}
+                        {%if last==False%}
+                        <a href="{{p}}">{{name}}</a> /
+                        {%else%}
+                        <a href="#">{{name}}</a> 
+                        {%endif%}
+                    {%endfor%}
+                {%endif%}
+            </p>
+        </div>
+    </div>
+</div>

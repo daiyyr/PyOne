@@ -1,0 +1,35 @@
+{%extends 'admin/layout.html'%}
+
+{%block content%}
+<div class="mdui-container-fluid">
+
+    <div class="mdui-typo">
+      <h1>自定义代码 <small>用不好的话就别乱用</small></h1>
+    </div>
+    <form action="{{url_for('admin.setCode')}}" method="POST">
+        <div class="mdui-textfield">
+          <h4>自定义css代码 (只能写css代码，不用写style标签，内容在style标签内)</h4>
+          <textarea class="mdui-textfield-input" rows="4" placeholder="自定义css代码" name="cssCode">{{GetConfig('cssCode')}}</textarea>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>自定义头部代码</h4>
+          <textarea class="mdui-textfield-input" rows="4" placeholder="自定义头部代码" name="headCode">{{GetConfig('headCode')}}</textarea>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>自定义底部代码</h4>
+          <textarea class="mdui-textfield-input" rows="4" placeholder="自定义底部代码" name="footCode">{{GetConfig('footCode')}}</textarea>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>统计代码</h4>
+          <textarea class="mdui-textfield-input" rows="4" placeholder="统计代码" name="tj_code">{{GetConfig('tj_code')}}</textarea>
+        </div>
+
+       <button type="submit" class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right">
+        <i class="mdui-icon material-icons">&#xe161;</i> 保存
+       </button>
+    </form>
+</div>
+{%endblock content%}

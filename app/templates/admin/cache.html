@@ -1,0 +1,58 @@
+{%extends 'admin/layout.html'%}
+
+{%block content%}
+<div class="mdui-container-fluid">
+    <div class="mdui-typo">
+        <h1>更新列表</h1>
+    </div>
+    <div class="mdui-row">
+        <div class="mdui-col-xs-2">
+            <button class="mdui-btn mdui-btn-raised mdui-ripple" id="new">增量更新</button>
+        </div>
+        <div class="mdui-col-xs-2">
+            <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" id="all">全量更新</button>
+        </div>
+        <div class="mdui-col-xs-8"></div>
+    </div>
+    <hr>
+    <div class="mdui-row">
+        <div class="mdui-col-xs-12">
+            <div class="mdui-card">
+              <div class="mdui-card-actions mdui-card-actions-stacked">
+                <h2>更新策略解释</h2>
+                <p>1. 增量更新：对比本地列表和远程列表，文件列表有更新时才更新。（文件目录结构不变的情况下推荐使用增量更新）</p>
+                <p>2. 全量更新：删除本地文件列表，全量更新。（文件目录结构发生变化推荐使用增量更新）</p>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#new').click(function(){
+        $.post("{{url_for('admin.cache_control')}}",
+            {
+                type:"new"
+            },
+            function(data){
+                mdui.snackbar({
+                    message: data.msg,
+                    position: 'top'
+                });
+            }
+        );
+    });
+    $('#all').click(function(){
+        $.post("{{url_for('admin.cache_control')}}",
+            {
+                type:"all"
+            },
+            function(data){
+                mdui.snackbar({
+                    message: data.msg,
+                    position: 'top'
+                });
+            }
+        );
+    });
+</script>
+{%endblock content%}

@@ -1,0 +1,55 @@
+{% macro pagination_widget(pagination, endpoint) %}
+<br>
+    {%if pagination.pages>1%}
+        <center>
+            <div id="page">
+                {% if pagination.has_prev %}
+                <a href="{{ url_for(endpoint,page = pagination.page - 1, **kwargs) |safe}}" class="mdui-fab mdui-fab-mini mdui-ripple">&lt;</a>
+                {%endif%}
+
+                {% for p in pagination.iter_pages() %}
+                  {% if p %}
+                    {%if p == pagination.page%}
+                      <a href="{{ url_for(endpoint, page = p,**kwargs) }}" class="mdui-color-blue mdui-shadow-13">{{ p }}</a>
+                    {%else%}
+                      <a href="{{ url_for(endpoint, page = p,**kwargs) }}">{{ p }}</a>
+                    {%endif%}
+                  {%else%}
+                      <a href="javascript:void(0);">&hellip;</a>
+                  {%endif%}
+                {%endfor%}
+
+                {% if pagination.has_next %}
+                <a href="{{ url_for(endpoint,page = pagination.page + 1, **kwargs) |safe}}">&gt;</a>
+                {%endif%}
+            </div>
+        </center>
+    {%endif%}
+{% endmacro %}
+
+{% macro Arraw(endpoint,name,cur_type,sortby,order) %}
+    <a href="{% if order=='asc' %}{{url_for(endpoint,sortby=cur_type,order='desc',**kwargs)|safe}}{%else%}{{url_for(endpoint,sortby=cur_type,order='asc',**kwargs)|safe}}{%endif%}">
+    {{ name }}
+    {% if cur_type==sortby %}
+        {% if order=='asc' %}
+            <i class="mdui-icon material-icons">arrow_upward</i>
+        {% else %}
+            <i class="mdui-icon material-icons">arrow_downward</i>
+        {% endif %}
+    {% endif %}
+    </a>
+{% endmacro %}
+
+
+{% macro Admin_Arraw(name,cur_type,sortby,order) %}
+    <a href="{% if order=='asc' %}{{url_for('admin.manage',sortby=cur_type,order='desc',**kwargs)|safe}}{%else%}{{url_for('admin.manage',sortby=cur_type,order='asc',**kwargs)|safe}}{%endif%}">
+    {{ name }}
+    {% if cur_type==sortby %}
+        {% if order=='asc' %}
+            <i class="mdui-icon material-icons">arrow_upward</i>
+        {% else %}
+            <i class="mdui-icon material-icons">arrow_downward</i>
+        {% endif %}
+    {% endif %}
+    </a>
+{% endmacro %}

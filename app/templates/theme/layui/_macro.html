@@ -1,0 +1,52 @@
+{% macro pagination_widget(pagination, endpoint) %}
+    {%if pagination.pages>1%}
+        <div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-1">
+            <a href="{% if pagination.has_prev %}{{ url_for(endpoint,page = pagination.page - 1, **kwargs) |safe}}{%else%}javascript:;{%endif%}" class="layui-laypage-prev {% if pagination.has_prev==False %}layui-disabled{%endif%}" data-page="0">上一页</a>
+            {% for p in pagination.iter_pages() %}
+                {% if p %}
+                    {%if p == pagination.page%}
+                        <span class="layui-laypage-curr">
+                        <em class="layui-laypage-em"></em>
+                        <em>{{p}}</em>
+                        </span>
+                    {%else%}
+                        <a href="{{ url_for(endpoint, page = p,**kwargs) }}" data-page="{{ p }}">{{ p }}</a>
+                    {%endif%}
+                {%else%}
+                    <span class="layui-laypage-spr">…</span>
+                {%endif%}
+            {%endfor%}
+            <a href="{% if pagination.has_next %}{{ url_for(endpoint,page = pagination.page + 1, **kwargs) |safe}}{%else%}javascript:;{%endif%}" class="layui-laypage-next {% if pagination.has_next==False %}layui-disabled{%endif%}" data-page="2">下一页</a>
+        </div>
+    {%endif%}
+{% endmacro %}
+
+{% macro get_ico(type) %}
+    {%if type=='image'%}
+        <i class="fa fa-file-image-o"></i>
+    {%else%}
+        {%if type=='ondemand_video'%}
+            <i class="fa fa-video-camera"></i>
+        {%else%}
+            <i class="fa fa-file"></i>
+        {%endif%}
+    {%endif%}
+{% endmacro %}
+
+
+{% macro Arraw(endpoint,name,cur_type,sortby,order,class) %}
+<th class="{{class}}">
+    <a href="{% if order=='asc' %}{{url_for(endpoint,sortby=cur_type,order='desc',**kwargs)|safe}}{%else%}{{url_for(endpoint,sortby=cur_type,order='asc',**kwargs)|safe}}{%endif%}">
+    {% if cur_type==sortby %}
+        {% if order=='asc' %}
+                {{ name }}<i class="fa fa-arrow-up" aria-hidden="true"></i>
+        {% else %}
+                {{ name }}<i class="fa fa-arrow-down" aria-hidden="true"></i>
+        {% endif %}
+    {%else%}
+        {{ name }}
+    {% endif %}
+    </a>
+</th>
+{% endmacro %}
+

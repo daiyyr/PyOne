@@ -1,0 +1,23 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+
+{%block content%}
+<div class="mdui-container-fluid">
+    <br>
+    <img class="mdui-img-fluid" src="{{inner_url}}"/>
+    <br>
+    <div class="mdui-textfield">
+      <label class="mdui-textfield-label">分享地址</label>
+      <input class="mdui-textfield-input" type="text" id="share" value="{{url}}?action=share" onclick="copyUrl('share')"/>
+    </div>
+    <div class="mdui-textfield">
+      <label class="mdui-textfield-label">调用地址</label>
+      <input class="mdui-textfield-input" type="text" id="out_use" value="{{url}}" onclick="copyUrl('out_use')"/>
+    </div>
+    <div class="mdui-textfield">
+      <label class="mdui-textfield-label">Markdown 引用地址</label>
+      <input class="mdui-textfield-input" type="text" id="markdown" value="![]({{url}})"  onclick="copyUrl('markdown')"/>
+    </div>
+    <br>
+</div>
+<a href="{{inner_url}}" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">file_download</i></a>
+{%endblock content%}

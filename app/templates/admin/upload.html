@@ -1,0 +1,215 @@
+{%extends 'admin/layout.html'%}
+{%block content%}
+<link rel="stylesheet" href="/static/css/theme.css?t=20305">
+<div class="mdui-container-fluid">
+    <div class="mdui-typo">
+        <h1> 上传管理 <small>文件上传添加和管理</small></h1>
+    </div>
+    <div class="mdui-toolbar mdui-color-theme">
+        <button class="mdui-btn mdui-btn-icon" onclick="Restart()" mdui-tooltip="{{'{'}}content: '重启任务（因重启网站之后上传中断）'{{'}'}}"><i class="mdui-icon material-icons">&#xe863;</i></button>
+        <button class="mdui-btn mdui-btn-icon" onclick="ClearHist()" mdui-tooltip="{{'{'}}content: '清空任务'{{'}'}}"><i class="mdui-icon material-icons">&#xe0b8;</i></button>
+    </div>
+    <div class="mdui-row">
+        <form action="" method="post">
+            <div class="mdui-col-xs-3">
+                <label class="mdui-textfield-label">选择网盘</label>
+                <select class="mdui-select" name="user" mdui-select>
+                    {%for user in get_od_user()%}
+                    {%if user[1]!='添加网盘'%}
+                    <option value="{{user[0]}}">{{user[1]}}</option>
+                    {%endif%}
+                    {%endfor%}
+                </select>
+            </div>
+            <div class="mdui-col-xs-4">
+                <label class="mdui-textfield-label">服务器文件/文件夹</label>
+                <input name="local" class="mdui-textfield-input" type="text" value="{%if local%}{{local}}{%else%}/{%endif%}" />
+            </div>
+            <div class="mdui-col-xs-3">
+                <label class="mdui-textfield-label">远程目录</label>
+                <input name="remote" class="mdui-textfield-input" type="text" value="{%if remote%}{{remote}}{%endif%}" />
+            </div>
+            <div class="mdui-col-xs-2" style="padding-top: 34px;">
+                <button type="submit" name="upload" value="1" class="mdui-btn mdui-btn-block mdui-color-green-600 mdui-ripple">
+                    <i class="mdui-icon material-icons">&#xe2c3;</i> 上传
+                </button>
+            </div>
+        </form>
+    </div>
+    <hr>
+    <div class="nexmoe-item">
+        <div class="mdui-row">
+            <ul class="mdui-list">
+                <li class="mdui-list-item th">
+                    <div class="mdui-col-sm-1 hidden-xs">盘</div>
+                    <div class="mdui-col-sm-4 mdui-col-xs-8">本地</div>
+                    <div class="mdui-col-sm-4 hidden-xs">远程</div>
+                    <div class="mdui-col-sm-1 hidden-xs">速度</div>
+                    <div class="mdui-col-sm-2 mdui-col-xs-4">进度</div>
+                </li>
+                <div id="tasks">
+                </div>
+            </ul>
+        </div>
+        <div id="pagination">
+        </div>
+    </div>
+</div>
+<script>
+function ShowNotice(msg){
+    mdui.snackbar({
+          message: msg,
+          position: 'top'
+        });
+}
+function ClearHist(){
+    layer.confirm('确定清除任务？', {
+        btn: ['确定','取消'] //按钮
+    },
+    function(index){
+        layer.close(index);
+        $.ajax({
+            type: "POST",
+            url: "/admin/upload/jsonrpc",
+            data:{action:'ClearHist'},
+            dataType: "json",
+            beforeSend: function(xhr) {
+                var index2 = layer.load(2, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+            },
+            success: function(data) {
+                ShowNotice(data.msg);
+            },
+            complete: function(xhr) {
+                $('#layui-layer-shade1').remove();
+                setTimeout("window.location.reload();",2000);
+            }
+        });
+        }
+    );
+}
+
+function Restart(){
+    layer.confirm('确定重启任务？（只有任务中断了才重启！）', {
+        btn: ['确定','取消'] //按钮
+    },
+    function(index){
+        layer.close(index);
+        $.ajax({
+            type: "POST",
+            url: "/admin/upload/jsonrpc",
+            data:{action:'Restart'},
+            dataType: "json",
+            beforeSend: function(xhr) {
+                var index2 = layer.load(2, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+            },
+            success: function(data) {
+                ShowNotice(data.msg);
+            },
+            complete: function(xhr) {
+                $('#layui-layer-shade1').remove();
+                setTimeout("window.location.reload();",2000);
+            }
+        });
+        }
+    );
+}
+
+function GetPagination() {
+    var defer = $.Deferred();
+    var getTimestamp = new Date().getTime();
+    $.ajax({
+        type: "POST",
+        url: "/admin/upload/jsonrpc?t=" + getTimestamp,
+        data: { page: '{{page}}', action: 'pagination' },
+        cache: false, //使用同步的方式,true为异步方式
+        // async: false, //使用同步的方式,true为异步方式
+        dataType: "json",
+        success: function(pagination) {
+            defer.resolve(pagination);
+            if (pagination.code == 1) {
+                $('#pagination').empty();
+                html = '<center><div id="page">';
+                if (pagination.has_prev) {
+                    last_page = pagination.page - 1;
+                    tmp_html = '<a href="/admin/upload?page=' + last_page + '" class="mdui-fab mdui-fab-mini mdui-ripple">&lt;</a>';
+                    html += tmp_html;
+                }
+                for (var i = pagination.page_lists.length - 1; i >= 0; i--) {
+                    p = pagination.page_lists[i];
+                    if (p) {
+                        if (p == {{ page }} ) {
+                            tmp_html = '<a href="/admin/upload?page=' + p + '" class="mdui-color-blue mdui-shadow-13">' + p + '</a>';
+                        } else {
+                            tmp_html = '<a href="/admin/upload?page=' + p + '">' + p + '</a>';
+                        }
+                    } else {
+                        tmp_html = '<a href="javascript:void(0);">&hellip;</a>';
+                    }
+                    html += tmp_html;
+                }
+                if (pagination.has_next) {
+                    next_page = pagination.page + 1;
+                    tmp_html = '<a href="/admin/upload?page=' + next_page + '" class="mdui-fab mdui-fab-mini mdui-ripple">&gt;</a>';
+                    html += tmp_html;
+                }
+                html += '</div></center>';
+                $('#pagination').append(html);
+            }
+        },
+        complete: function() {
+            defer.promise();
+        }
+    });
+}
+
+function GetTasks() {
+    var defer = $.Deferred();
+    var getTimestamp = new Date().getTime();
+    $.ajax({
+        type: "POST",
+        url: "/admin/upload/jsonrpc?t=" + getTimestamp,
+        data: { page: '{{page}}' },
+        cache: false, //使用同步的方式,true为异步方式
+        // async: false, //使用同步的方式,true为异步方式
+        dataType: "json",
+        success: function(data) {
+            defer.resolve(data);
+            if (data.code == 1) {
+                $('#tasks').empty();
+                for (var i = 0; i <= data.result.length - 1; i++) {
+                    t = data.result[i];
+                    html = '<li class="mdui-list-item mdui-ripple">';
+                    html += '<div class="mdui-col-sm-1 hidden-xs">' + t.user + '</div>';
+                    html += '<div class="mdui-col-sm-4 mdui-col-xs-8">' + t.localpath + '</div>';
+                    html += '<div class="mdui-col-sm-4 hidden-xs">' + t.remote + '</div>';
+                    html += '<div class="mdui-col-sm-1 hidden-xs">' + t.speed + '</div>';
+                    html += '<div class="mdui-col-sm-2 mdui-col-xs-4">' + t.status + '</div>';
+                    html += '</li>';
+                    $('#tasks').append(html);
+                }
+            }
+        },
+        complete: function() {
+            defer.promise();
+        }
+    });
+}
+var interval_id = null;
+
+function AutoRefresh() {
+    if (interval_id) {
+        window.clearInterval(interval_id);
+    }
+    interval_id = window.setInterval(function() {
+        GetTasks();
+    }, 2000);
+}
+GetTasks();
+GetPagination();
+AutoRefresh();
+</script>
+{%endblock content%}

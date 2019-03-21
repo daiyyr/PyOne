@@ -1,0 +1,32 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+
+{%block content%}
+<link class="dplayer-css" rel="stylesheet" href="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.css">
+<script src="https://cdn.staticfile.org/dashjs/2.9.2/dash.all.min.js"></script>
+<script src="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.js"></script>
+<div class="mdui-container-fluid">
+  <br>
+  <div id="dplayer"></div>
+  <br>
+  <!-- 固定标签 -->
+  <div class="mdui-textfield">
+    <label class="mdui-textfield-label">分享地址</label>
+    <input class="mdui-textfield-input" type="text" id="share" value="{{url}}?action=share" onclick="copyUrl('share')"/>
+  </div>
+  <div class="mdui-textfield">
+    <label class="mdui-textfield-label">调用地址</label>
+    <input class="mdui-textfield-input" type="text" id="out_use" value="{{url}}" onclick="copyUrl('out_use')"/>
+  </div>
+</div>
+<script>
+const dp = new DPlayer({
+  container: document.getElementById('dplayer'),
+  lang:'zh-cn',
+  video: {
+      url: '{{inner_url}}?action=play',
+      type: 'dash'
+  }
+});
+</script>
+<a href="{{inner_url}}" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">file_download</i></a>
+{%endblock content%}

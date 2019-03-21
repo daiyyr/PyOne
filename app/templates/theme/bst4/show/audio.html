@@ -1,0 +1,37 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+
+{%block content%}
+<script src="https://cdn.staticfile.org/audiojs/1.0.1/audio.min.js"></script>
+
+<div class="container">
+  <br>
+  <center>
+  <audio src="{{inner_url}}" autoplay style="width: 100%;" preload="auto">
+  </audio>
+  </center>
+  <br>
+    <!-- 固定标签 -->
+    <div class="form-horizontal">
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-share-alt" aria-hidden="true"></i>分享地址
+                </span>
+            <input id="share" class="form-control" type="text" value="{{url}}?action=share" />
+            <a class="input-group-addon" onclick="copyUrl('share')">点击复制</a>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-link" aria-hidden="true"></i>调用地址
+                </span>
+            <input id="use_outer" class="form-control" type="text" value="{{url}}" />
+            <a class="input-group-addon" onclick="copyUrl('use_outer')">点击复制</a>
+        </div>
+    </div>
+</div>
+<script>
+  audiojs.events.ready(function() {
+    var as = audiojs.createAll();
+  });
+</script>
+    <a href="{{inner_url}}" class="fab-fixed"><i class="fa fa-download fa-3x" aria-hidden="true"></i></a>
+{%endblock content%}

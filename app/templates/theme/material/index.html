@@ -1,0 +1,157 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+{% import 'theme/'+GetConfig('theme')+'/_macro.html' as macros %}
+
+{%block content%}
+<div class="mdui-container-fluid">
+    <div class="mdui-row">
+        <div class="mdui-col-xs-10">
+              <label class="mdui-switch">
+                    看图模式
+                    <input type="checkbox" id="image_view" {%if image_mode==1%}checked{%endif%}/>
+                    <i class="mdui-switch-icon"></i>
+              </label>
+        </div>
+        <div class="mdui-col-xs-2">
+            <button class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '搜索'}" mdui-dialog="{target: '#find_dialog'}"><i class="mdui-icon material-icons">search</i></button>
+        </div>
+    </div>
+    {%include 'theme/'+GetConfig('theme')+'/head.html'%}
+    <div class="nexmoe-item">
+        <div class="mdui-row">
+            <ul class="mdui-list">
+                <li class="mdui-list-item th">
+                    <div class="mdui-col-xs-8 mdui-col-sm-5">{{ macros.Arraw(endpoint=endpoint,name='文件',cur_type='name',sortby=sortby,order=order,path=path) }}</div>
+                    <div class="mdui-col-xs-4 mdui-col-sm-2">{{ macros.Arraw(endpoint=endpoint,name='修改时间',cur_type='lastModtime',sortby=sortby,order=order,path=path) }}</div>
+                    <div class="mdui-col-sm-2 mdui-text-right">{{ macros.Arraw(endpoint=endpoint,name='文件类型',cur_type='type',sortby=sortby,order=order,path=path) }}</div>
+                    <div class="mdui-col-sm-2 mdui-text-right">{{ macros.Arraw(endpoint=endpoint,name='大小',cur_type='size',sortby=sortby,order=order,path=path) }}</div>
+                </li>
+                {%if path.split(':')[-1]!=''%}
+                <li class="mdui-list-item mdui-ripple">
+                    <a href="{{list(breadCrumb(path))[-2][1]}}">
+                        <div class="mdui-col-xs-12 mdui-col-sm-7">
+                            <i class="mdui-icon material-icons">arrow_upward</i> 返回上一层
+                        </div>
+                        <div class="mdui-col-sm-3 mdui-text-right"></div>
+                        <div class="mdui-col-sm-2 mdui-text-right"></div>
+                    </a>
+                </li>
+                {%endif%}
+
+                {%for data in items%}
+                    {%if data['type']=='folder' %}
+                    <li class="mdui-list-item mdui-ripple">
+                        <a href="{{url_for('front.index',path=data['path'])}}">
+                            <div class="mdui-col-xs-8 mdui-col-sm-5 mdui-text-truncate">
+                                <i class="mdui-icon material-icons">folder_open</i> {{data['name']}}
+                            </div>
+                            <div class="mdui-col-xs-4 mdui-col-sm-2">{{data['lastModtime']}}</div>
+                            <div class="mdui-col-sm-2 mdui-text-right">{{data['type']}}</div>
+                            <div class="mdui-col-sm-2 mdui-text-right">{{data['size']}}</div>
+                        </a>
+                    </li>
+                    {%else%}
+                        <li class="mdui-list-item file mdui-ripple">
+                            <a href="{{url_for('front.index',path=data['path'])|safe}}" target="_blank">
+                                {%if image_mode==1%}
+                                    {%if file_ico(data)=='image'%}
+                                        <img class="mdui-img-fluid" src="{{url_for('front.show',fileid=data['id'],user=cur_user,action='download')}}"/>
+                                    {%else%}
+                                        <div class="mdui-col-xs-8 mdui-col-sm-5 mdui-text-truncate">
+                                            <i class="mdui-icon material-icons">{{file_ico(data)}}</i> {{data['name']}}
+                                        </div>
+                                        <div class="mdui-col-xs-4 mdui-col-sm-2">{{data['lastModtime']}}</div>
+                                        <div class="mdui-col-sm-2 mdui-text-right">{{data['type']}}</div>
+                                        <div class="mdui-col-sm-2 mdui-text-right">{{data['size']}}</div>
+                                    {%endif%}
+                                {%else%}
+                                    <div class="mdui-col-xs-8 mdui-col-sm-5 mdui-text-truncate">
+                                        <i class="mdui-icon material-icons">{{file_ico(data)}}</i> {{data['name']}}
+                                    </div>
+                                    <div class="mdui-col-xs-4 mdui-col-sm-2">{{data['lastModtime']}}</div>
+                                    <div class="mdui-col-sm-2 mdui-text-right">{{data['type']}}</div>
+                                    <div class="mdui-col-sm-2 mdui-text-right">{{data['size']}}</div>
+                                {%endif%}
+                            </a>
+                        </li>
+                    {%endif%}
+                {%endfor%}
+
+            </ul>
+        {%include 'theme/'+GetConfig('theme')+'/readme.html'%}
+        </div>
+    </div>
+    <div class="mdui-dialog" id="find_dialog">
+      <div class="mdui-dialog-title">搜索</div>
+      <div class="mdui-dialog-content">
+          <div class="mdui-textfield mdui-textfield-floating-label">
+            <label class="mdui-textfield-label">关键词</label>
+            <input class="mdui-textfield-input" type="text" pattern="^[^\/]{1,10}" id="key_word" required/>
+            <div class="mdui-textfield-error">不能包含"/"，长度1-10之间</div>
+          </div>
+      </div>
+      <div class="mdui-dialog-actions">
+        <button class="mdui-btn mdui-ripple" onclick="py_find();">搜索</button>
+      </div>
+    </div>
+</div>
+
+<div class="mdui-center">
+{% if pagination %}
+    {{ macros.pagination_widget(pagination, endpoint,path=path,sortby=sortby,order=order) }}
+{% endif %}
+</div>
+
+<script>
+var $$ = mdui.JQ;
+$$(function() {
+    $$('.file a').each(function() {
+        $$(this).on('click', function() {
+            layer.open({
+              type: 2,
+              title: 'PyOne播放窗口',
+              shadeClose: true,
+              shade: 0.8,
+              area: ['100%', '100%'],
+              content: $$(this).attr('href')+"?action=share" //iframe的url
+            });
+            return false;
+        });
+    });
+});
+
+function setCookie(c_name, value, exdays) {
+    var exdate = new Date();
+    exdate.setDate(exdate.getDate() + exdays);
+    var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+    document.cookie = c_name + "=" + c_value;
+}
+
+var ckname='image_mode';
+$('#image_view').change(function(){
+   if($(this).attr('checked')){
+        setCookie(ckname,1,1);
+        window.location.href="{{url_for('front.index',path=path,image_mode=0)}}";
+   }else{
+        setCookie(ckname,0,1);
+        window.location.href="{{url_for('front.index',path=path,image_mode=1)}}";
+   }
+});
+
+function py_find() {
+        var key_word = document.getElementById("key_word"); //获取key_word那个div
+        var patrn = /[@#\$%\^&\*\\/]+/g; //正则表达式
+        if (patrn.exec(key_word.value)) {
+            $('.alert').css('display', '');
+            $('#error_msg').html('关键词不能包含特殊字符！');
+            return false;
+        }
+        if (key_word.value == '') {
+            $('.alert').css('display', '');
+            $('#error_msg').html('关键词不能为空！');
+            return false;
+        }
+        $('.alert').css('display', 'none');
+        window.location.href = "/py_find/" + key_word.value;
+}
+</script>
+{%endblock content%}

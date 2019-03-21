@@ -1,0 +1,368 @@
+{%extends 'admin/layout.html'%} {%block content%}
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/webuploader/0.1.1/webuploader.css">
+<script src="https://cdn.jsdelivr.net/npm/webuploader@0.1.8/dist/webuploader.min.js"></script>
+<script type="text/javascript" src="/static/js/hashmap.js"></script>
+<style type="text/css">
+.placeholder {
+    min-height: 350px;
+    padding-top: 178px;
+    text-align: center;
+    background: center 93px no-repeat;
+    color: #cccccc;
+    font-size: 18px;
+    position: relative;
+}
+
+.placeholder .webuploader-pick {
+    font-size: 18px;
+    background: #00b7ee;
+    border-radius: 3px;
+    line-height: 44px;
+    padding: 0 30px;
+    *width: 120px;
+    color: #fff;
+    display: inline-block;
+    margin: 0 auto 20px auto;
+    cursor: pointer;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.placeholder .webuploader-pick-hover {
+    background: #00a2d4;
+}
+
+.placeholder .flashTip {
+    color: #666666;
+    font-size: 12px;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: 20px;
+}
+.placeholder .flashTip a {
+    color: #0785d1;
+    text-decoration: none;
+}
+.placeholder .flashTip a:hover {
+    text-decoration: underline;
+}
+</style>
+<div class="mdui-container-fluid">
+    <div class="mdui-typo">
+        <h1> 本地文件上传至onedrive <small>本地文件->服务器->onedrive</small></h1>
+    </div>
+    <div class="mdui-panel" mdui-panel>
+            <div class="mdui-panel-item">
+              <div class="mdui-panel-item-header">
+                <div class="mdui-panel-item-title">上传列表</div>
+              </div>
+              <div class="mdui-panel-item-body mdui-panel-item-open" id="thelist">
+                <div class="mdui-table-fluid">
+                    <table class="mdui-table" id="uploadTable">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>文件名称</th>
+                                <th>文件大小</th>
+                                <th>本地->服务器上传状态</th>
+                                <th>服务器->onedrive上传状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="mdui-panel-item-actions">
+                    <!-- <div class="mdui-btn mdui-ripple" id="picker">选择文件</div> -->
+                    <button class="mdui-btn mdui-ripple mdui-color-pink-accent mdui-center" id="btn">开始上传</button>
+                    <div id="dndArea" class="placeholder">
+                        <div id="picker"></div>
+                        <p>选择文件或将文件拖到这里</p>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+<script>
+    var fileMd5;
+    var fileSuffix;
+    var $list=$("#thelist table>tbody");
+    var state = 'pending';//初始按钮状态
+    var $btn=$("#btn");
+    var count=0;
+    var map=new HashMap();
+    //监听分块上传过程中的三个时间点
+    WebUploader.Uploader.register({
+        "before-send-file" : "beforeSendFile",
+        "before-send" : "beforeSend",
+        "after-send-file" : "afterSendFile",
+    }, {
+        //时间点1：所有分块进行上传之前调用此函数
+        beforeSendFile : function(file) {
+            var deferred = WebUploader.Deferred();
+            var fileName=file.name;
+            //1、计算文件的唯一标记，用于断点续传
+            (new WebUploader.Uploader()).md5File(file, 0, 10 * 1024 * 1024)
+                    .progress(function(percentage) {
+                        $('#' + file.id).find("td.to_server").text("正在读取文件信息...");
+                    }).then(function(val) {
+                        fileMd5 = val;
+                        $('#' + file.id).find("td.to_server").text("成功获取文件信息...");
+                        //获取文件信息后进入下一步
+                        deferred.resolve();
+                    });
+            return deferred.promise();
+        },
+        //时间点2：如果有分块上传，则每个分块上传之前调用此函数
+        beforeSend : function(block) {
+            var deferred = WebUploader.Deferred();
+            $.ajax({
+                type : "POST",
+                url : "{{url_for('admin.checkChunk')}}",
+                data : {
+                    //文件唯一标记
+                    name:fileName,
+                    fileMd5 : fileMd5,
+                    //当前分块下标
+                    chunk : block.chunk,
+                    //当前分块大小
+                    chunkSize : block.end - block.start
+                },
+                dataType : "json",
+                success : function(response) {
+                    if (response.ifExist) {
+                        //分块存在，跳过
+                        deferred.reject();
+                    } else {
+                        //分块不存在或不完整，重新发送该分块内容
+                        deferred.resolve();
+                    }
+                }
+            });
+            this.owner.options.formData.fileMd5 = fileMd5;
+            deferred.resolve();
+            return deferred.promise();
+        },
+        //时间点3：所有分块上传成功后调用此函数
+        afterSendFile : function(file) {
+            //如果分块上传成功，则通知后台合并分块
+            (new WebUploader.Uploader()).md5File(file, 0, 10 * 1024 * 1024).then(function(val) {
+                fileMd5 = val;
+            });
+            $.ajax({
+                type : "POST",
+                url : "{{url_for('admin.mergeChunks')}}",
+                data : {
+                    fileMd5 : fileMd5,
+                    fileSuffix:file.ext,
+                    fileName:file.name,
+                },
+                success : function(response) {
+                    $('#' + file.id).find('td.to_server').text('已上传');
+                    upload_to_one(file.id,file.name,"{{remote_folder}}");
+                }
+            });
+        }
+    });
+
+    var uploader = WebUploader
+            .create({
+                // swf文件路径
+                swf : 'https://cdnjs.cloudflare.com/ajax/libs/webuploader/0.1.1/Uploader.swf',
+                // 文件接收服务端。
+                server : '{{ url_for("admin.recv_upload") }}',
+                // 选择文件的按钮。可选。
+                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                pick : {
+                    id : '#picker',//这个id是你要点击上传文件的id
+                    multiple : true,
+                    label: '点击选择文件'
+                },
+                // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+                resize : true,
+                auto : false,
+                //开启分片上传
+                chunked : true,
+                chunkSize : 4 * 1024 * 1024,
+
+                // accept : {
+                //     extensions : 'csv,doc,docx,odp,ods,odt,pot,potm,potx,pps,ppsx,ppsxm,ppt,pptm,pptx,rtf,xls,xlsx,bmp,jpg,jpeg,png,gif,mp4,webm,avi,mpg,mpeg,rm,rmvb,mov,wmv,mkv,asf,avi mpg,mpeg,rm,rmvb,mov,wmv,mkv,asf,ogg,mp3,wav,exe,iso,txt,md,rst',
+                //     mimeTypes : '.csv,.doc,.docx,.odp,.ods,.odt,.pot,.potm,.potx,.pps,.ppsx,.ppsxm,.ppt,.pptm,.pptx,.rtf,.xls,.xlsx,.bmp,.jpg,.jpeg,.png,.gif,.mp4,.webm,.avi,.mpg,.mpeg,.rm,.rmvb,.mov,.wmv,.mkv,.asf,.avi mpg,.mpeg,.rm,.rmvb,.mov,.wmv,.mkv,.asf,.ogg,.mp3,.wav,.exe,.iso,.txt,.md,.rst'
+                // },
+                dnd: '#dndArea',
+                disableGlobalDnd: true,
+                fileNumLimit: 300,
+
+            });
+
+   // 当有文件被添加进队列的时候
+    uploader.on('fileQueued', function(file) {
+        //保存文件扩展名
+        fileSuffix=file.ext;
+        fileName=file.source['name'];
+        var fileSize=file.size;
+        var fileSizeStr="";
+        /* if(fileSize/1024<1024){
+            fileSize=fileSize/1024;
+            fileSizeStr=fileSize.toFixed(2)+"KB";
+        }else if(fileSize/1024/1024<1024){
+            fileSize=fileSize/1024/1024;
+            fileSizeStr=fileSize.toFixed(2)+"MB";
+        }else if(fileSize/1024/1024/1024<1024){
+            fileSize=fileSize/1024/1024/1024;
+            fileSizeStr=fileSize.toFixed(2)+"GB";
+        }else{
+            fileSize=fileSize/1024/1024/1024/1024;
+            fileSizeStr=fileSize.toFixed(2)+"T";
+        } */
+        fileSizeStr=WebUploader.Base.formatSize(fileSize);
+        count++;
+        $list.append(
+                '<tr id="' + file.id + '" class="item" flag=0>'+
+                '<td class="index">' + count + '</td>'+
+                '<td class="info">' + file.name + '</td>'+
+                '<td class="size">' + fileSizeStr + '</td>'+
+                '<td class="to_server">等待上传...</td>'+
+                '<td class="to_one">等待上传...</td>'+
+                '<td class="operate"><button name="upload" class="mdui-btn mdui-color-theme-accent mdui-ripple">开始</button><button name="delete" class="mdui-btn mdui-color-theme-accent">删除</button></td></tr>');
+        map.put(file.id+"",file);
+    });
+
+    // 文件上传过程中创建进度条实时显示。
+    uploader.on('uploadProgress', function(file, percentage) {
+        $('#' + file.id).find('td.to_server').text(
+                '上传中 ' + Math.round(percentage * 100) + '%');
+    });
+
+    uploader.on('uploadSuccess', function(file) {
+        $('#' + file.id).find('td.to_server').text('已上传');
+        $('#' + file.id).find('td.to_one').text('准备上传...');
+    });
+
+    uploader.on('uploadError', function(file) {
+        $('#' + file.id).find('td.to_server').text('上传出错');
+    });
+
+    uploader.on('uploadComplete', function(file) {
+        uploader.removeFile(file);
+    });
+
+
+    uploader.on('all', function(type) {
+        if (type === 'startUpload') {
+            state = 'uploading';
+        } else if (type === 'stopUpload') {
+            state = 'paused';
+        } else if (type === 'uploadFinished') {
+            state = 'done';
+        }
+
+        if (state === 'uploading') {
+            $btn.text('暂停上传');
+        } else {
+            $btn.text('开始上传');
+        }
+    });
+
+    $btn.on('click', function(){
+        if (state === 'uploading'){
+            uploader.stop(true);
+        } else {
+            uploader.upload();
+        }
+    });
+
+    $("body").on("click","#uploadTable button[name='upload']",function(){
+        flag=$(this).parents("tr.item").attr("flag")^1;
+        $(this).parents("tr.item").attr("flag",flag);
+        var id=$(this).parents("tr.item").attr("id");
+        if(flag==1){
+            $(this).text("暂停");
+            uploader.upload(uploader.getFile(id,true));
+
+        }else{
+            $(this).text("开始");
+            //uploader.stop(true);
+            uploader.stop(uploader.getFile(id,true));
+            //uploader.skipFile(file);
+            //uploader.removeFile(file);
+            //uploader.getFile(id,true);
+        }
+    });
+
+    $("body").on("click","#uploadTable button[name='delete']",function(){
+        var id=$(this).parents("tr.item").attr("id");
+        $(this).parents("tr.item").remove();
+        uploader.removeFile(uploader.getFile(id,true));
+        map.remove(id);
+    });
+
+    function upload_to_one(id,filename,remote_folder,user){
+        var source = new EventSource("{{url_for('admin.server_to_one')|safe}}?filename="+filename+"&remote_folder="+remote_folder+"&user={{cur_user}}");
+        source.onmessage = function(event) {
+          if(event.data=='end'){
+              source.close();
+              // $('#' + id).find('td.to_one').text('上传完成');
+          }
+          else{
+            $('#' + id).find('td.to_one').text(event.data);
+          }
+        }
+        source.addEventListener('error',function(e){
+            source.close();
+        })
+    }
+
+    //写cookies
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + "; " + expires;
+    }
+
+    //读取cookies
+    function getCookie(name){
+      var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+      if(arr=document.cookie.match(reg))
+        return (arr[2]);
+      else
+        return null;
+    }
+
+    //删除cookies
+    function delCookie(name){
+        var exp = new Date();
+      exp.setTime(exp.getTime() - 1);
+      var cval=getCookie(name);
+      if(cval!=null)
+        document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+    }
+
+    $(document).ready(function(){
+        var ckname='folder_mode';
+        if(getCookie(ckname)!=null){
+            if(getCookie(ckname)==0){
+                $('#webuploader-element-invisible').attr('webkitdirectory','');
+                $('#folder_mode').removeAttr('checked');
+            }
+            else{
+                $('#webuploader-element-invisible').removeAttr('webkitdirectory');
+                $('#folder_mode').attr('checked','');
+            }
+        }
+        $('#folder_mode').change(function(){
+           if($(this).attr('checked')){
+                setCookie(ckname,0,1);
+                $('#webuploader-element-invisible').removeAttr('webkitdirectory');
+           }else{
+                setCookie(ckname,1,1);
+                $('#webuploader-element-invisible').attr('webkitdirectory','');
+           }
+        });
+    });
+
+
+</script>
+{%endblock content%}

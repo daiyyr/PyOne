@@ -1,0 +1,81 @@
+{%extends 'admin/layout.html'%}
+{%block content%}
+<div class="mdui-container-fluid">
+    <div class="mdui-typo">
+        <h1> 离线下载 <small>远程文件->服务器->onedrive</small></h1>
+    </div>
+    <div class="mdui-toolbar mdui-color-theme">
+      <button class="mdui-btn mdui-btn-icon" onclick="AddLink()" mdui-tooltip="{{'{'}}content: '添加任务'{{'}'}}"><i class="mdui-icon material-icons">&#xe250;</i></button>
+      <button class="mdui-btn mdui-btn-icon" onclick="window.open('http://www.torrent.org.cn/');" mdui-tooltip="{{'{'}}content: '种子转磁力'{{'}'}}"><i class="mdui-icon material-icons">&#xe428;</i></button>
+      <button class="mdui-btn mdui-btn-icon" onclick="ClearHist()" mdui-tooltip="{{'{'}}content: '清空任务'{{'}'}}"><i class="mdui-icon material-icons">&#xe0b8;</i></button>
+    </div>
+    <div class="nexmoe-item">
+        <div class="mdui-row">
+            <ul class="mdui-list">
+                <li class="mdui-list-item th">
+                    <div class="mdui-col-xs-12">活动任务</div>
+                </li>
+                <div class="mdui-panel mdui-panel-gapless" mdui-panel id="active">
+                </div>
+            </ul>
+            <ul class="mdui-list">
+                <li class="mdui-list-item th">
+                    <div class="mdui-col-xs-12">失败任务</div>
+                </li>
+                <div class="mdui-panel mdui-panel-gapless" mdui-panel id="fail">
+                </div>
+            </ul>
+            <ul class="mdui-list">
+                <li class="mdui-list-item th">
+                    <div class="mdui-col-xs-12">完成任务</div>
+                </li>
+                <div class="mdui-panel mdui-panel-gapless" mdui-panel id="success">
+                </div>
+            </ul>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="/static/js/offdownload.js?t=201902264"></script>
+<script>
+{%if msg!=None%}
+ShowNotice("{{msg}}");
+{%endif%}
+function AddLink() {
+    layer.prompt({
+        formType: 2,
+        title: '请输入下载链接（一行一个）',
+        maxlength:10000
+    },
+    function(value, index, elem) {
+        layer.close(index);
+        var defer = $.Deferred();
+        $.ajax({
+            type: "POST",
+            url: "/admin/off_download",
+            data: { grand_path: "{{grand_path}}", urls: value, user: "{{cur_user}}" },
+            // async: false, //使用同步的方式,true为异步方式
+            dataType: "json",
+            beforeSend: function(xhr) {
+                var index2 = layer.load(2, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+            },
+            success: function(data) {
+                defer.resolve(data);
+                if (data.status) {
+                    ShowNotice('添加任务成功！');
+                } else {
+                    ShowNotice(data.msg);
+                }
+            },
+            complete: function(xhr) {
+                defer.promise();
+                $('#layui-layer-shade1').remove();
+                setTimeout("window.location.reload();",2000);
+            }
+        });
+    });
+}
+</script>
+{%endblock content%}

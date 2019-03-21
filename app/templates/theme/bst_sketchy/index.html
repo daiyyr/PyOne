@@ -1,0 +1,134 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+{% import 'theme/'+GetConfig('theme')+'/_macro.html' as macros %}
+
+{%block content%}
+<div class="container mt-3">
+    <div class="form-inline">
+        <label for="image_view">看图模式</label>
+        <input type="checkbox" id="image_view" class="form-control" data-switch-value="mini" onclick="changeMode()" {%if image_mode==1%}checked{%endif%} />
+    </div>
+    <hr>
+    {%include 'theme/'+GetConfig('theme')+'/head.html'%}
+
+    <div class="card border-light mb-3">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-8 col-sm-6">
+                    {{ macros.Arraw(endpoint=endpoint,name='标题',cur_type='name',sortby=sortby,order=order,path=path) }}
+                </div>
+                <div class="col-sm-2 d-none d-md-block d-md-none">
+                    <span class="pull-right">{{ macros.Arraw(endpoint=endpoint,name='修改时间',cur_type='lastModtime',sortby=sortby,order=order,path=path) }}</span>
+                </div>
+                <div class="col-sm-2 d-none d-md-block d-md-none">
+                    <span class="pull-right">{{ macros.Arraw(endpoint=endpoint,name='类型',cur_type='type',sortby=sortby,order=order,path=path) }}</span>
+                </div>
+                <div class="col-4 col-sm-2">
+                    <span class="pull-right">{{ macros.Arraw(endpoint=endpoint,name='大小',cur_type='size',sortby=sortby,order=order,path=path) }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            {%if path.split(':')[-1]!=''%}
+                <li class="list-group-item list-group-item-action">
+                    <a href="{{list(breadCrumb(path))[-2][1]}}"><i class="fa fa-level-up"></i> 返回上一层</a>
+                </li>
+            {%endif%}
+            <div class="list-group item-list">
+                {%for data in items%}
+                    {%if data['type']=='folder' %}
+                        <li class="list-group-item list-group-item-action">
+                            <a href="{{url_for('front.index',path=data['path'])}}">
+                            <div class="row">
+                                <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;"><i class="fa fa-folder-o"></i>{{data['name']}}</div>
+                                <div class="col-sm-2 d-none d-md-block d-md-none"><span class="pull-right">{{data['lastModtime']}}</span></div>
+                                <div class="col-sm-2 d-none d-md-block d-md-none"><span class="pull-right">{{data['type']}}</span></div>
+                                <div class="col-4 col-sm-2"><span class="pull-right">{{data['size']}}</span></div>
+                            </div>
+                            </a>
+                        </li>
+                    {%else%}
+                       <li class="list-group-item list-group-item-action file">
+                            <a href="{{url_for('front.index',path=data['path'])}}" target="_blank">
+                                {%if image_mode==1%}
+                                    {%if file_ico(data)=='image'%}
+                                    <img class="img-fluid" src="{{url_for('front.show',fileid=data['id'],user=cur_user,action='download')}}"/>
+                                    {%else%}
+                                    <div class="row">
+                                        <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">{{ macros.get_ico(file_ico(data)) }}{{data['name']}}</div>
+                                        <div class="col-sm-2 d-none d-md-block d-md-none"><span class="pull-right">{{data['lastModtime']}}</span></div>
+                                        <div class="col-sm-2 d-none d-md-block d-md-none"><span class="pull-right">{{data['type']}}</span></div>
+                                        <div class="col-4 col-sm-2"><span class="pull-right">{{data['size']}}</span></div>
+                                    </div>
+                                    {%endif%}
+                                {%else%}
+                                <div class="row">
+                                    <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">{{ macros.get_ico(file_ico(data)) }}{{data['name']}}</div>
+                                    <div class="col-sm-2 d-none d-md-block d-md-none"><span class="pull-right">{{data['lastModtime']}}</span></div>
+                                    <div class="col-sm-2 d-none d-md-block d-md-none"><span class="pull-right">{{data['type']}}</span></div>
+                                    <div class="col-4 col-sm-2"><span class="pull-right">{{data['size']}}</span></div>
+                                </div>
+                                {%endif%}
+                            </a>
+                        </li>
+                    {%endif%}
+                {%endfor%}
+                {%include 'theme/'+GetConfig('theme')+'/readme.html'%}
+            </div>
+        </div>
+    </div>
+
+    <center>
+    {% if pagination %}
+        {{ macros.pagination_widget(pagination, endpoint,path=path,sortby=sortby,order=order) }}
+    {% endif %}
+    </center>
+</div>
+
+
+{%endblock content%}
+
+
+{%block script%}
+<script>
+$("#image_view").bootstrapSwitch({
+    size: 'mini',
+    onSwitchChange:function(){
+        var ckname = 'image_mode'
+        if ($('#image_view').attr('checked')) {
+            setCookie(ckname, 1, 1);
+            window.location.href = "{{url_for('front.index',path=path,image_mode=0)}}";
+        } else {
+            setCookie(ckname, 0, 1);
+            window.location.href = "{{url_for('front.index',path=path,image_mode=1)}}";
+        }
+    }
+})
+;
+$(function() {
+    $('.file a').each(function() {
+        $(this).on('click', function() {
+            layer.open({
+                type: 2,
+                title: 'PyOne播放窗口',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['100%', '100%'],
+                content: $(this).attr('href') + "?action=share" //iframe的url
+            });
+            return false;
+        });
+    });
+});
+
+function setCookie(c_name, value, exdays) {
+    var exdate = new Date();
+    exdate.setDate(exdate.getDate() + exdays);
+    var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+    document.cookie = c_name + "=" + c_value;
+}
+
+
+
+
+</script>
+{%endblock script%}

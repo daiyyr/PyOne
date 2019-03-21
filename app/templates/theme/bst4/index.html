@@ -1,0 +1,124 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+{% import 'theme/'+GetConfig('theme')+'/_macro.html' as macros %}
+
+{%block content%}
+<div class="container">
+    <div class="form-inline">
+        <label for="image_view">看图模式</label>
+        <input type="checkbox" id="image_view" class="form-control" data-switch-value="mini" onclick="changeMode()" {%if image_mode==1%}checked{%endif%} />
+    </div>
+    <hr>
+    {%include 'theme/'+GetConfig('theme')+'/head.html'%}
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-xs-8 col-md-6 text-left">{{ macros.Arraw(endpoint=endpoint,name='标题',cur_type='name',sortby=sortby,order=order,path=path) }}</div>
+                <div class="col-xs-4 col-md-2">{{ macros.Arraw(endpoint=endpoint,name='修改时间',cur_type='lastModtime',sortby=sortby,order=order,path=path) }}</div>
+                <div class="col-md-2 hidden-xs hidden-sm">{{ macros.Arraw(endpoint=endpoint,name='类型',cur_type='type',sortby=sortby,order=order,path=path) }}</div>
+                <div class="col-md-2 hidden-xs hidden-sm">{{ macros.Arraw(endpoint=endpoint,name='大小',cur_type='size',sortby=sortby,order=order,path=path) }}</div>
+            </div>
+        </div>
+        <div class="panel-body">
+            {%if path.split(':')[-1]!=''%}
+                <div class="row">
+                        <a href="{{list(breadCrumb(path))[-2][1]}}">
+                        <div class="col-xs-8 col-md-6 text-left cut"><i class="fa fa-level-up" aria-hidden="true"></i> 返回上一层</div>
+                        <div class="col-xs-4 col-md-2"></div>
+                        <div class="col-md-2 hidden-xs hidden-sm"></div>
+                        <div class="col-md-2 hidden-xs hidden-sm"></div>
+                    </a>
+                </div>
+            {%endif%}
+
+            {%for data in items%}
+                {%if data['type']=='folder' %}
+                    <div class="row mt-15">
+                        <a href="{{url_for('front.index',path=data['path'])}}">
+                            <div class="col-xs-8 col-md-6 text-left cut"><i class="fa fa-folder-o"></i>{{data['name']}}</div>
+                            <div class="col-xs-4 col-md-2">{{data['lastModtime']}}</div>
+                            <div class="col-md-2 hidden-xs hidden-sm">{{data['type']}}</div>
+                            <div class="col-md-2 hidden-xs hidden-sm">{{data['size']}}</div>
+                        </a>
+                    </div>
+                {%else%}
+                    <div class="row file mt-15">
+                        <a href="{{url_for('front.index',path=data['path'])}}" target="_blank">
+                            {%if image_mode==1%}
+                                {%if file_ico(data)=='image'%}
+                                    <img class="img-responsive" src="{{url_for('front.show',fileid=data['id'],user=cur_user,action='download')}}"/>
+                                {%else%}
+                                    <div class="col-xs-8 col-md-6 text-left cut">{{ macros.get_ico(file_ico(data)) }}{{data['name']}}</div>
+                                    <div class="col-xs-4 col-md-2">{{data['lastModtime']}}</div>
+                                    <div class="col-md-2 hidden-xs hidden-sm">{{data['type']}}</div>
+                                    <div class="col-md-2 hidden-xs hidden-sm">{{data['size']}}</div>
+                                {%endif%}
+                            {%else%}
+                                <div class="col-xs-8 col-md-6 text-left cut">{{ macros.get_ico(file_ico(data)) }}{{data['name']}}</div>
+                                <div class="col-xs-4 col-md-2">{{data['lastModtime']}}</div>
+                                <div class="col-md-2 hidden-xs hidden-sm">{{data['type']}}</div>
+                                <div class="col-md-2 hidden-xs hidden-sm">{{data['size']}}</div>
+                            {%endif%}
+                        </a>
+                    </div>
+                {%endif%}
+            {%endfor%}
+            {%include 'theme/'+GetConfig('theme')+'/readme.html'%}
+        </div>
+    </div>
+
+    <center>
+    {% if pagination %}
+        {{ macros.pagination_widget(pagination, endpoint,path=path,sortby=sortby,order=order) }}
+    {% endif %}
+    </center>
+</div>
+
+
+{%endblock content%}
+
+
+{%block script%}
+<script>
+$("#image_view").bootstrapSwitch({
+    size: 'mini',
+    onSwitchChange:function(){
+        var ckname = 'image_mode'
+        if ($('#image_view').attr('checked')) {
+            setCookie(ckname, 1, 1);
+            window.location.href = "{{url_for('front.index',path=path,image_mode=0)}}";
+        } else {
+            setCookie(ckname, 0, 1);
+            window.location.href = "{{url_for('front.index',path=path,image_mode=1)}}";
+        }
+    }
+})
+;
+$(function() {
+    $('.file a').each(function() {
+        $(this).on('click', function() {
+            layer.open({
+                type: 2,
+                title: 'PyOne播放窗口',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['100%', '100%'],
+                content: $(this).attr('href') + "?action=share" //iframe的url
+            });
+            return false;
+        });
+    });
+});
+
+function setCookie(c_name, value, exdays) {
+    var exdate = new Date();
+    exdate.setDate(exdate.getDate() + exdays);
+    var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+    document.cookie = c_name + "=" + c_value;
+}
+
+
+
+
+</script>
+{%endblock script%}

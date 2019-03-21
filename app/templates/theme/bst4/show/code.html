@@ -1,0 +1,47 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+
+{%block content%}
+<style type="text/css" media="screen">
+    #editor {
+        /*height:800px;*/
+    }
+</style>
+<div class="container">
+<pre id="editor" >{{content|safe}}</pre>
+
+    <!-- 固定标签 -->
+    <div class="form-horizontal">
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-share-alt" aria-hidden="true"></i>分享地址
+                </span>
+            <input id="share" class="form-control" type="text" value="{{url}}?action=share" />
+            <a class="input-group-addon" onclick="copyUrl('share')">点击复制</a>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-link" aria-hidden="true"></i>调用地址
+                </span>
+            <input id="use_outer" class="form-control" type="text" value="{{url}}" />
+            <a class="input-group-addon" onclick="copyUrl('use_outer')">点击复制</a>
+        </div>
+    </div>
+    <a href="{{inner_url}}" class="fab-fixed"><i class="fa fa-download fa-3x" aria-hidden="true"></i></a>
+</div>
+<script src="https://cdn.staticfile.org/ace/1.4.2/ace.js"></script>
+<script src="https://cdn.staticfile.org/ace/1.4.2/ext-language_tools.js"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/ambiance");
+    editor.setFontSize(18);
+    editor.session.setMode("ace/mode/{{language}}");
+
+    //Autocompletion
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        maxLines: Infinity
+    });
+</script>
+{%endblock content%}

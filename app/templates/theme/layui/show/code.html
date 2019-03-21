@@ -1,0 +1,46 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+
+{%block content%}
+<style type="text/css" media="screen">
+    #editor {
+        /*height:800px;*/
+    }
+</style>
+<div class="layui-container">
+<pre id="editor" >{{content|safe}}</pre>
+
+<div class="layui-form layui-form-pane">
+  <div class="layui-form-item" pane>
+    <label class="layui-form-label"><a onclick="copyUrl('share')"><i class="fa fa-share-alt" aria-hidden="true"></i>分享地址(点击复制)</a></label>
+    <div class="layui-input-block">
+      <input type="text" id="share" class="layui-input" value="{{url}}?action=share" >
+    </div>
+  </div>
+</div>
+<div class="layui-form layui-form-pane">
+  <div class="layui-form-item" pane>
+    <label class="layui-form-label"><a onclick="copyUrl('use_outer')"><i class="fa fa-link" aria-hidden="true"></i>调用地址(点击复制)</a></label>
+    <div class="layui-input-block">
+      <input type="text"  id="use_outer" class="layui-input" value="{{url}}" >
+    </div>
+  </div>
+</div>
+    <a href="{{inner_url}}" class="fab-fixed"><i class="fa fa-download fa-3x" aria-hidden="true"></i></a>
+</div>
+<script src="https://cdn.staticfile.org/ace/1.4.2/ace.js"></script>
+<script src="https://cdn.staticfile.org/ace/1.4.2/ext-language_tools.js"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/ambiance");
+    editor.setFontSize(18);
+    editor.session.setMode("ace/mode/{{language}}");
+
+    //Autocompletion
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        maxLines: Infinity
+    });
+</script>
+{%endblock content%}

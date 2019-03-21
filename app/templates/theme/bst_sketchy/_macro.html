@@ -1,0 +1,62 @@
+{% macro pagination_widget(pagination, endpoint) %}
+    {%if pagination.pages>1%}
+        <div>
+          <ul class="pagination">
+            {% if pagination.has_prev %}
+                <li class="page-item">
+                  <a href="{{ url_for(endpoint,page = pagination.page - 1, **kwargs) |safe}}" aria-label="Previous" class="page-link">
+                    &laquo;
+                  </a>
+                </li>
+            {%endif%}
+
+            {% for p in pagination.iter_pages() %}
+                {% if p %}
+                    {%if p == pagination.page%}
+                        <li class="page-item active"><a href="javascript:void(0);" class="page-link">{{ p }}</a></li>
+                    {%else%}
+                        <li class="page-item"><a href="{{ url_for(endpoint, page = p,**kwargs) }}" class="page-link">{{ p }}</a></li>
+                    {%endif%}
+                {%else%}
+                    <li class="page-item"><a href="javascript:void(0);">&hellip;</a></li>
+                {%endif%}
+            {%endfor%}
+
+            {% if pagination.has_next %}
+            <li class="page-item">
+              <a href="{{ url_for(endpoint,page = pagination.page + 1, **kwargs) |safe}}" aria-label="Next" class="page-link">
+                &raquo;
+              </a>
+            </li>
+            {%endif%}
+          </ul>
+        </div>
+    {%endif%}
+{% endmacro %}
+
+{% macro get_ico(type) %}
+    {%if type=='image'%}
+        <i class="fa fa-file-image-o"></i>
+    {%else%}
+        {%if type=='ondemand_video'%}
+            <i class="fa fa-video-camera"></i>
+        {%else%}
+            <i class="fa fa-file"></i>
+        {%endif%}
+    {%endif%}
+{% endmacro %}
+
+
+{% macro Arraw(endpoint,name,cur_type,sortby,order) %}
+    <a href="{% if order=='asc' %}{{url_for(endpoint,sortby=cur_type,order='desc',**kwargs)|safe}}{%else%}{{url_for(endpoint,sortby=cur_type,order='asc',**kwargs)|safe}}{%endif%}">
+    {{ name }}
+    {% if cur_type==sortby %}
+        {% if order=='asc' %}
+            <i class="fa fa-arrow-up" aria-hidden="true"></i>
+        {% else %}
+            <i class="fa fa-arrow-down" aria-hidden="true"></i>
+        {% endif %}
+    {% endif %}
+    </a>
+{% endmacro %}
+

@@ -1,0 +1,81 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+{% import 'theme/'+GetConfig('theme')+'/_macro.html' as macros %}
+
+{%block content%}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-xs-8 col-md-6 text-left">标题</div>
+                <div class="col-xs-4 col-md-2">修改时间</div>
+                <div class="col-md-2 hidden-xs hidden-sm">类型</div>
+                <div class="col-md-2 hidden-xs hidden-sm">大小</div>
+            </div>
+        </div>
+        <div class="panel-body">
+            {%for data in items%}
+                {%if data['type']=='folder' %}
+                    <div class="row  mt-15">
+                        <a href="{{url_for('front.index',path=data['path'])}}">
+                            <div class="col-xs-8 col-md-6 text-left cut"><i class="fa fa-folder-o"></i>{{data['name']}}</div>
+                            <div class="col-xs-4 col-md-2">{{data['lastModtime']}}</div>
+                            <div class="col-md-2 hidden-xs hidden-sm">{{data['type']}}</div>
+                            <div class="col-md-2 hidden-xs hidden-sm">{{data['size']}}</div>
+                        </a>
+                    </div>
+                {%else%}
+                    <div class="row file  mt-15">
+                        <a href="{{url_for('front.index',path=data['path'])}}" target="_blank">
+                            {%if image_mode==1%}
+                                {%if file_ico(data)=='image'%}
+                                    <img class="mdui-img-fluid" src="{{url_for('front.show',fileid=data['id'],user=cur_user,action='download')}}"/>
+                                {%else%}
+                                    <div class="col-xs-8 col-md-6 text-left cut">{{ macros.get_ico(file_ico(data)) }}{{data['name']}}</div>
+                                    <div class="col-xs-4 col-md-2">{{data['lastModtime']}}</div>
+                                    <div class="col-md-2 hidden-xs hidden-sm">{{data['type']}}</div>
+                                    <div class="col-md-2 hidden-xs hidden-sm">{{data['size']}}</div>
+                                {%endif%}
+                            {%else%}
+                                <div class="col-xs-8 col-md-6 text-left cut">{{ macros.get_ico(file_ico(data)) }}{{data['name']}}</div>
+                                <div class="col-xs-4 col-md-2">{{data['lastModtime']}}</div>
+                                <div class="col-md-2 hidden-xs hidden-sm">{{data['type']}}</div>
+                                <div class="col-md-2 hidden-xs hidden-sm">{{data['size']}}</div>
+                            {%endif%}
+                        </a>
+                    </div>
+                {%endif%}
+            {%endfor%}
+        </div>
+    </div>
+
+    <center>
+    {% if pagination %}
+        {{ macros.pagination_widget(pagination, endpoint,path=path,sortby=sortby,order=order) }}
+    {% endif %}
+    </center>
+</div>
+<div class="mdui-center">
+{% if pagination %}
+    {{ macros.pagination_widget(pagination, endpoint,path=path,sortby=sortby,order=order,key_word=key_word) }}
+{% endif %}
+</div>
+
+<script>
+$(function() {
+    $('.file a').each(function() {
+        $(this).on('click', function() {
+            layer.open({
+              type: 2,
+              title: 'PyOne播放窗口',
+              shadeClose: true,
+              shade: 0.8,
+              area: ['100%', '100%'],
+              content: $(this).attr('href')+"?action=share" //iframe的url
+            });
+            return false;
+        });
+    });
+});
+
+</script>
+{%endblock content%}

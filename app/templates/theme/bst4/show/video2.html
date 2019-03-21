@@ -1,0 +1,39 @@
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+{%block content%}
+<div class="container">
+    <link class="dplayer-css" rel="stylesheet" href="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.css">
+    <script src="https://cdn.staticfile.org/dashjs/2.9.2/dash.all.min.js"></script>
+    <script src="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.js"></script>
+    <br>
+    <div id="dplayer"></div>
+    <br>
+    <!-- 固定标签 -->
+    <div class="form-horizontal">
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-share-alt" aria-hidden="true"></i>分享地址
+                </span>
+            <input id="share" class="form-control" type="text" value="{{url}}?action=share" />
+            <a class="input-group-addon" onclick="copyUrl('share')">点击复制</a>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-link" aria-hidden="true"></i>调用地址
+                </span>
+            <input id="use_outer" class="form-control" type="text" value="{{url}}" />
+            <a class="input-group-addon" onclick="copyUrl('use_outer')">点击复制</a>
+        </div>
+    </div>
+    <script>
+    const dp = new DPlayer({
+        container: document.getElementById('dplayer'),
+        lang: 'zh-cn',
+        video: {
+            url: '{{inner_url}}?action=play',
+            type: 'dash'
+        }
+    });
+    </script>
+    <a href="{{inner_url}}" class="fab-fixed"><i class="fa fa-download fa-3x" aria-hidden="true"></i></a>
+</div>
+{%endblock content%}

@@ -1,0 +1,60 @@
+{%extends 'admin/layout.html'%}
+
+{%block content%}
+<div class="mdui-container-fluid">
+  <div class="mdui-type">
+    <h1>安装之前，请花2分钟看完这个gif！再进行下一步！！</h1>
+    <img src="https://ws2.sinaimg.cn/large/0074MymAly1fxab79lnsag31gs0qcqvb.gif">
+  </div>
+<div class="mdui-typo">
+  <h4>步骤0. 先登录一次<a href="https://apps.dev.microsoft.com/" target="_blank">https://apps.dev.microsoft.com/</a></h4>
+</div>
+<div class="mdui-typo">
+  <h4>步骤1. 然后点击下方按钮获取<b>应用机密（client_secret)</b>，填写到<b>应用机密(client_secret)</b>栏/h4>
+  <a href="https://apps.dev.microsoft.com/?referrer=https%3a%2f%2fdeveloper.microsoft.com%2fzh-cn%2fgraph%2fquick-start#/quickstart/graphIO?publicClientSupport=false&appName=PyOne&redirectUrl={{redirectUrl}}&allowImplicitFlow=false&ru=https:%2F%2Fdeveloper.microsoft.com%2Fzh-cn%2Fgraph%2Fquick-start%3FappID%3D_appId_%26appName%3D_appName_%26redirectUrl%3D{{redirectUrl}}%26platform%3Doption-php" target="_blank" class="mdui-btn mdui-color-theme-accent mdui-ripple"><i class="mdui-icon material-icons">&#xe89e;</i> 获取应用ID和机密(分两个页面显示，请注意保存)</a>
+</div>
+<div class="mdui-typo">
+  <h4>步骤2. 在刚才获取<b>应用机密（client_secret)</b>的页面，点击<code>知道了，返回到快速启动</code>，会出现错误，查看网址栏，找到<B>appID</B>这一个参数(目前修复了，可直接获取），将<B>appID</B>复制到<b>应用ID(client_id)</b>栏</h4>
+</div>
+<div class="mdui-typo">
+  <h4>步骤3. 填写完下方两个参数，继续下一步</h4>
+  <img src="http://wx4.sinaimg.cn/large/0060lm7Tly1fxa6f6j93bj30yf0anmy5.jpg">
+  <img src="http://wx1.sinaimg.cn/large/0060lm7Tly1fxa6f6jj1uj30zu0mimz8.jpg">
+</div>
+
+    <div class="mdui-typo">
+      <h1>系统安装 <small>应用ID和机密</small></h1>
+    </div>
+
+    <div class="mdui-typo">
+      <h4 class="doc-article-title">
+        填入<code>client_id</code>和<code>client_secret</code>,
+        <a href="https://apps.dev.microsoft.com/?referrer=https%3a%2f%2fdeveloper.microsoft.com%2fzh-cn%2fgraph%2fquick-start#/quickstart/graphIO?publicClientSupport=false&appName=PyOne&redirectUrl={{redirectUrl}}&allowImplicitFlow=false&ru=https:%2F%2Fdeveloper.microsoft.com%2Fzh-cn%2Fgraph%2Fquick-start%3FappID%3D_appId_%26appName%3D_appName_%26redirectUrl%3D{{redirectUrl}}%26platform%3Doption-php" target="_blank" class="mdui-btn mdui-color-theme-accent mdui-ripple"><i class="mdui-icon material-icons">&#xe89e;</i> 获取应用ID和机密(分两个页面显示，请注意保存)</a>
+      </h4>
+    </div>
+
+    <form action="{{url_for('admin.install')}}" method="post">
+        <div class="mdui-textfield mdui-textfield-floating-label">
+            <i class="mdui-icon material-icons">https</i>
+            <label class="mdui-textfield-label">应用机密(client secret)</label>
+            <input type="text" type="text" class="mdui-textfield-input" name="client_secret" required"/>
+            <div class="mdui-textfield-error">应用机密不能为空</div>
+        </div>
+        <br>
+        <div class="mdui-textfield mdui-textfield-floating-label">
+            <i class="mdui-icon material-icons">&#xe5c3;</i>
+            <label class="mdui-textfield-label">应用 ID(client_id)</label>
+            <input type="text" class="mdui-textfield-input" name="client_id" required"/>
+            <div class="mdui-textfield-error">应用 ID不能为空</div>
+        </div>
+        <br>
+        <input type="hidden" name="step" value="1">
+        <input type="hidden" name="user" value="{{cur_user}}">
+        <br>
+        <br>
+     <button class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" type="submit">下一步</button>
+    </form>
+
+
+</div>
+{%endblock content%}

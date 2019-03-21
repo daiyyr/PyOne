@@ -1,0 +1,386 @@
+{%extends 'admin/layout.html'%}
+{% import 'theme/material/_macro.html' as macros %}
+{%block content%}
+<style type="text/css">
+a:link {
+    color: black;
+    text-decoration: none;
+}
+
+a:active: {
+    color: black;
+}
+
+a:visited {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: black;
+    text-decoration: none;
+}
+</style>
+<div class="mdui-typo">
+    <h1> 文件管理 <small>仅支持更新/编辑文编；支持删除文件</small></h1>
+</div>
+<div class="mdui-table-fluid">
+    <div class="mdui-appbar">
+        <div class="mdui-tab mdui-color-theme" mdui-tab>
+            {%for user in get_od_user()%}
+                {%if user[1]=='添加网盘'%}
+                <a href="{{url_for('admin.install',user=user[0],step=0)}}" class="mdui-ripple mdui-ripple-white{%if cur_user==user[0]%} mdui-tab-active{%endif%}" id="{{user[0]}}">
+                    <i class="mdui-icon material-icons">&#xe2bf;</i>
+                    <label>{{user[1]}}</label>
+                </a>
+                {%else%}
+                <a href="{{url_for('admin.manage',path=user[0]+':/')}}" class="mdui-ripple mdui-ripple-white{%if cur_user==user[0]%} mdui-tab-active{%endif%}" id="{{user[0]}}">
+                    <i class="mdui-icon material-icons">&#xe2bf;</i>
+                    <label>{{user[1]}}</label>
+                </a>
+                {%endif%}
+            {%endfor%}
+                <a href="{{url_for('admin.add_pan')}}" class="mdui-ripple mdui-ripple-white">
+                    <i class="mdui-icon material-icons">&#xe147;</i>
+                    <label>添加盘位</label>
+                </a>
+         </div>
+         <div class="mdui-toolbar mdui-color-theme">
+           <button class="mdui-btn mdui-btn-icon" onclick="delAllProduct()" mdui-tooltip="{{'{'}}content: '删除'{{'}'}}"><i class="mdui-icon material-icons">&#xe872;</i></button>
+           <button class="mdui-btn mdui-btn-icon" onclick="setPasswd('{{path}}')" mdui-tooltip="{{'{'}}content: '设置密码'{{'}'}}"><i class="mdui-icon material-icons">&#xe32a;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="setReadMe('{{path}}')" mdui-tooltip="{{'{'}}content: '设置README'{{'}'}}"><i class="mdui-icon material-icons">&#xe0d8;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="setHead('{{path}}')" mdui-tooltip="{{'{'}}content: '设置HEAD'{{'}'}}"><i class="mdui-icon material-icons">&#xe89c;</i> </button>
+         </div>
+         <div class="mdui-toolbar mdui-color-theme">
+           <button class="mdui-btn mdui-btn-icon" onclick="uploadLocalFile('{{path}}')" mdui-tooltip="{{'{'}}content: '本地上传文件至onedrive'{{'}'}}"><i class="mdui-icon material-icons">&#xe2c3;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="AddFolder('{{path}}')" mdui-tooltip="{{'{'}}content: '创建文件夹'{{'}'}}"><i class="mdui-icon material-icons">&#xe2cc;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="OffDownload('{{path}}')" mdui-tooltip="{{'{'}}content: '离线下载'{{'}'}}"><i class="mdui-icon material-icons">&#xe2c4;</i> </button>
+         </div>
+    </div>
+
+
+    <table class="mdui-table mdui-table-selectable">
+        <div class="mdui-toolbar nexmoe-item">
+            {%if path%}
+                {%for name,p,last in breadCrumb(path)%}
+                    {%if last==False%}
+                    <a href="{{url_for('admin.manage',path=p[1:])}}">{{name}}</a>
+                    <i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
+                    {%else%}
+                    <a href="#">{{name}}</a>
+                    {%endif%}
+                {%endfor%}
+            {%endif%}
+        </div>
+        <thead>
+            <tr>
+                <th class="mdui-table-cell-checkbox" id="SelectAll" style="width: 60px;">
+                    <label class="mdui-checkbox">
+                        <input type="checkbox" onclick="reserveCheck('choice')"><i class="mdui-checkbox-icon"></i>
+                    </label>
+                </th>
+                <th>{{ macros.Admin_Arraw(name='文件',cur_type='name',sortby=sortby,order=order,path=path) }}</th>
+                <th>{{ macros.Admin_Arraw(name='修改时间',cur_type='lastModtime',sortby=sortby,order=order,path=path) }}</th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {%if path.split(':')[-1]!=''%}
+            <tr>
+                <td></td>
+                <td>
+                    <a href="{{url_for('admin.manage',path=list(breadCrumb(path))[-2][1][1:])}}">
+                        <i class="mdui-icon material-icons">arrow_upward</i> 返回上一层
+                    </a>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            {%endif%}
+            {%for data in items%}
+            {%if data['type']=='folder' %}
+            <tr>
+                <td class="mdui-table-cell-checkbox">
+                    <label class="mdui-checkbox">
+                        <input type="checkbox" name="choice" value="{{data['id']}}"><i class="mdui-checkbox-icon"></i>
+                    </label>
+                </td>
+                <td>
+                    <a href="{{url_for('admin.manage',path=path+'/'+data['name'])|safe}}" class="mdui-list-item">
+                      <i class="mdui-icon material-icons">folder_open</i> {{data['name']}}
+                    </a>
+                </td>
+                <td>{{data['lastModtime']}}</td>
+                <td>
+                    <button class="mdui-btn mdui-btn-icon" onclick="delProduct('{{data['id']}}')">
+                        <i class="mdui-icon material-icons">&#xe872;</i>
+                    </button>
+                    <button class="mdui-btn mdui-btn-icon" onclick="Rename('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '重命名'{{'}'}}">
+                        <i class="mdui-icon material-icons">&#xe8e1;</i>
+                    </button>
+                </td>
+            </tr>
+            {%else%}
+            <tr>
+                <td class="mdui-table-cell-checkbox">
+                    <label class="mdui-checkbox">
+                        <input type="checkbox" name="choice" value="{{data['id']}}"><i class="mdui-checkbox-icon"></i>
+                    </label>
+                </td>
+                <td class="file">
+                    <a href="{{url_for('front.index',path=path+'/'+data['name'])|safe}}" target="_blank" class="mdui-list-item">
+                          <i class="mdui-icon material-icons">{{file_ico(data)}}</i> {{data['name']}}
+                      </a>
+                </td>
+                <td>{{data['lastModtime']}}</td>
+                <td>
+                    <button class="mdui-btn mdui-btn-icon" onclick="delProduct('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '删除文件'{{'}'}}">
+                        <i class="mdui-icon material-icons">&#xe872;</i>
+                    </button>
+                    <button class="mdui-btn mdui-btn-icon" onclick="moveProduct('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '移动文件'{{'}'}}">
+                        <i class="mdui-icon material-icons">&#xe14e;</i>
+                    </button>
+                    <button class="mdui-btn mdui-btn-icon" onclick="Rename('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '重命名'{{'}'}}">
+                        <i class="mdui-icon material-icons">&#xe8e1;</i>
+                    </button>
+                    {%if CanEdit(data['name'])%}
+                    <button class="mdui-btn mdui-btn-icon" onclick="editFile('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '编辑文件'{{'}'}}">
+                        <i class="mdui-icon material-icons">&#xe3c9;</i>
+                    </button>
+                    {%endif%}
+                </td>
+            </tr>
+            {%endif%}
+            {%endfor%}
+        </tbody>
+    </table>
+</div>
+<div class="mdui-center">
+    {% if pagination %} {{ macros.pagination_widget(pagination, endpoint,path=path,sortby=sortby,order=order) }} {% endif %}
+</div>
+<script type="text/javascript">
+$$(function() {
+    $$('.file a').each(function() {
+        $$(this).on('click', function() {
+            layer.open({
+              type: 2,
+              title: 'PyOne播放窗口',
+              shadeClose: true,
+              shade: 0.8,
+              area: ['100%', '100%'],
+              content: $$(this).attr('href')+"?action=share" //iframe的url
+            });
+            return false;
+        });
+    });
+});
+
+function reserveCheck(name) {
+    var revalue = document.getElementsByName(name);
+    for (i = 0; i < revalue.length; i++) {
+        if (revalue[i].checked == true)
+            revalue[i].checked = false;
+        else
+            revalue[i].checked = true;
+    }
+}
+
+function delAllProduct() {
+    if (!confirm("将直接从onedrive删除文件！！！确定删除？")) {
+        return;
+    }
+    var cks = document.getElementsByName("choice");
+    var str = "";
+    //拼接所有id
+    for (var i = 0; i < cks.length; i++) {
+        if (cks[i].checked) {
+            str += cks[i].value + "##";
+        }
+    }
+
+    //去掉字符串末尾的‘&’
+    str = str.substring(0, str.length - 2);
+    $.ajax({
+        type: "POST",
+        url: "{{url_for('admin.delete')}}",
+        dataType: 'json',
+        data: { id: str,user:"{{cur_user}}" },
+        beforeSend: function(xhr) {
+            var index = layer.load(2, {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
+        },
+        success: function(result) {
+            if (result.status == 0) {
+                alert(result.msg);
+                window.location.reload();
+            } else {
+                alert('删除成功' + result.delete + '个,失败' + result.fail + '个');
+                window.location.reload();
+            }
+        },
+        complete: function(xhr) {
+            $('#layui-layer-shade1').remove();
+        }
+    });
+
+}
+
+function delProduct(id) {
+    if (!confirm("将直接从onedrive删除文件！！！确定删除？")) {
+        return;
+    }
+    $.ajax({
+        type: "POST",
+        url: "{{url_for('admin.delete')}}",
+        dataType: 'json',
+        data: { id: id ,user:"{{cur_user}}"},
+        beforeSend: function(xhr) {
+            var index = layer.load(2, {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
+        },
+        success: function(result) {
+            if (result.status == 0) {
+                alert(result.msg);
+                window.location.reload();
+            } else {
+                alert('删除成功');
+                window.location.reload();
+            }
+        },
+        complete: function(xhr) {
+            $('#layui-layer-shade1').remove();
+        }
+
+    });
+}
+
+function editFile(id) {
+    window.open("{{url_for('admin.edit')}}?fileid=" + id+"&user={{cur_user}}", '_blank');
+}
+
+function setPasswd(path) {
+    window.open("{{url_for('admin.setFile',filename='.password')}}?path=" + path, '_blank');
+}
+
+function setReadMe(path) {
+    window.open("{{url_for('admin.setFile',filename='README.md')}}?path=" + path, '_blank');
+}
+
+function setHead(path) {
+    window.open("{{url_for('admin.setFile',filename='HEAD.md')}}?path=" + path, '_blank');
+}
+
+function uploadLocalFile(path) {
+    window.open("{{url_for('admin.upload_local')}}?path=" + path, '_blank');
+}
+
+function OffDownload(path) {
+    window.open("{{url_for('admin.off_download')}}?path=" + path, '_blank');
+}
+
+function moveProduct(fileid){
+    layer.prompt({
+        formType: 0,
+        title: '请输入文件夹名',
+    },
+    function(value, index, elem) {
+        layer.close(index);
+        $.ajax({
+                type: "POST",
+                url: "{{url_for('admin.MoveFileToNewFolder')}}",
+                data: { fileid: fileid,new_folder_path:value,user:"{{cur_user}}" },
+                async: false,//使用同步的方式,true为异步方式
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    var index2 = layer.load(2, {
+                        shade: [0.1, '#fff'] //0.1透明度的白色背景
+                    });
+                },
+                success: function(data) {
+                    if(data.result){
+                        alert('移动成功');
+                    }
+                    else{
+                        alert('移动失败');
+                    }
+                    window.location.reload();
+                },
+                complete: function(xhr) {
+                    $('#layui-layer-shade1').remove();
+                }
+            });
+    });
+}
+
+function Rename(fileid){
+    layer.prompt({
+        formType: 0,
+        title: '请输入新文件名（记得带后缀）',
+    },
+    function(value, index, elem) {
+        layer.close(index);
+        $.ajax({
+                type: "POST",
+                url: "{{url_for('admin.Rename')}}",
+                data: { fileid: fileid,new_name:value,user:"{{cur_user}}" },
+                async: false,//使用同步的方式,true为异步方式
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    var index2 = layer.load(2, {
+                        shade: [0.1, '#fff'] //0.1透明度的白色背景
+                    });
+                },
+                success: function(data) {
+                    if(data.result){
+                        alert('重命名成功');
+                    }
+                    else{
+                        alert('重命名失败');
+                    }
+                    window.location.reload();
+                },
+                complete: function(xhr) {
+                    $('#layui-layer-shade1').remove();
+                }
+            });
+    });
+}
+
+function AddFolder() {
+    layer.prompt({
+        formType: 0,
+        title: '请输入文件夹名',
+    },
+    function(value, index, elem) {
+        layer.close(index);
+        $.ajax({
+                type: "POST",
+                url: "{{url_for('admin.AddFolder',path=path)}}",
+                data: { folder_name: value },
+                async: false,//使用同步的方式,true为异步方式
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    var index2 = layer.load(2, {
+                        shade: [0.1, '#fff'] //0.1透明度的白色背景
+                    });
+                },
+                success: function(data) {
+                    if(data.result){
+                        alert('创建成功');
+                    }
+                    else{
+                        alert('创建失败');
+                    }
+                    window.location.reload();
+                },
+                complete: function(xhr) {
+                    $('#layui-layer-shade1').remove();
+                }
+            });
+    });
+}
+</script>
+{%endblock content%}
