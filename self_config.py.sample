@@ -12,7 +12,7 @@ data_dir=os.path.join(config_dir,'data')
 downloadUrl_timeout="300"
 
 #后台密码设置
-password="PyOne"
+password="PyOne1"
 
 #网站名称
 title="PyOne"

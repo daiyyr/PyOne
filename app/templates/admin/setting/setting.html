@@ -4,17 +4,17 @@
 <div class="mdui-container-fluid">
 
     <div class="mdui-typo">
-      <h1> 基本设置 <small>设置PyOne基本参数</small></h1>
+      <h1> Basic setting <small>Setup PyOne basic parameters</small></h1>
     </div>
     <form action="{{url_for('admin.setting')}}" method="POST" enctype="multipart/form-data">
 
         <div class="mdui-textfield">
-          <h4>图标选择</h4>
+          <h4>Icon</h4>
           <img src="/favicon.ico" style="width: 20px;height: 20px;">
           <input class="mdui-textfield-input" type="file" name="favicon" accept="image/vnd.microsoft.icon"/>
         </div>
 
-        <h4>主题选择</h4>
+        <h4>Theme</h4>
         <select class="mdui-select" name="theme" mdui-select>
           {%for t in GetThemeList()%}
             <option value="{{t}}"{%if GetConfig('theme')==t%} selected{%endif%}>{{t}}</option>
@@ -22,103 +22,103 @@
         </select>
 
         <div class="mdui-textfield">
-          <h4>网站名称</h4>
+          <h4>Site name</h4>
           <input class="mdui-textfield-input" type="text" name="title" value="{{GetConfig('title')}}"/>
         </div>
 
         <div class="mdui-textfield">
-          <h4>网站名称前缀（默认：index of）</h4>
+          <h4>Site prefix(default：index of)</h4>
           <input class="mdui-textfield-input" type="text" name="title_pre" value="{{GetConfig('title_pre')}}"/>
         </div>
 
         <div class="mdui-textfield">
-          <h4>缓存过期时间(秒)</h4>
+          <h4>Download URL timeout(seconds)</h4>
           <input class="mdui-textfield-input" type="text" name="downloadUrl_timeout" value="{{GetConfig('downloadUrl_timeout')}}"/>
         </div>
 
         <div class="mdui-textfield">
-          <h4>防盗链设置（不限制，则设置：no-referrer；仅限3pp.me调用，则设置：3pp.me；可调用域名通过英文逗号分隔）</h4>
+          <h4>Allow site(if not limit：no-referrer；if only allow 3pp.me：3pp.me; seperate domain names by ,)</h4>
           <input class="mdui-textfield-input" type="text" name="allow_site" value="{{GetConfig('allow_site')}}"/>
         </div>
 
-        <h4>默认排序字段</h4>
+        <h4>Default sort</h4>
         <select class="mdui-select" name="default_sort" mdui-select>
-            <option value="lastModtime"{%if GetConfig('default_sort')=='lastModtime'%} selected{%endif%}>修改时间</option>
-            <option value="name"{%if GetConfig('default_sort')=='name'%} selected{%endif%}>文件名</option>
-            <option value="type"{%if GetConfig('default_sort')=='type'%} selected{%endif%}>文件类型</option>
-            <option value="size"{%if GetConfig('default_sort')=='size'%} selected{%endif%}>文件大小</option>
+            <option value="lastModtime"{%if GetConfig('default_sort')=='lastModtime'%} selected{%endif%}>Modify datetime</option>
+            <option value="name"{%if GetConfig('default_sort')=='name'%} selected{%endif%}>file name</option>
+            <option value="type"{%if GetConfig('default_sort')=='type'%} selected{%endif%}>file type</option>
+            <option value="size"{%if GetConfig('default_sort')=='size'%} selected{%endif%}>file size</option>
         </select>
 
-        <h4>默认排序方法</h4>
+        <h4>Order</h4>
         <select class="mdui-select" name="order_m" mdui-select>
-            <option value="desc"{%if GetConfig('order_m')=='desc'%} selected{%endif%}>降序</option>
-            <option value="asc"{%if GetConfig('order_m')=='asc'%} selected{%endif%}>升序</option>
+            <option value="desc"{%if GetConfig('order_m')=='desc'%} selected{%endif%}>Descending</option>
+            <option value="asc"{%if GetConfig('order_m')=='asc'%} selected{%endif%}>Ascending</option>
         </select>
 
         <div class="mdui-textfield">
-          <h4>Aria2信息编辑</h4>
+          <h4>Aria2</h4>
           <div class="mdui-panel" mdui-panel>
               <div class="mdui-panel-item">
-                <div class="mdui-panel-item-header">点击配置</div>
+                <div class="mdui-panel-item-header">click to config</div>
                 <div class="mdui-panel-item-body">
-                  <h5>Aria2协议</h5>
+                  <h5>Aria2 protocal</h5>
                   <select class="mdui-select" name="ARIA2_SCHEME" mdui-select>
                     <option value="http"{%if GetConfig('ARIA2_SCHEME')=='http'%} selected{%endif%}>http</option>
                     <option value="https"{%if GetConfig('ARIA2_SCHEME')=='https'%} selected{%endif%}>https</option>
                   </select>
-                  <h5>主机（默认localhost。如果不是本机的aria2，怎么下载到本机然后上传？？？）</h5>
-                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="ARIA2_HOST" placeholder="请输入aria2主机" value="{{GetConfig('ARIA2_HOST')}}" />
-                  <h5>端口</h5>
-                  <input class="mdui-textfield-input" type="text" name="ARIA2_PORT" placeholder="请输入aria2端口" value="{{GetConfig('ARIA2_PORT')}}" />
-                  <h5>秘钥</h5>
-                  <input class="mdui-textfield-input" type="text" name="ARIA2_SECRET" placeholder="请输入aria2秘钥" value="{{GetConfig('ARIA2_SECRET')}}" />
+                  <h5>IP(default localhost)</h5>
+                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="ARIA2_HOST" placeholder="Please enter aria2 host" value="{{GetConfig('ARIA2_HOST')}}" />
+                  <h5>Host</h5>
+                  <input class="mdui-textfield-input" type="text" name="ARIA2_PORT" placeholder="Please enter aria2 port" value="{{GetConfig('ARIA2_PORT')}}" />
+                  <h5>Key</h5>
+                  <input class="mdui-textfield-input" type="text" name="ARIA2_SECRET" placeholder="Please aria2 key" value="{{GetConfig('ARIA2_SECRET')}}" />
                 </div>
               </div>
           </div>
         </div>
 
         <div class="mdui-textfield">
-          <h4>MongoDB信息编辑</h4>
+          <h4>MongoDB</h4>
           <div class="mdui-panel" mdui-panel>
               <div class="mdui-panel-item">
-                <div class="mdui-panel-item-header">点击配置</div>
+                <div class="mdui-panel-item-header">click to config</div>
                 <div class="mdui-panel-item-body">
-                  <h5>主机（默认localhost）</h5>
-                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="MONGO_HOST" placeholder="请输入MongoDB主机" value="{{GetConfig('MONGO_HOST')}}" />
-                  <h5>端口</h5>
-                  <input class="mdui-textfield-input" type="text" name="MONGO_PORT" placeholder="请输入MongoDB端口" value="{{GetConfig('MONGO_PORT')}}" />
-                  <h5>数据库（原则上不要修改）</h5>
-                  <input class="mdui-textfield-input" type="text" name="MONGO_DB" placeholder="请输入数据库名" value="{{GetConfig('MONGO_DB')}}" />
-                  <h5>用户名（如果有）</h5>
-                  <input class="mdui-textfield-input" type="text" name="MONGO_USER" placeholder="请输入用户名" value="{{GetConfig('MONGO_USER')}}" />
-                  <h5>密码（如果有）</h5>
-                  <input class="mdui-textfield-input" type="text" name="MONGO_PASSWORD" placeholder="请输入密码" value="{{GetConfig('MONGO_PASSWORD')}}" />
+                  <h5>IP (Default localhost)</h5>
+                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="MONGO_HOST" placeholder="Please enter MongoDB IP" value="{{GetConfig('MONGO_HOST')}}" />
+                  <h5>Port</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_PORT" placeholder="Please enter MongoDB port" value="{{GetConfig('MONGO_PORT')}}" />
+                  <h5>Database (modification is not advised)</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_DB" placeholder="Please enter database name" value="{{GetConfig('MONGO_DB')}}" />
+                  <h5>User (if appliable)</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_USER" placeholder="Please enter user name" value="{{GetConfig('MONGO_USER')}}" />
+                  <h5>Password (if appliable)</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_PASSWORD" placeholder="Please enter password" value="{{GetConfig('MONGO_PASSWORD')}}" />
                 </div>
               </div>
           </div>
         </div>
 
         <div class="mdui-textfield">
-          <h4>Redis信息编辑</h4>
+          <h4>Redis</h4>
           <div class="mdui-panel" mdui-panel>
               <div class="mdui-panel-item">
-                <div class="mdui-panel-item-header">点击配置</div>
+                <div class="mdui-panel-item-header">click to config</div>
                 <div class="mdui-panel-item-body">
-                  <h5>主机（默认localhost）</h5>
-                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="REDIS_HOST" placeholder="请输入Redis主机" value="{{GetConfig('REDIS_HOST')}}" />
-                  <h5>端口</h5>
-                  <input class="mdui-textfield-input" type="text" name="REDIS_PORT" placeholder="请输入Redis端口" value="{{GetConfig('REDIS_PORT')}}" />
-                  <h5>数据库（原则上不要修改）</h5>
-                  <input class="mdui-textfield-input" type="text" name="REDIS_DB" placeholder="请输入数据库名" value="{{GetConfig('REDIS_DB')}}" />
-                  <h5>密码（如果有）</h5>
-                  <input class="mdui-textfield-input" type="text" name="REDIS_PASSWORD" placeholder="请输入密码" value="{{GetConfig('REDIS_PASSWORD')}}" />
+                  <h5>IP (Default localhost)</h5>
+                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="REDIS_HOST" placeholder="Please enter Redis IP" value="{{GetConfig('REDIS_HOST')}}" />
+                  <h5>Port</h5>
+                  <input class="mdui-textfield-input" type="text" name="REDIS_PORT" placeholder="Please enter Redis port" value="{{GetConfig('REDIS_PORT')}}" />
+                  <h5>Database (modification is not advised)</h5>
+                  <input class="mdui-textfield-input" type="text" name="REDIS_DB" placeholder="Please enter database" value="{{GetConfig('REDIS_DB')}}" />
+                  <h5>Password (if appliable)</h5>
+                  <input class="mdui-textfield-input" type="text" name="REDIS_PASSWORD" placeholder="Please enter password" value="{{GetConfig('REDIS_PASSWORD')}}" />
                 </div>
               </div>
           </div>
         </div>
 
         <div class="mdui-textfield">
-          <h4>搜索结果是否展示“加密文件”（开启之后，前台搜索结果会展示出加密文件夹及加密文件夹下的文件）</h4>
+          <h4>Display encrypt files being searched (if checked，search result shows encrypt file names, encrypt folder names and file names under encrypt folders)</h4>
           <label class="mdui-switch">
             <input type="checkbox" name="show_secret" {%if GetConfig('show_secret')=='on'%}checked{%endif%}/>
             <i class="mdui-switch-icon"></i>
@@ -126,31 +126,31 @@
         </div>
 
         <div class="mdui-textfield">
-          <h4>加密文件夹下的文件是否加密（本选项是配合前一个选项新增的选项，看个人需求开启）</h4>
+          <h4>Auto encrypt files under encrypt folders</h4>
           <label class="mdui-switch">
             <input type="checkbox" name="encrypt_file" {%if GetConfig('encrypt_file')=='on'%}checked{%endif%}/>
             <i class="mdui-switch-icon"></i>
           </label>
         </div>
        <button type="submit" class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right">
-        <i class="mdui-icon material-icons">&#xe161;</i> 保存
+        <i class="mdui-icon material-icons">&#xe161;</i> Save
        </button>
     </form>
 </div>
 <div class="mdui-fab-wrapper" id="exampleFab">
   <button class="mdui-fab mdui-ripple mdui-color-theme-accent">
-    <!-- 默认显示的图标 -->
+    <!-- Default显示的图标 -->
     <i class="mdui-icon material-icons">add</i>
 
     <!-- 在拨号菜单开始打开时，平滑切换到该图标，若不需要切换图标，则可以省略该元素 -->
     <i class="mdui-icon mdui-fab-opened material-icons">add</i>
   </button>
   <div class="mdui-fab-dial">
-    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-pink" href="{{url_for('admin.logout')}}" mdui-tooltip="{content: '退出'}"><i class="mdui-icon material-icons">&#xe8ac;</i></a>
-    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red" href="{{url_for('admin.reload')}}" mdui-tooltip="{content: '重启网站'}"><i class="mdui-icon material-icons">&#xe5d5;</i></a>
-    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-orange" href="javascript:void(0);" onclick="uninstall();" mdui-tooltip="{content: '卸载PyOne'}"><i class="mdui-icon material-icons">&#xe16c;</i></a>
-    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue" href="javascript:void(0);" onclick="ChangePass();" mdui-tooltip="{content: '修改密码'}"><i class="mdui-icon material-icons">&#xe63f;</i></a>
-    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue" href="javascript:void(0);" onclick="UpdatePyOne();" mdui-tooltip="{content: '升级PyOne'}"><i class="mdui-icon material-icons">&#xe031;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-pink" href="{{url_for('admin.logout')}}" mdui-tooltip="{content: 'Logout'}"><i class="mdui-icon material-icons">&#xe8ac;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red" href="{{url_for('admin.reload')}}" mdui-tooltip="{content: 'Reboot'}"><i class="mdui-icon material-icons">&#xe5d5;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-orange" href="javascript:void(0);" onclick="uninstall();" mdui-tooltip="{content: 'Uninstall PyOne'}"><i class="mdui-icon material-icons">&#xe16c;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue" href="javascript:void(0);" onclick="ChangePass();" mdui-tooltip="{content: 'Change password'}"><i class="mdui-icon material-icons">&#xe63f;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue" href="javascript:void(0);" onclick="UpdatePyOne();" mdui-tooltip="{content: 'Upgrade PyOne'}"><i class="mdui-icon material-icons">&#xe031;</i></a>
   </div>
 </div>
 <script type="text/javascript">
@@ -158,7 +158,7 @@
     var inst = new mdui.Fab('#exampleFab');
 
     function UpdatePyOne() {
-        layer.confirm('确定升级PyOne？',
+        layer.confirm('Confirm to upgrade PyOne？',
             function(index){
                 layer.close(index);
                 layer.open({
@@ -178,12 +178,12 @@
     function ChangePass() {
         layer.prompt({
               formType: 0,
-              title: '请输入新密码',
+              title: 'Please enter new password',
         }, function(value1, index, elem){
               layer.close(index);
               layer.prompt({
                     formType: 0,
-                    title: '请输入旧密码核对身份',
+                    title: 'Please enter old password for certification',
               }, function(value2, index, elem){
                     layer.close(index);
                     $.ajax({
@@ -199,12 +199,12 @@
         });
     }
     function uninstall() {
-        layer.confirm('真的要卸载PyOne？',
+        layer.confirm('Confirm to uninstall PyOne？',
             {
                 icon: 3,
-                title:'卸载',
+                title:'Uninstall',
                 success: function (layero, index) {
-                    var msg = '确认';
+                    var msg = 'Confirm';
                     var i = 5;
                     var timer = null;
                     $(".layui-layer-btn0").addClass("layui-btn-disabled");
@@ -223,7 +223,7 @@
             },
             function(index){
                 layer.close(index);
-                layer.msg('删除mongodb数据中...', {icon: 1});
+                layer.msg('Deleting mongodb data...', {icon: 1});
                 uninstall_action('mongodb');
                 uninstall_action('redis');
                 uninstall_action('directory');
