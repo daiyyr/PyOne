@@ -31,7 +31,7 @@ def logout():
 def reload():
     cmd='supervisorctl -c {} restart pyone'.format(os.path.join(config_dir,'supervisoredis_client.conf'))
     subprocess.Popen(cmd,shell=True)
-    flash('正在重启网站...如果更改了分享目录，请更新缓存')
+    flash('rebooting...if shared directory is changed, please clean your browser cache')
     return redirect(url_for('admin.setting'))
 
 @admin.route('/setPass',methods=['POST'])
@@ -41,9 +41,9 @@ def setPass():
     if old_password==GetConfig('password'):
         set('password',new_password)
         redis_client.set('password',new_password)
-        data={'msg':'修改成功！'}
+        data={'msg':'changing password succeed!'}
     else:
-        data={'msg':'旧密码不正确'}
+        data={'msg':'Original password is incorrect!'}
     return jsonify(data)
 
 @admin.route('/UpdatePyOne')

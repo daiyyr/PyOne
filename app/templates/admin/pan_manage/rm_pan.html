@@ -2,16 +2,16 @@
 {%block content%}
 <div class="mdui-container-fluid">
     <div class="mdui-typo">
-        <h1>删除网盘 <small>谨慎操作！</small></h1>
+        <h1>Remove drive <small>Please be carefull</small></h1>
     </div>
     <div class="mdui-table-fluid">
         <table class="mdui-table mdui-table-hoverable">
             <thead>
                 <tr>
-                    <th>删除</th>
-                    <th>盘符</th>
-                    <th>网盘名称</th>
-                    <th>共享目录</th>
+                    <th>Delete</th>
+                    <th>Drive</th>
+                    <th>Drive name</th>
+                    <th>Shared directory</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,7 +29,7 @@
 </div>
 <script type="text/javascript">
     function rmPan(pan){
-        if (!confirm("确定删除？")) {
+        if (!confirm("Confirm to delete?")) {
             return;
         }
         $.ajax({

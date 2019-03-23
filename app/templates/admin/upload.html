@@ -3,16 +3,16 @@
 <link rel="stylesheet" href="/static/css/theme.css?t=20305">
 <div class="mdui-container-fluid">
     <div class="mdui-typo">
-        <h1> 上传管理 <small>文件上传添加和管理</small></h1>
+        <h1> Upload <small>Upload to Onedrive</small></h1>
     </div>
     <div class="mdui-toolbar mdui-color-theme">
-        <button class="mdui-btn mdui-btn-icon" onclick="Restart()" mdui-tooltip="{{'{'}}content: '重启任务（因重启网站之后上传中断）'{{'}'}}"><i class="mdui-icon material-icons">&#xe863;</i></button>
-        <button class="mdui-btn mdui-btn-icon" onclick="ClearHist()" mdui-tooltip="{{'{'}}content: '清空任务'{{'}'}}"><i class="mdui-icon material-icons">&#xe0b8;</i></button>
+        <button class="mdui-btn mdui-btn-icon" onclick="Restart()" mdui-tooltip="{{'{'}}content: 'restart（Tasks were terminated by server rebooting）'{{'}'}}"><i class="mdui-icon material-icons">&#xe863;</i></button>
+        <button class="mdui-btn mdui-btn-icon" onclick="ClearHist()" mdui-tooltip="{{'{'}}content: 'clear Tasks'{{'}'}}"><i class="mdui-icon material-icons">&#xe0b8;</i></button>
     </div>
     <div class="mdui-row">
         <form action="" method="post">
             <div class="mdui-col-xs-3">
-                <label class="mdui-textfield-label">选择网盘</label>
+                <label class="mdui-textfield-label">choose a drive</label>
                 <select class="mdui-select" name="user" mdui-select>
                     {%for user in get_od_user()%}
                     {%if user[1]!='添加网盘'%}
@@ -22,16 +22,16 @@
                 </select>
             </div>
             <div class="mdui-col-xs-4">
-                <label class="mdui-textfield-label">服务器文件/文件夹</label>
+                <label class="mdui-textfield-label">Server files/folders</label>
                 <input name="local" class="mdui-textfield-input" type="text" value="{%if local%}{{local}}{%else%}/{%endif%}" />
             </div>
             <div class="mdui-col-xs-3">
-                <label class="mdui-textfield-label">远程目录</label>
+                <label class="mdui-textfield-label">Remote directory</label>
                 <input name="remote" class="mdui-textfield-input" type="text" value="{%if remote%}{{remote}}{%endif%}" />
             </div>
             <div class="mdui-col-xs-2" style="padding-top: 34px;">
                 <button type="submit" name="upload" value="1" class="mdui-btn mdui-btn-block mdui-color-green-600 mdui-ripple">
-                    <i class="mdui-icon material-icons">&#xe2c3;</i> 上传
+                    <i class="mdui-icon material-icons">&#xe2c3;</i> Upload
                 </button>
             </div>
         </form>
@@ -41,11 +41,11 @@
         <div class="mdui-row">
             <ul class="mdui-list">
                 <li class="mdui-list-item th">
-                    <div class="mdui-col-sm-1 hidden-xs">盘</div>
-                    <div class="mdui-col-sm-4 mdui-col-xs-8">本地</div>
-                    <div class="mdui-col-sm-4 hidden-xs">远程</div>
-                    <div class="mdui-col-sm-1 hidden-xs">速度</div>
-                    <div class="mdui-col-sm-2 mdui-col-xs-4">进度</div>
+                    <div class="mdui-col-sm-1 hidden-xs">Drive</div>
+                    <div class="mdui-col-sm-4 mdui-col-xs-8">Local</div>
+                    <div class="mdui-col-sm-4 hidden-xs">Remote</div>
+                    <div class="mdui-col-sm-1 hidden-xs">Speed</div>
+                    <div class="mdui-col-sm-2 mdui-col-xs-4">Process</div>
                 </li>
                 <div id="tasks">
                 </div>
@@ -63,8 +63,8 @@ function ShowNotice(msg){
         });
 }
 function ClearHist(){
-    layer.confirm('确定清除任务？', {
-        btn: ['确定','取消'] //按钮
+    layer.confirm('Confirm to clear task?', {
+        btn: ['Yes','Cancel'] //按钮
     },
     function(index){
         layer.close(index);
@@ -91,8 +91,8 @@ function ClearHist(){
 }
 
 function Restart(){
-    layer.confirm('确定重启任务？（只有任务中断了才重启！）', {
-        btn: ['确定','取消'] //按钮
+    layer.confirm('Confirm to restart task?（only for terminated tasks）', {
+        btn: ['Yes','Cancel'] //按钮
     },
     function(index){
         layer.close(index);

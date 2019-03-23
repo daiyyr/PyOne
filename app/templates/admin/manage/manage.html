@@ -7,7 +7,7 @@ a:link {
     text-decoration: none;
 }
 
-a:active: {
+a:active {
     color: black;
 }
 
@@ -22,7 +22,7 @@ a:hover {
 }
 </style>
 <div class="mdui-typo">
-    <h1> 文件管理 <small>仅支持更新/编辑文编；支持删除文件</small></h1>
+    <h1> Files management <small>update/delete files</small></h1>
 </div>
 <div class="mdui-table-fluid">
     <div class="mdui-appbar">
@@ -42,19 +42,19 @@ a:hover {
             {%endfor%}
                 <a href="{{url_for('admin.add_pan')}}" class="mdui-ripple mdui-ripple-white">
                     <i class="mdui-icon material-icons">&#xe147;</i>
-                    <label>添加盘位</label>
+                    <label>Add drive</label>
                 </a>
          </div>
          <div class="mdui-toolbar mdui-color-theme">
-           <button class="mdui-btn mdui-btn-icon" onclick="delAllProduct()" mdui-tooltip="{{'{'}}content: '删除'{{'}'}}"><i class="mdui-icon material-icons">&#xe872;</i></button>
-           <button class="mdui-btn mdui-btn-icon" onclick="setPasswd('{{path}}')" mdui-tooltip="{{'{'}}content: '设置密码'{{'}'}}"><i class="mdui-icon material-icons">&#xe32a;</i> </button>
-           <button class="mdui-btn mdui-btn-icon" onclick="setReadMe('{{path}}')" mdui-tooltip="{{'{'}}content: '设置README'{{'}'}}"><i class="mdui-icon material-icons">&#xe0d8;</i> </button>
-           <button class="mdui-btn mdui-btn-icon" onclick="setHead('{{path}}')" mdui-tooltip="{{'{'}}content: '设置HEAD'{{'}'}}"><i class="mdui-icon material-icons">&#xe89c;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="delAllProduct()" mdui-tooltip="{{'{'}}content: 'Delete'{{'}'}}"><i class="mdui-icon material-icons">&#xe872;</i></button>
+           <button class="mdui-btn mdui-btn-icon" onclick="setPasswd('{{path}}')" mdui-tooltip="{{'{'}}content: 'Setup password'{{'}'}}"><i class="mdui-icon material-icons">&#xe32a;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="setReadMe('{{path}}')" mdui-tooltip="{{'{'}}content: 'Setup README'{{'}'}}"><i class="mdui-icon material-icons">&#xe0d8;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="setHead('{{path}}')" mdui-tooltip="{{'{'}}content: 'Setup HEAD'{{'}'}}"><i class="mdui-icon material-icons">&#xe89c;</i> </button>
          </div>
          <div class="mdui-toolbar mdui-color-theme">
-           <button class="mdui-btn mdui-btn-icon" onclick="uploadLocalFile('{{path}}')" mdui-tooltip="{{'{'}}content: '本地上传文件至onedrive'{{'}'}}"><i class="mdui-icon material-icons">&#xe2c3;</i> </button>
-           <button class="mdui-btn mdui-btn-icon" onclick="AddFolder('{{path}}')" mdui-tooltip="{{'{'}}content: '创建文件夹'{{'}'}}"><i class="mdui-icon material-icons">&#xe2cc;</i> </button>
-           <button class="mdui-btn mdui-btn-icon" onclick="OffDownload('{{path}}')" mdui-tooltip="{{'{'}}content: '离线下载'{{'}'}}"><i class="mdui-icon material-icons">&#xe2c4;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="uploadLocalFile('{{path}}')" mdui-tooltip="{{'{'}}content: 'local to Onedrive'{{'}'}}"><i class="mdui-icon material-icons">&#xe2c3;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="AddFolder('{{path}}')" mdui-tooltip="{{'{'}}content: 'Create a folder'{{'}'}}"><i class="mdui-icon material-icons">&#xe2cc;</i> </button>
+           <button class="mdui-btn mdui-btn-icon" onclick="OffDownload('{{path}}')" mdui-tooltip="{{'{'}}content: 'Offline download'{{'}'}}"><i class="mdui-icon material-icons">&#xe2c4;</i> </button>
          </div>
     </div>
 
@@ -91,7 +91,7 @@ a:hover {
                 <td></td>
                 <td>
                     <a href="{{url_for('admin.manage',path=list(breadCrumb(path))[-2][1][1:])}}">
-                        <i class="mdui-icon material-icons">arrow_upward</i> 返回上一层
+                        <i class="mdui-icon material-icons">arrow_upward</i> Back
                     </a>
                 </td>
                 <td></td>
@@ -116,7 +116,7 @@ a:hover {
                     <button class="mdui-btn mdui-btn-icon" onclick="delProduct('{{data['id']}}')">
                         <i class="mdui-icon material-icons">&#xe872;</i>
                     </button>
-                    <button class="mdui-btn mdui-btn-icon" onclick="Rename('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '重命名'{{'}'}}">
+                    <button class="mdui-btn mdui-btn-icon" onclick="Rename('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Rename'{{'}'}}">
                         <i class="mdui-icon material-icons">&#xe8e1;</i>
                     </button>
                 </td>
@@ -135,17 +135,17 @@ a:hover {
                 </td>
                 <td>{{data['lastModtime']}}</td>
                 <td>
-                    <button class="mdui-btn mdui-btn-icon" onclick="delProduct('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '删除文件'{{'}'}}">
+                    <button class="mdui-btn mdui-btn-icon" onclick="delProduct('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Delete file'{{'}'}}">
                         <i class="mdui-icon material-icons">&#xe872;</i>
                     </button>
-                    <button class="mdui-btn mdui-btn-icon" onclick="moveProduct('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '移动文件'{{'}'}}">
+                    <button class="mdui-btn mdui-btn-icon" onclick="moveProduct('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Move file'{{'}'}}">
                         <i class="mdui-icon material-icons">&#xe14e;</i>
                     </button>
-                    <button class="mdui-btn mdui-btn-icon" onclick="Rename('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '重命名'{{'}'}}">
+                    <button class="mdui-btn mdui-btn-icon" onclick="Rename('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Rename'{{'}'}}">
                         <i class="mdui-icon material-icons">&#xe8e1;</i>
                     </button>
                     {%if CanEdit(data['name'])%}
-                    <button class="mdui-btn mdui-btn-icon" onclick="editFile('{{data['id']}}')" mdui-tooltip="{{'{'}}content: '编辑文件'{{'}'}}">
+                    <button class="mdui-btn mdui-btn-icon" onclick="editFile('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Edit file'{{'}'}}">
                         <i class="mdui-icon material-icons">&#xe3c9;</i>
                     </button>
                     {%endif%}
@@ -165,7 +165,7 @@ $$(function() {
         $$(this).on('click', function() {
             layer.open({
               type: 2,
-              title: 'PyOne播放窗口',
+              title: 'PyOne player',
               shadeClose: true,
               shade: 0.8,
               area: ['100%', '100%'],
@@ -187,7 +187,7 @@ function reserveCheck(name) {
 }
 
 function delAllProduct() {
-    if (!confirm("将直接从onedrive删除文件！！！确定删除？")) {
+    if (!confirm("All selected will be deleted from Onedrive!!! Are you sure?")) {
         return;
     }
     var cks = document.getElementsByName("choice");
@@ -216,7 +216,7 @@ function delAllProduct() {
                 alert(result.msg);
                 window.location.reload();
             } else {
-                alert('删除成功' + result.delete + '个,失败' + result.fail + '个');
+                alert('Succeed to delete ' + result.delete + ' items, failed to delete ' + result.fail + ' items');
                 window.location.reload();
             }
         },
@@ -228,7 +228,7 @@ function delAllProduct() {
 }
 
 function delProduct(id) {
-    if (!confirm("将直接从onedrive删除文件！！！确定删除？")) {
+    if (!confirm("All selected will be deleted from Onedrive!!! Are you sure?")) {
         return;
     }
     $.ajax({
@@ -246,7 +246,7 @@ function delProduct(id) {
                 alert(result.msg);
                 window.location.reload();
             } else {
-                alert('删除成功');
+                alert('Deleting succeed!');
                 window.location.reload();
             }
         },
@@ -284,7 +284,7 @@ function OffDownload(path) {
 function moveProduct(fileid){
     layer.prompt({
         formType: 0,
-        title: '请输入文件夹名',
+        title: 'Please enter the folder name',
     },
     function(value, index, elem) {
         layer.close(index);
@@ -301,10 +301,10 @@ function moveProduct(fileid){
                 },
                 success: function(data) {
                     if(data.result){
-                        alert('移动成功');
+                        alert('Succeed to move');
                     }
                     else{
-                        alert('移动失败');
+                        alert('Failed to move');
                     }
                     window.location.reload();
                 },
@@ -318,7 +318,7 @@ function moveProduct(fileid){
 function Rename(fileid){
     layer.prompt({
         formType: 0,
-        title: '请输入新文件名（记得带后缀）',
+        title: 'Please enter new file name (including suffix) ',
     },
     function(value, index, elem) {
         layer.close(index);
@@ -335,10 +335,10 @@ function Rename(fileid){
                 },
                 success: function(data) {
                     if(data.result){
-                        alert('重命名成功');
+                        alert('Succeed to rename');
                     }
                     else{
-                        alert('重命名失败');
+                        alert('Failed to rename');
                     }
                     window.location.reload();
                 },
@@ -352,7 +352,7 @@ function Rename(fileid){
 function AddFolder() {
     layer.prompt({
         formType: 0,
-        title: '请输入文件夹名',
+        title: 'Please enter folder name',
     },
     function(value, index, elem) {
         layer.close(index);
@@ -369,10 +369,10 @@ function AddFolder() {
                 },
                 success: function(data) {
                     if(data.result){
-                        alert('创建成功');
+                        alert('Creating succeed');
                     }
                     else{
-                        alert('创建失败');
+                        alert('Creating failed');
                     }
                     window.location.reload();
                 },

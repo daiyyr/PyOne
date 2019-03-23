@@ -3,14 +3,14 @@
 {%block content%}
 <div class="mdui-container-fluid">
     <div class="mdui-typo">
-        <h1>更新列表</h1>
+        <h1>Pull from Onedrive</h1>
     </div>
     <div class="mdui-row">
         <div class="mdui-col-xs-2">
-            <button class="mdui-btn mdui-btn-raised mdui-ripple" id="new">增量更新</button>
+            <button class="mdui-btn mdui-btn-raised mdui-ripple" id="new">Incremental update</button>
         </div>
         <div class="mdui-col-xs-2">
-            <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" id="all">全量更新</button>
+            <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" id="all">Full update</button>
         </div>
         <div class="mdui-col-xs-8"></div>
     </div>
@@ -19,9 +19,9 @@
         <div class="mdui-col-xs-12">
             <div class="mdui-card">
               <div class="mdui-card-actions mdui-card-actions-stacked">
-                <h2>更新策略解释</h2>
-                <p>1. 增量更新：对比本地列表和远程列表，文件列表有更新时才更新。（文件目录结构不变的情况下推荐使用增量更新）</p>
-                <p>2. 全量更新：删除本地文件列表，全量更新。（文件目录结构发生变化推荐使用增量更新）</p>
+                <h2>Explanation</h2>
+                <p>1. Incremental update: compair local and remote files, update only if files updated. This recommended if directory trees are not changed. </p>
+                <p>2. Full update: delete local files before update. This is recommended if directory trees changed.</p>
               </div>
             </div>
         </div>

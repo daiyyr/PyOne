@@ -148,8 +148,8 @@ function unselected(gid){
 
 
 function ClearHist(){
-    layer.confirm('确定清除任务？', {
-        btn: ['确定','取消'] //按钮
+    layer.confirm('Confirm to remove task?', {
+        btn: ['Yes','Cancel'] //按钮
     },
     function(index){
         layer.close(index);

@@ -9,7 +9,7 @@ def cache_control():
         type=request.form.get('type')
         cmd="python -u {} UpdateFile {}".format(os.path.join(config_dir,'function.py'),type)
         subprocess.Popen(cmd,shell=True)
-        msg='后台刷新数据中...请不要多次点击！否则服务器出问题别怪PyOne'
+        msg='Backend data refreshing...Please do not multi-click'
         return jsonify(dict(msg=msg))
     resp=MakeResponse(render_template('admin/cache.html'))
     return resp
