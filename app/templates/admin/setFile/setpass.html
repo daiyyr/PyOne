@@ -7,7 +7,7 @@
     }
 </style>
 <div class="mdui-container">
-  <h4>添加文件 - {{filename}}</h4>
+  <h4>Add password - {{filename}}</h4>
 <pre id="editor" ></pre>
 <button class="mdui-btn mdui-btn-icon" onclick="SubmitNew()">
     <i class="mdui-icon material-icons">&#xe5ca;</i>
@@ -32,7 +32,7 @@
         maxLines: Infinity
     });
     function SubmitNew(){
-        if(!confirm("确定添加文件？")){
+        if(!confirm("Confirm to add password？")){
             return ;
         }
         content=editor.getValue();
@@ -52,7 +52,7 @@
                     window.location.reload();
                   }
                   else{
-                    alert('修改成功');
+                    alert('Succeed to change');
                     window.location.reload();
                   }
               },

@@ -4,7 +4,7 @@
 {%block content%}
 <div class="container mt-3">
     <div class="form-inline">
-        <label for="image_view">看图模式</label>
+        <label for="image_view">Image mode</label>
         <input type="checkbox" id="image_view" class="form-control" data-switch-value="mini" onclick="changeMode()" {%if image_mode==1%}checked{%endif%} />
     </div>
     <hr>
@@ -30,7 +30,7 @@
         <div class="panel-body">
             {%if path.split(':')[-1]!=''%}
                 <li class="list-group-item list-group-item-action">
-                    <a href="{{list(breadCrumb(path))[-2][1]}}"><i class="fa fa-level-up"></i> 返回上一层</a>
+                    <a href="{{list(breadCrumb(path))[-2][1]}}"><i class="fa fa-level-up"></i> Back</a>
                 </li>
             {%endif%}
             <div class="list-group item-list">
@@ -109,7 +109,7 @@ $(function() {
         $(this).on('click', function() {
             layer.open({
                 type: 2,
-                title: 'PyOne播放窗口',
+                title: 'PyOne player',
                 shadeClose: true,
                 shade: 0.8,
                 area: ['100%', '100%'],

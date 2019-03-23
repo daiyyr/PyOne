@@ -3,27 +3,27 @@
 {%block content%}
 <div class="mdui-container-fluid">
     <div class="mdui-typo">
-      <h1>系统安装 <small>绑定账号</small></h1>
+      <h1>Add drive <small>account binding</small></h1>
     </div>
 
     <div class="mdui-typo">
-      <h4>步骤1：点击<B>绑定账号</B>，并跳转到绑定页面</h4>
+      <h4>step 1：click <B>bind account</B>, and jump to binding page</h4>
     </div>
     <div class="mdui-typo">
-      <h4>步骤2：选择需要绑定的账号，进入下一步</h4>
+      <h4>step2：select account</h4>
     </div>
   	<div class="mdui-typo">
-      <h4>步骤3：接收认证许可，获取一个code，将这个code填写到下栏后，点击<B>结束绑定</B></h4>
+      <h4>step 3：get a permissions code，copy this code to the code box，click <B>finish binding</B></h4>
     </div>
 
     <div class="mdui-typo">
-    <a href="{{login_url}}" class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" target="_blank">1. 绑定账号</a>
+    <a href="{{login_url}}" class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" target="_blank">1. bind account</a>
      <form action="{{url_for('admin.install')}}" method="post">
          <div class="mdui-textfield mdui-textfield-floating-label">
              <i class="mdui-icon material-icons">https</i>
              <label class="mdui-textfield-label">code</label>
              <input type="text" type="text" class="mdui-textfield-input" name="code" required"/>
-             <div class="mdui-textfield-error">code不能为空</div>
+             <div class="mdui-textfield-error">code cannot be blank</div>
          </div>
          <input type="hidden" name="user" value="{{cur_user}}">
          <input type="hidden" name="step" value="2">
@@ -31,11 +31,11 @@
          <input type="hidden" name="client_secret" value="{{client_secret}}">
          <br>
          <br>
-      <button class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" type="submit">2. 结束绑定</button>
+      <button class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" type="submit">2. finish binding</button>
      </form>
     </div>
      <div class="mdui-typo">
-        <h4>示例，如何操作</h4>
+        <h4>exmple</h4>
     <img src="http://wx4.sinaimg.cn/large/0060lm7Tly1fxa7c5bvwvj30hw0ikgq3.jpg">
     <img src="http://wx3.sinaimg.cn/large/0060lm7Tly1fxa7dg9wt6j31gv04jq3c.jpg">
     <img src="http://wx1.sinaimg.cn/large/0060lm7Tly1fxa7e9mh0mj310n0h1abr.jpg">

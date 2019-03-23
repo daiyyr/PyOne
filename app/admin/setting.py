@@ -91,7 +91,7 @@ def setting():
         redis_client.set('order_m',order_m)
         redis_client.set('show_secret',show_secret)
         redis_client.set('encrypt_file',encrypt_file)
-        flash('更新成功')
+        flash('Updating succeed')
         resp=MakeResponse(redirect(url_for('admin.setting')))
         return resp
     resp=MakeResponse(render_template('admin/setting/setting.html'))
@@ -115,7 +115,7 @@ def setCode():
         redis_client.set('headCode',headCode)
         redis_client.set('footCode',footCode)
         redis_client.set('cssCode',cssCode)
-        flash('更新成功')
+        flash('Updating succeed')
         resp=MakeResponse(render_template('admin/setCode/setCode.html'))
         return resp
     resp=MakeResponse(render_template('admin/setCode/setCode.html'))

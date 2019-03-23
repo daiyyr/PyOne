@@ -39,7 +39,7 @@ def install():
                 with open(config_path,'r') as f:
                     text=f.read()
                 redis_client.set('users',re.findall('od_users=([\w\W]*})',text)[0])
-                return make_response('<h1>授权成功!<br>请先在<B><a href="/admin/cache" target="_blank">后台-更新列表</a></B>，全量更新数据<br>然后<a href="/?t={}">点击进入首页</a></h1><br>'.format(time.time()))
+                return make_response('<h1>Authorization approved!<br>Please do a FULL UPDATE on <B><a href="/admin/cache" target="_blank">Admin - Pull from Onedrive</a></B><br>Then <a href="/?t={}">click here to visit home page</a></h1><br>'.format(time.time()))
             else:
                 return jsonify(Atoken)
     step=request.args.get('step',type=int)

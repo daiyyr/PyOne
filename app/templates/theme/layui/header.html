@@ -10,7 +10,7 @@
         <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
             <li class="layui-nav-item" lay-unselect="">
                 <button class="layui-btn layui-btn-sm" onclick="py_search();">
-                    <i class="layui-icon">&#xe615;</i> 搜索
+                    <i class="layui-icon">&#xe615;</i> Searching
                 </button>
             </li>
         </ul>
@@ -19,7 +19,7 @@
     <div class="layui-row">
         <div class="layui-col-lg12">
             <p>
-                当前位置：
+                Current location：
                 {%if path%}
                     {%for name,p,last in breadCrumb(path)%}
                         {%if last==False%}

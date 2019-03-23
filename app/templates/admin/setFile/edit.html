@@ -31,7 +31,7 @@
     });
 
     function SubmitEdit(fileid){
-        if(!confirm("将直接更改onedrive内容！！！确定修改？")){
+        if(!confirm("Sure to change?")){
             return ;
         }
         content=editor.getValue();
@@ -51,7 +51,7 @@
                     window.location.reload();
                   }
                   else{
-                    alert('修改成功');
+                    alert('Succeed to change');
                     window.location.reload();
                   }
               },

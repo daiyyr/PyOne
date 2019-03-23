@@ -93,7 +93,7 @@ def CreateFile(filename,path,content,user=GetConfig('default_pan')):
     if data.get('id'):
         AddResource(data,user)
         info['status']=0
-        info['msg']='添加成功'
+        info['msg']='succeed'
         key='has_item$#$#$#$#{}:{}$#$#$#$#{}'.format(user,path,filename)
         InfoLogger().print_r('set key:{}'.format(key))
         redis_client.delete(key)
@@ -114,7 +114,7 @@ def EditFile(fileid,content,user=GetConfig('default_pan')):
         data=json.loads(r.content)
         if data.get('id'):
             info['status']=0
-            info['msg']='修改成功'
+            info['msg']='Succeed to change'
             redis_client.delete('{}:content'.format(fileid))
             file=mon_db.items.find_one({'id':fileid})
             name=file['name']

@@ -6,7 +6,7 @@
     <div class="mdui-row">
         <div class="mdui-col-xs-10">
               <label class="mdui-switch">
-                    看图模式
+                    Image mode
                     <input type="checkbox" id="image_view" {%if image_mode==1%}checked{%endif%}/>
                     <i class="mdui-switch-icon"></i>
               </label>
@@ -29,7 +29,7 @@
                 <li class="mdui-list-item mdui-ripple">
                     <a href="{{list(breadCrumb(path))[-2][1]}}">
                         <div class="mdui-col-xs-12 mdui-col-sm-7">
-                            <i class="mdui-icon material-icons">arrow_upward</i> 返回上一层
+                            <i class="mdui-icon material-icons">arrow_upward</i> Back
                         </div>
                         <div class="mdui-col-sm-3 mdui-text-right"></div>
                         <div class="mdui-col-sm-2 mdui-text-right"></div>
@@ -81,16 +81,16 @@
         </div>
     </div>
     <div class="mdui-dialog" id="find_dialog">
-      <div class="mdui-dialog-title">搜索</div>
+      <div class="mdui-dialog-title">Search</div>
       <div class="mdui-dialog-content">
           <div class="mdui-textfield mdui-textfield-floating-label">
-            <label class="mdui-textfield-label">关键词</label>
+            <label class="mdui-textfield-label">Key word</label>
             <input class="mdui-textfield-input" type="text" pattern="^[^\/]{1,10}" id="key_word" required/>
-            <div class="mdui-textfield-error">不能包含"/"，长度1-10之间</div>
+            <div class="mdui-textfield-error">do not contain "/"，1-10 letters</div>
           </div>
       </div>
       <div class="mdui-dialog-actions">
-        <button class="mdui-btn mdui-ripple" onclick="py_find();">搜索</button>
+        <button class="mdui-btn mdui-ripple" onclick="py_find();">Search</button>
       </div>
     </div>
 </div>
@@ -108,7 +108,7 @@ $$(function() {
         $$(this).on('click', function() {
             layer.open({
               type: 2,
-              title: 'PyOne播放窗口',
+              title: 'PyOne player',
               shadeClose: true,
               shade: 0.8,
               area: ['100%', '100%'],
