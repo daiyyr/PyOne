@@ -71,21 +71,21 @@ od_users={
         "client_id":"",
         "client_secret":"",
         "share_path":"/",
-        "other_name":"网盘1区",
+        "other_name":"Drive1",
         "order":1
     },
     "B":{
         "client_id":"",
         "client_secret":"",
         "share_path":"/",
-        "other_name":"网盘2区",
+        "other_name":"Drive2",
         "order":2
     },
     "C":{
         "client_id":"",
         "client_secret":"",
         "share_path":"/",
-        "other_name":"网盘3区",
+        "other_name":"Drive3",
         "order":3
     }
 }

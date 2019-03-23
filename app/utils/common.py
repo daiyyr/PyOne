@@ -442,7 +442,7 @@ def get_od_user():
             ret.append(
                     (
                         user,
-                        '添加网盘',
+                        'Add drive',
                         url_for('admin.install',step=0,user=user),
                         value.get('share_path'),
                         value.get('order')

@@ -28,7 +28,7 @@ a:hover {
     <div class="mdui-appbar">
         <div class="mdui-tab mdui-color-theme" mdui-tab>
             {%for user in get_od_user()%}
-                {%if user[1]=='添加网盘'%}
+                {%if user[1]=='Add drive'%}
                 <a href="{{url_for('admin.install',user=user[0],step=0)}}" class="mdui-ripple mdui-ripple-white{%if cur_user==user[0]%} mdui-tab-active{%endif%}" id="{{user[0]}}">
                     <i class="mdui-icon material-icons">&#xe2bf;</i>
                     <label>{{user[1]}}</label>
@@ -80,7 +80,7 @@ a:hover {
                     </label>
                 </th>
                 <th>{{ macros.Admin_Arraw(name='文件',cur_type='name',sortby=sortby,order=order,path=path) }}</th>
-                <th>{{ macros.Admin_Arraw(name='修改时间',cur_type='lastModtime',sortby=sortby,order=order,path=path) }}</th>
+                <th>{{ macros.Admin_Arraw(name='Modified date',cur_type='lastModtime',sortby=sortby,order=order,path=path) }}</th>
                 <th>
                 </th>
             </tr>

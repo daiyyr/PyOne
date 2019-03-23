@@ -2,7 +2,7 @@
     <div class="mdui-appbar mdui-appbar-scroll-hide">
         <div class="mdui-tab mdui-color-theme" mdui-tab>
             {%for user in get_od_user()%}
-            {%if user[1]!='添加网盘'%}
+            {%if user[1]!='Add drive'%}
                 <a href="{{user[2]}}" class="mdui-ripple mdui-ripple-white{%if cur_user==user[0]%} mdui-tab-active{%endif%}" id="{{user[0]}}">
                     <i class="mdui-icon material-icons">&#xe2bf;</i>
                     <label>{{user[1]}}</label>

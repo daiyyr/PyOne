@@ -222,8 +222,8 @@ function tellActive() {
                     html+='       <ul class="mdui-list mdui-color-blue-50 mdui-typo-caption">'
                         // subtitle
                         html+='<li class="mdui-list-item mdui-ripple">';
-                        html+='<div class="mdui-col-xs-8 mdui-col-offset-xs-1">文件名</div>';
-                        html+='<div class="mdui-col-xs-1 ">大小</div>';
+                        html+='<div class="mdui-col-xs-8 mdui-col-offset-xs-1">Name</div>';
+                        html+='<div class="mdui-col-xs-1 ">Size</div>';
                         html+='<div class="mdui-col-xs-1 ">下载</div>';
                         html+='<div class="mdui-col-xs-1 ">上传</div>';
                         html+='<div class="mdui-col-xs-1 ">操作</div>';
@@ -314,8 +314,8 @@ function tellFail() {
                     html+='       <ul class="mdui-list mdui-color-blue-50 mdui-typo-caption">'
                         // subtitle
                         html+='<li class="mdui-list-item mdui-ripple">';
-                        html+='<div class="mdui-col-xs-8 mdui-col-offset-xs-1">文件名</div>';
-                        html+='<div class="mdui-col-xs-1 ">大小</div>';
+                        html+='<div class="mdui-col-xs-8 mdui-col-offset-xs-1">Name</div>';
+                        html+='<div class="mdui-col-xs-1 ">Size</div>';
                         html+='<div class="mdui-col-xs-1 ">下载</div>';
                         html+='<div class="mdui-col-xs-1 ">上传</div>';
                         html+='<div class="mdui-col-xs-1 ">操作</div>';
@@ -400,8 +400,8 @@ function tellSuccess() {
                     html+='       <ul class="mdui-list mdui-color-blue-50 mdui-typo-caption">'
                         // subtitle
                         html+='<li class="mdui-list-item mdui-ripple">';
-                        html+='<div class="mdui-col-xs-8 mdui-col-offset-xs-1">文件名</div>';
-                        html+='<div class="mdui-col-xs-1 ">大小</div>';
+                        html+='<div class="mdui-col-xs-8 mdui-col-offset-xs-1">Name</div>';
+                        html+='<div class="mdui-col-xs-1 ">Size</div>';
                         html+='<div class="mdui-col-xs-1 ">下载</div>';
                         html+='<div class="mdui-col-xs-1 ">上传</div>';
                         html+='<div class="mdui-col-xs-1 ">操作</div>';

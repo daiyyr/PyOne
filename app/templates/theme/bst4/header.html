@@ -3,7 +3,7 @@
         <div class="sitenav">
             <ul>
                 {%for user in get_od_user()%}
-                    {%if user[1]!='添加网盘'%}
+                    {%if user[1]!='Add drive'%}
                         <li id="menu-item-1" class="menu-item menu-item-type-taxonomy menu-item-object-category {%if cur_user==user[0]%}current-menu-item{%endif%}"><a href="{{user[2]}}">{{user[1]}}</a></li>
                     {%endif%}
                 {%endfor%}

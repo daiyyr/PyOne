@@ -2,7 +2,7 @@
     <div class="layui-header">
         <ul class="layui-nav" lay-filter="">
             {%for user in get_od_user()%}
-            {%if user[1]!='添加网盘'%}
+            {%if user[1]!='Add drive'%}
             <li class="layui-nav-item {%if cur_user==user[0]%}layui-this{%endif%}"><a href="{{user[2]}}">{{user[1]}}</a></li>
             {%endif%}
             {%endfor%}

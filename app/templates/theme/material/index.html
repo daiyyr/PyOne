@@ -21,9 +21,9 @@
             <ul class="mdui-list">
                 <li class="mdui-list-item th">
                     <div class="mdui-col-xs-8 mdui-col-sm-5">{{ macros.Arraw(endpoint=endpoint,name='文件',cur_type='name',sortby=sortby,order=order,path=path) }}</div>
-                    <div class="mdui-col-xs-4 mdui-col-sm-2">{{ macros.Arraw(endpoint=endpoint,name='修改时间',cur_type='lastModtime',sortby=sortby,order=order,path=path) }}</div>
-                    <div class="mdui-col-sm-2 mdui-text-right">{{ macros.Arraw(endpoint=endpoint,name='文件类型',cur_type='type',sortby=sortby,order=order,path=path) }}</div>
-                    <div class="mdui-col-sm-2 mdui-text-right">{{ macros.Arraw(endpoint=endpoint,name='大小',cur_type='size',sortby=sortby,order=order,path=path) }}</div>
+                    <div class="mdui-col-xs-4 mdui-col-sm-2">{{ macros.Arraw(endpoint=endpoint,name='Modified date',cur_type='lastModtime',sortby=sortby,order=order,path=path) }}</div>
+                    <div class="mdui-col-sm-2 mdui-text-right">{{ macros.Arraw(endpoint=endpoint,name='Type',cur_type='type',sortby=sortby,order=order,path=path) }}</div>
+                    <div class="mdui-col-sm-2 mdui-text-right">{{ macros.Arraw(endpoint=endpoint,name='Size',cur_type='size',sortby=sortby,order=order,path=path) }}</div>
                 </li>
                 {%if path.split(':')[-1]!=''%}
                 <li class="mdui-list-item mdui-ripple">

@@ -450,7 +450,7 @@ class GetItemThread(Thread):
                     if value.get('folder'):
                         folder=mon_db.items.find_one({'id':value['id']})
                         if folder is not None:
-                            if folder['size_order']==value['size']: #文件夹大小未变化，不更新
+                            if folder['size_order']==value['size']: #文件夹Size未变化，不更新
                                 InfoLogger().print_r(u'path:{},origin size:{},current size:{}--------no change'.format(value['name'],folder['size_order'],value['size']))
                             else:
                                 mon_db.items.delete_one({'id':value['id']})

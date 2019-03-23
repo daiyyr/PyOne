@@ -3,11 +3,11 @@ from base_view import *
 
 
 
-###########################################网盘管理
+###########################################Drive管理
 @admin.route('/panage',methods=['GET','POST'])
 def panage():
     if request.method=='POST':
-        ####网盘信息处理
+        ####Drive信息处理
         for k,v in request.form.to_dict().items():
             if 'share_path' in k or 'other_name' in k:
                 user=re.findall('\[(.*?)\]',k)[0]

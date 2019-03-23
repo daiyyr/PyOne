@@ -15,7 +15,7 @@
                 <label class="mdui-textfield-label">choose a drive</label>
                 <select class="mdui-select" name="user" mdui-select>
                     {%for user in get_od_user()%}
-                    {%if user[1]!='添加网盘'%}
+                    {%if user[1]!='Add drive'%}
                     <option value="{{user[0]}}">{{user[1]}}</option>
                     {%endif%}
                     {%endfor%}
