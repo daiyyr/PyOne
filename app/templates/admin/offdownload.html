@@ -64,7 +64,7 @@ function AddLink() {
             success: function(data) {
                 defer.resolve(data);
                 if (data.status) {
-                    ShowNotice('添加任务成功！');
+                    ShowNotice('Succeed to add task!');
                 } else {
                     ShowNotice(data.msg);
                 }
