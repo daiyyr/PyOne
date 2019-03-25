@@ -69,6 +69,7 @@ def index(path=None):
     data,total = FetchData(path=path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
     #是否有密码
     password,_,cur=has_item(path,'.password')
+    ori_pass = password
     md5_p=md5(path)
     has_verify_=has_verify(path)
     if request.method=="POST":
@@ -81,10 +82,9 @@ def index(path=None):
                     has_verify_ = True
                     break
         if password1==password:
-            return render_template('error.html',msg=line+", entered pass: "+password1+", end!",code=500), 500
             resp=MakeResponse(redirect(url_for('.index',path=path)))
             resp.delete_cookie(md5_p)
-            resp.set_cookie(md5_p,password)
+            resp.set_cookie(md5_p,ori_pass)
             return resp
     if password!=False:
         if (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=password) and has_verify_==False:
