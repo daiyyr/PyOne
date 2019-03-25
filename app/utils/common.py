@@ -343,8 +343,6 @@ def has_item(path,name):
         redis_client.set(key,'{}########{}########{}'.format(item,fid,cur))
         return item,fid,cur
 
-
-
 def has_verify(path):
     verify=False
     md5_p=md5(path)

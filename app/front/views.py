@@ -73,6 +73,12 @@ def index(path=None):
     has_verify_=has_verify(path)
     if request.method=="POST":
         password1=request.form.get('password')
+        #deal with root password
+        if len(path.split('/')) == 1 or n_path == '/':
+            for line in password.splitlines():
+                if line != '' and password1 == line:
+                    password = line
+                    break
         if password1==password:
             resp=MakeResponse(redirect(url_for('.index',path=path)))
             resp.delete_cookie(md5_p)
