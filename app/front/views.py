@@ -80,6 +80,9 @@ def index(path=None):
                 if line != '' and password1 == line:
                     password = password1
                     has_verify_ = True
+                    md5_urp=md5('user_root_pass')
+                    resp.delete_cookie(md5_urp)
+                    resp.set_cookie(md5_urp,password1)
                     break
         if password1==password:
             resp=MakeResponse(redirect(url_for('.index',path=path)))
@@ -99,6 +102,25 @@ def index(path=None):
     #参数
     all_image=False if sum([file_ico(i)!='image' for i in data])>0 else True
     pagination=Pagination(query=None,page=page, per_page=50, total=total, items=None)
+
+    #hide root files, and other users' folders
+    if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
+        md5_urp=md5('user_root_pass')
+        user_root_pass = request.cookies.get(md5_urp)
+        hide_list=[]
+        data_index = -1
+        for d in data:
+            data_index += 1
+            if d['type']=='folder':
+                sub_password,_,_sub_cur=has_item(d['path'],'.password')
+                if sub_password!=False:
+                    if sub_password != user_root_pass:
+                        hide_list.append(data_index)
+            else:
+                hide_list.append(data_index)
+        for i in hide_list:
+            del data[i]
+
     if path.split(':',1)[-1]=='/':
         path=':'.join([path.split(':',1)[0],''])
     resp=MakeResponse(render_template('theme/{}/index.html'.format(GetConfig('theme'))
