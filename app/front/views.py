@@ -117,10 +117,12 @@ def index(path=None):
                     if sub_password!=False:
                         if sub_password != user_root_pass:
                             hide_list.append(data_index)
+                            data.remove(d)
                 else:
                     hide_list.append(data_index)
-            for i in hide_list:
-                del data[i]
+                    data.remove(d)
+            # for i in hide_list:
+            #     del data[i]
     except Exception as e:
         exstr = traceback.format_exc()
         return render_template('error.html',msg=exstr,code=500), 500
