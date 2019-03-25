@@ -76,7 +76,7 @@ def index(path=None):
         #deal with root password
         if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
             for line in password.splitlines():
-                return render_template('error.html',msg=line,code=500), 500
+                return render_template('error.html',msg=line+", entered pass: "+password1+",end!",code=500), 500
                 if line != '' and password1 == line:
                     password = line
                     has_verify_ = True
