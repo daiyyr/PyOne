@@ -74,13 +74,13 @@ def index(path=None):
     if request.method=="POST":
         password1=request.form.get('password')
         #deal with root password
-        # if len(path.split(':')) == 1 or path.split(':')[1]=='/':
-        return render_template('error.html',msg=password,code=500), 500
-        for line in password.splitlines():
-            if line != '' and password1 == line:
-                password = line
-                has_verify_ = True
-                break
+        if len(path.split(':')) == 1 or path.split(':')[1]=='/':
+            for line in password.splitlines():
+                if line != '' and password1 == line:
+                    return render_template('error.html',msg=line,code=500), 500
+                    password = line
+                    has_verify_ = True
+                    break
         if password1==password:
             resp=MakeResponse(redirect(url_for('.index',path=path)))
             resp.delete_cookie(md5_p)
