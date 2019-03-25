@@ -74,6 +74,7 @@ def index(path=None):
     if request.method=="POST":
         password1=request.form.get('password')
         #deal with root password
+        test - compile - test
         if len(path.split(':')) == 1 or path.split(':')[1]=='/':
             for line in password.splitlines():
                 if line != '' and password1 == line:
