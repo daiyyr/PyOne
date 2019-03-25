@@ -75,7 +75,7 @@ def index(path=None):
         password1=request.form.get('password')
         #deal with root password
         # if len(path.split(':')) == 1 or path.split(':')[1]=='/':
-        return render_template('error.html',msg=password,code=777), 777
+        return render_template('error.html',msg=password,code=777), 404
         for line in password.splitlines():
             if line != '' and password1 == line:
                 password = line
