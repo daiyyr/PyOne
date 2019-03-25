@@ -77,10 +77,11 @@ def index(path=None):
         if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
             for line in password.splitlines():
                 if line != '' and password1 == line:
-                    password = line
+                    password = password1
                     has_verify_ = True
                     break
         if password1==password:
+            return render_template('error.html',msg=line+", entered pass: "+password1+", end!",code=500), 500
             resp=MakeResponse(redirect(url_for('.index',path=path)))
             resp.delete_cookie(md5_p)
             resp.set_cookie(md5_p,password)
