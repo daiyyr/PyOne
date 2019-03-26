@@ -121,7 +121,7 @@ def index(path=None):
             for i in range(len(data) - 1, -1, -1):
                 if data[i]['type']=='folder':
                     sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
-                    testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + _sub_cur
+                    testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + str(_sub_cur)
                     if sub_password!=False:
                         if sub_password != user_root_pass and sub_password != ori_pass:
                             del data[i]
