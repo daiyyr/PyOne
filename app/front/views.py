@@ -113,21 +113,21 @@ def index(path=None):
 
     #hide root files, and other users' folders
     try:
-        # testing = ''
+        testing = ''
         if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
             md5_urp=md5('user_root_pass')
             user_root_pass = request.cookies.get(md5_urp)
-            # testing += 'user_root_pass:' + user_root_pass
+            testing += 'user_root_pass:' + user_root_pass
             for i in range(len(data) - 1, -1, -1):
                 if data[i]['type']=='folder':
                     sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
-                    # testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password
+                    testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + _sub_cur
                     if sub_password!=False:
                         if sub_password != user_root_pass and sub_password != ori_pass:
                             del data[i]
                 else:
                     del data[i]
-            # return render_template('error.html',msg=testing,code=500), 500
+            return render_template('error.html',msg=testing,code=500), 500
     except Exception as e:
         exstr = traceback.format_exc()
         return render_template('error.html',msg=exstr,code=500), 500
