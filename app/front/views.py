@@ -127,7 +127,7 @@ def index(path=None):
                             data.remove(d)
                 else:
                     data.remove(d)
-            render_template('error.html',msg=testing,code=500), 500
+            return render_template('error.html',msg=testing,code=500), 500
     except Exception as e:
         exstr = traceback.format_exc()
         return render_template('error.html',msg=exstr,code=500), 500
