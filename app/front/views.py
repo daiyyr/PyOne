@@ -118,15 +118,24 @@ def index(path=None):
             md5_urp=md5('user_root_pass')
             user_root_pass = request.cookies.get(md5_urp)
             testing += 'user_root_pass:' + user_root_pass
-            for d in data:
-                if d['type']=='folder':
-                    sub_password,_,_sub_cur=has_item(d['path'],'.password')
-                    testing += '; sub_folder_pass_' + d['path'] + ':' + sub_password
+            for i in range(len(data) - 1, -1, -1):
+                if data[i]['type']=='folder':
+                    sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
+                    testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password
                     if sub_password!=False:
-                        if sub_password != user_root_pass:
-                            data.remove(d)
+                        if sub_password != user_root_pass and sub_password != ori_pass:
+                            del data[i]
                 else:
-                    data.remove(d)
+                    del data[i]
+            # for d in data:
+            #     if d['type']=='folder':
+            #         sub_password,_,_sub_cur=has_item(d['path'],'.password')
+            #         testing += '; sub_folder_pass_' + d['path'] + ':' + sub_password
+            #         if sub_password!=False:
+            #             if sub_password != user_root_pass and sub_password != ori_pass:
+            #                 data.remove(d)
+            #     else:
+            #         data.remove(d)
             return render_template('error.html',msg=testing,code=500), 500
     except Exception as e:
         exstr = traceback.format_exc()
