@@ -82,9 +82,12 @@ def index(path=None):
                         password = password1
                         has_verify_ = True
                         md5_urp=md5('user_root_pass')
+                        resp=MakeResponse(redirect(url_for('.index',path=path)))
                         resp.delete_cookie(md5_urp)
                         resp.set_cookie(md5_urp,password1)
-                        break
+                        resp.delete_cookie(md5_p)
+                        resp.set_cookie(md5_p,ori_pass)
+                        return resp
             except Exception as e:
                 exstr = traceback.format_exc()
                 return render_template('error.html',msg=exstr,code=500), 500
