@@ -123,11 +123,11 @@ def index(path=None):
                     sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
                     testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + str(_sub_cur)
                     if sub_password!=False:
-                        if sub_password != user_root_pass and sub_password != ori_pass:
+                        if sub_password != user_root_pass and _sub_cur:
                             del data[i]
                 else:
                     del data[i]
-            return render_template('error.html',msg=testing,code=500), 500
+            # return render_template('error.html',msg=testing,code=500), 500
     except Exception as e:
         exstr = traceback.format_exc()
         return render_template('error.html',msg=exstr,code=500), 500
