@@ -76,14 +76,19 @@ def index(path=None):
         password1=request.form.get('password')
         #deal with root password
         if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
-            for line in password.splitlines():
-                if line != '' and password1 == line:
-                    password = password1
-                    has_verify_ = True
-                    md5_urp=md5('user_root_pass')
-                    resp.delete_cookie(md5_urp)
-                    resp.set_cookie(md5_urp,password1)
-                    break
+            try:
+                for line in password.splitlines():
+                    if line != '' and password1 == line:
+                        password = password1
+                        has_verify_ = True
+                        md5_urp=md5('user_root_pass')
+                        resp.delete_cookie(md5_urp)
+                        resp.set_cookie(md5_urp,password1)
+                        break
+            except Exception as e:
+                exstr = traceback.format_exc()
+                return render_template('error.html',msg=exstr,code=500), 500
+
         if password1==password:
             resp=MakeResponse(redirect(url_for('.index',path=path)))
             resp.delete_cookie(md5_p)
