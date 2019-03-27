@@ -125,6 +125,13 @@ def index(path=None):
                     if sub_password!=False:
                         if sub_password != user_root_pass and _sub_cur:
                             del data[i]
+                        #directly go into sub folder
+                        if sub_password == user_root_pass:
+                            resp=MakeResponse(redirect(url_for('.index',path=data[i]['path'])))
+                            md5_sub_p=md5(data[i]['path'])
+                            resp.delete_cookie(md5_sub_p)
+                            resp.set_cookie(md5_sub_p,sub_password)
+                            return resp
                 else:
                     del data[i]
             # return render_template('error.html',msg=testing,code=500), 500
