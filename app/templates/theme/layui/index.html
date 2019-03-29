@@ -1,6 +1,9 @@
 {%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
 {% import 'theme/'+GetConfig('theme')+'/_macro.html' as macros %}
 
+<link rel="stylesheet" href="https://cdn.staticfile.org/mdui/0.4.2/css/mdui.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/mdui/0.4.2/js/mdui.min.js"></script>
 <script src="https://cdn.staticfile.org/layer/2.3/layer.js"></script>
 
 {%block content%}
@@ -27,10 +30,11 @@
         <div class="layui-col-lg12">
             <table class="layui-table">
                 <colgroup>
-                    <col width="60%">
+                    <col width="50%">
                     <col width="15%" class="layui-hide-xs">
+                    <col width="10%" class="layui-hide-xs">
+                    <col width="10%" class="layui-hide-xs">
                     <col width="15%" class="layui-hide-xs">
-                    <col class="layui-hide-xs">
                 </colgroup>
                 <thead>
                     <tr>

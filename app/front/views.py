@@ -342,7 +342,6 @@ def server_to_one():
         local_dir=os.path.join(config_dir,'upload')
         filepath=urllib.unquote(os.path.join(local_dir,filename))
         _upload_session=Upload_for_server(filepath,remote_folder,user)
-        ErrorLogger().print_r("front: " + str(filepath) + ", " + str(remote_folder) + ", " + str(user))
         def read_status():
             while 1:
                 try:
@@ -368,7 +367,7 @@ def delete():
     ids=request.form.get('id')
     user=request.form.get('user')
     if ids is None:
-        return jsonify({'msg':u'请选择要删除的文件','status':0})
+        return jsonify({'msg':u'Please select files you want to delete','status':0})
     ids=ids.split('##')
     infos={}
     infos['status']=1
@@ -384,9 +383,13 @@ def delete():
         name=file['name']
         path=file['path'].replace(name,'')
 
+        ErrorLogger().print_r("id: " + str(id))
+        ErrorLogger().print_r("path: " + str(path))
         password,_,cur=has_item(path,'.password')
         if(password != "" and password != password1):
             infos['fail']+=1
+            infos['status']=0
+            infos['msg']="User authentication failed!"
             return jsonify(infos)
 
         if len(path.split('/'))>2 and path.split('/')[-1]=='':
@@ -410,6 +413,10 @@ def Rename():
     file=mon_db.items.find_one({'id':fileid})
     name=file['name']
     path=file['path'].replace(name,'')
+
+    ErrorLogger().print_r("fileid: " + str(fileid))
+    ErrorLogger().print_r("path: " + str(path))
+
     password,_,cur=has_item(path,'.password')
     md5_urp=md5('user_root_pass')
     password1 = request.cookies.get(md5_urp)
