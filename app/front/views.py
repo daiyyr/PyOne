@@ -265,11 +265,6 @@ Disallow:  /
 
 @front.route('/add_folder',methods=['POST'])
 def AddFolder():
-    password,_,cur=has_item(path,'.password')
-    password1=request.form.get('password')
-    if(password != "" and password != password1):
-        result = False
-        return jsonify({'result':result})
     folder_name=request.form.get('folder_name')
     path=request.args.get('path')
     user,grand_path=path.split(':')
@@ -278,5 +273,11 @@ def AddFolder():
     else:
         if grand_path.startswith('/'):
             grand_path=grand_path[1:]
+            
+    password,_,cur=has_item(path,'.password')
+    password1=request.form.get('password')
+    if(password != "" and password != password1):
+        result = False
+        return jsonify({'result':result})
     result=CreateFolder(folder_name,grand_path,user)
     return jsonify({'result':result})
