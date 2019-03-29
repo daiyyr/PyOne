@@ -278,6 +278,6 @@ def AddFolder():
     password1=request.form.get('password')
     if(password != "" and password != password1):
         result = False
-        return jsonify({'result':result,'message': password + "\," + password1})
+        return jsonify({'result':result,'message': password + "   " + password1})
     result=CreateFolder(folder_name,grand_path,user)
     return jsonify({'result':result})
