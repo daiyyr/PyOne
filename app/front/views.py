@@ -5,6 +5,7 @@ from ..utils import *
 from ..extend import *
 from . import front
 import datetime
+import os
 import shutil
 
 ################################################################################
@@ -72,28 +73,28 @@ def index(path=None):
     data,total = FetchData(path=path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
     
     #ddos protection
-    try:
-        retry_key = ''.join(e for e in ('retry' + path) if e.isalnum())
-        retry = getRetry(retry_key)
-        if retry == "":
-            retry = 0
-        retry = float(retry)
-        if(retry == 5):
-            retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
-            setRetry(retry_key, retry)
-        if(retry > 5):
-            last_try = datetime.datetime(1900, 1, 1, 0, 0, 0, 0) + datetime.timedelta(seconds=retry)
-            if((datetime.datetime.now() - last_try).total_seconds() > 60):
-                #unlock account
-                setRetry(retry_key, 0)
-            else:
-                #lock account for 7 days
-                retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
-                setRetry(retry_key, retry)
-                return render_template('error.html',msg="Someone was trying your password. Your account has been locked for 7 days. Please contact admin.",code=500), 500
-    except:
-        exstr = traceback.format_exc()
-        ErrorLogger().print_r(exstr)
+    # try:
+    #     retry_key = ''.join(e for e in ('retry' + path) if e.isalnum())
+    #     retry = getRetry(retry_key)
+    #     if retry == "":
+    #         retry = 0
+    #     retry = float(retry)
+    #     if(retry == 5):
+    #         retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
+    #         setRetry(retry_key, retry)
+    #     if(retry > 5):
+    #         last_try = datetime.datetime(1900, 1, 1, 0, 0, 0, 0) + datetime.timedelta(seconds=retry)
+    #         if((datetime.datetime.now() - last_try).total_seconds() > 60):
+    #             #unlock account
+    #             setRetry(retry_key, 0)
+    #         else:
+    #             #lock account for 7 days
+    #             retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
+    #             setRetry(retry_key, retry)
+    #             return render_template('error.html',msg="Someone was trying your password. Your account has been locked for 7 days. Please contact admin.",code=500), 500
+    # except:
+    #     exstr = traceback.format_exc()
+    #     ErrorLogger().print_r(exstr)
 
     #是否有密码
     password,_,cur=has_item(path,'.password')
@@ -126,13 +127,13 @@ def index(path=None):
             resp.set_cookie(md5_p,ori_pass)
             return resp
     if password!=False:
-        retry = getRetry(retry_key)
-        if retry == "":
-            retry = 0
-        retry = float(retry)
-        retry += 1
-        setRetry(retry_key,retry)
-        setRetryLog("path: " + path + ", password: " +  password1)
+        # retry = getRetry(retry_key)
+        # if retry == "":
+        #     retry = 0
+        # retry = float(retry)
+        # retry += 1
+        # setRetry(retry_key,retry)
+        # setRetryLog("path: " + path + ", password: " +  password1)
 
         if (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=password) and has_verify_==False:
             if total=='files' and GetConfig('encrypt_file')=="no":
@@ -467,43 +468,3 @@ def Rename():
     result=ReName(fileid,new_name,user)
     return jsonify({'result':result})
 
-
-def setRetry(key, value):
-    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
-    if not os.path.exists(retrykeyfile):
-        open(retrykeyfile, 'a').close()
-    #Create temp file
-    tempFile = os.path.join(config_dir,'logs/PyOne.password.retry.key.temp')
-    open(tempFile, 'a').close()
-    with open(tempFile,'w') as new_file:
-        found = False
-        with open(retrykeyfile) as old_file:
-            for line in old_file:
-                if key == line.split(':')[0]: 
-                    new_file.write(key + ":" + str(value) + "\n")
-                    found = True
-                else:
-                    new_file.write(line)
-            if not found:
-                new_file.write(key + ":" + str(value) + "\n")
-    #Remove original file
-    os.remove(retrykeyfile)
-    #Move new file
-    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
-    shutil.move(tempFile, retrykeyfile)
-
-
-def getRetry(key):
-    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
-    if not os.path.exists(retrykeyfile):
-        open(retrykeyfile, 'a').close()
-    with open(retrykeyfile) as old_file:
-        for line in old_file:
-            if key == line.split(':')[0]: 
-                return line.split(':')[1]
-    return ""
-
-def setRetryLog(log_line):
-    retrylogfile = os.path.join(config_dir,'logs/PyOne.password.retry.log')
-    with open(retrylogfile, 'a') as file:
-        file.write(str(datetime.datetime.now()) + " " + log_line + '\n')
