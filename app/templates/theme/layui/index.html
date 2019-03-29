@@ -30,7 +30,7 @@
         <div class="layui-col-lg12">
             <table class="layui-table">
                 <colgroup>
-                    <col width="50%">
+                    <col width="60%">
                     <col width="15%" class="layui-hide-xs">
                     <col width="10%" class="layui-hide-xs">
                     <col width="10%" class="layui-hide-xs">
@@ -92,6 +92,14 @@
                                         <td class="layui-hide-xs">{{data['lastModtime']}}</td>
                                         <td class="layui-hide-xs">{{data['type']}}</td>
                                         <td class="layui-hide-xs">{{data['size']}}</td>
+                                        <td class="layui-hide-xs">
+                                            <button class="layui-btn layui-btn-sm" onclick="delProduct('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Delete file'{{'}'}}">
+                                                <i class="layui-icon">&#xe640;</i>
+                                            </button>
+                                            <button class="layui-btn layui-btn-sm" onclick="Rename('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Rename'{{'}'}}">
+                                                <i class="layui-icon">&#xe642;</i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 {%endif%}
                             {%else%}
@@ -104,6 +112,14 @@
                                     <td class="layui-hide-xs">{{data['lastModtime']}}</td>
                                     <td class="layui-hide-xs">{{data['type']}}</td>
                                     <td class="layui-hide-xs">{{data['size']}}</td>
+                                    <td class="layui-hide-xs">
+                                        <button class="layui-btn layui-btn-sm" onclick="delProduct('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Delete file'{{'}'}}">
+                                            <i class="layui-icon">&#xe640;</i>
+                                        </button>
+                                        <button class="layui-btn layui-btn-sm" onclick="Rename('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Rename'{{'}'}}">
+                                            <i class="layui-icon">&#xe642;</i>
+                                        </button>
+                                    </td>
                                 </tr>
                             {%endif%}
                         {%endif%}
