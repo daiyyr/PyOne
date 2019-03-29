@@ -382,10 +382,11 @@ def delete():
         file=mon_db.items.find_one({'id':id})
         name=file['name']
         path=file['path'].replace(name,'')
+        password,_,cur=has_item(path,'.password')
 
         ErrorLogger().print_r("id: " + str(id))
         ErrorLogger().print_r("path: " + str(path))
-        password,_,cur=has_item(path,'.password')
+        ErrorLogger().print_r("password: " + str(password) + "password1" + str(password1))
         if(password != "" and password != password1):
             infos['fail']+=1
             infos['status']=0
