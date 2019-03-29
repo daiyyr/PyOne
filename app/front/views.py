@@ -489,6 +489,7 @@ def setRetry(key, value):
     #Remove original file
     os.remove(retrykeyfile)
     #Move new file
+    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
     shutil.move(tempFile, retrykeyfile)
 
 
