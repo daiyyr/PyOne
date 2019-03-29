@@ -468,6 +468,7 @@ from shutil import move
 from os import fdopen, remove
 
 def setRetry(key, value):
+    retrykeyfile = ""
     retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
     if not os.path.exists(retrykeyfile):
         os.mknod(retrykeyfile)
@@ -489,6 +490,7 @@ def setRetry(key, value):
     move(abs_path, retrykeyfile)
 
 def getRetry(key):
+    retrykeyfile = ""
     retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
     if not os.path.exists(retrykeyfile):
         os.mknod(retrykeyfile)
@@ -499,6 +501,7 @@ def getRetry(key):
     return ""
 
 def setRetryLog(log_line):
+    retrylogfile = ""
     retrylogfile = os.path.join(config_dir,'logs/PyOne.password.retry.log')
     if not os.path.exists(retrylogfile):
         os.mknod(retrylogfile)
