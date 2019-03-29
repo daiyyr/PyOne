@@ -357,5 +357,7 @@ def server_to_one():
                     break
         session.pop('login',None)
         return Response(read_status(), mimetype= 'text/event-stream')
-    except:
+    except Exception as e:
+        exstr = traceback.format_exc()
+        ErrorLogger().print_r(exstr)
         return render_template('error.html',msg="error",code=500), 500
