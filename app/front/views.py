@@ -294,10 +294,60 @@ def upload_local():
     md5_p=md5(path)
     password1 = request.cookies.get(md5_p)
     if(password != "" and password != password1):
-        return render_template('error.html',msg=exstr,code=500), 500
+        return render_template('error.html',msg="error",code=500), 500
 
     user,remote_folder=request.args.get('path').split(':')
-    # resp=MakeResponse(render_template('theme/{}/upload_local.html'.format(GetConfig('theme')),remote_folder=remote_folder,cur_user=user))
-    resp=MakeResponse(render_template('admin/manage/upload_local.html',remote_folder=remote_folder,cur_user=user))
+    resp=MakeResponse(render_template('theme/{}/upload_local.html'.format(GetConfig('theme')),remote_folder=remote_folder,cur_user=user))
+    # resp=MakeResponse(render_template('admin/manage/upload_local.html',remote_folder=remote_folder,cur_user=user))
     return resp
 
+
+@front.route('/recv_upload', methods=['POST'])
+def recv_upload():  # 接收前端上传的一个分片
+    path=request.form.get('path')
+    password,_,cur=has_item(path,'.password')
+    md5_p=md5(path)
+    password1 = request.cookies.get(md5_p)
+    if(password != "" and password != password1):
+        return render_template('error.html',msg="error",code=500), 500
+
+    md5=request.form.get('fileMd5')
+    name=request.form.get('name').encode('utf-8')
+    chunk_id=request.form.get('chunk',0,type=int)
+    filename = '{}-{}'.format(name,chunk_id)
+    upload_file = request.files['file']
+    upload_file.save(u'./upload/{}'.format(filename))
+    return jsonify({'upload_part':True})
+
+
+@front.route('/to_one',methods=['GET'])
+def server_to_one():
+    user=request.args.get('user')
+    filename=request.args.get('filename').encode('utf-8')
+    remote_folder=request.args.get('remote_folder').encode('utf-8')
+
+    path = user + ":" + remote_folder
+    password,_,cur=has_item(path,'.password')
+    md5_p=md5(path)
+    password1 = request.cookies.get(md5_p)
+    if(password != "" and password != password1):
+        return render_template('error.html',msg="error",code=500), 500
+        
+    if remote_folder!='/':
+        remote_folder=remote_folder+'/'
+    local_dir=os.path.join(config_dir,'upload')
+    filepath=urllib.unquote(os.path.join(local_dir,filename))
+    _upload_session=Upload_for_server(filepath,remote_folder,user)
+    def read_status():
+        while 1:
+            try:
+                msg=_upload_session.next()['status']
+                yield "data:" + msg + "\n\n"
+            except Exception as e:
+                exstr = traceback.format_exc()
+                ErrorLogger().print_r(exstr)
+                msg='end'
+                yield "data:" + msg + "\n\n"
+                os.remove(filepath)
+                break
+    return Response(read_status(), mimetype= 'text/event-stream')
