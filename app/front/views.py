@@ -8,8 +8,7 @@ import datetime
 
 from tempfile import mkstemp
 from shutil import move
-from os import fdopen, remove
-
+import os
 
 ################################################################################
 ###################################前台函数#####################################
@@ -58,18 +57,19 @@ def setRetry(key, value):
         os.mknod(retrykeyfile)
     #Create temp file
     fh, abs_path = mkstemp()
-    with fdopen(fh,'w') as new_file:
+    with os.fdopen(fh,'w') as new_file:
         found = False
         with open(retrykeyfile) as old_file:
             for line in old_file:
                 if key == line.split(':')[0]: 
                     new_file.write(key + ":" + str(value) + "\n")
+                    found = True
                 else:
                     new_file.write(line)
             if not found:
                 new_file.write(key + ":" + str(value) + "\n")
     #Remove original file
-    remove(retrykeyfile)
+    os.remove(retrykeyfile)
     #Move new file
     move(abs_path, retrykeyfile)
 
