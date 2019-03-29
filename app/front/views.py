@@ -5,10 +5,7 @@ from ..utils import *
 from ..extend import *
 from . import front
 import datetime
-
-from tempfile import mkstemp
-from shutil import move
-import os
+import shutil
 
 ################################################################################
 ###################################前台函数#####################################
@@ -51,13 +48,13 @@ def favicon():
 
 
 def setRetry(key, value):
-    retrykeyfile = ""
     retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
     if not os.path.exists(retrykeyfile):
-        os.mknod(retrykeyfile)
+        open(retrykeyfile, 'a').close()
     #Create temp file
-    fh, abs_path = mkstemp()
-    with os.fdopen(fh,'w') as new_file:
+    tempFile = os.path.join(config_dir,'logs/PyOne.password.retry.key.temp')
+    open(tempFile, 'a').close()
+    with open(tempFile,'w') as new_file:
         found = False
         with open(retrykeyfile) as old_file:
             for line in old_file:
@@ -71,14 +68,13 @@ def setRetry(key, value):
     #Remove original file
     os.remove(retrykeyfile)
     #Move new file
-    move(abs_path, retrykeyfile)
+    shutil.move(tempFile, retrykeyfile)
 
 
 def getRetry(key):
-    retrykeyfile = ""
     retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
     if not os.path.exists(retrykeyfile):
-        os.mknod(retrykeyfile)
+        open(retrykeyfile, 'a').close()
     with open(retrykeyfile) as old_file:
         for line in old_file:
             if key == line.split(':')[0]: 
@@ -86,10 +82,7 @@ def getRetry(key):
     return ""
 
 def setRetryLog(log_line):
-    retrylogfile = ""
     retrylogfile = os.path.join(config_dir,'logs/PyOne.password.retry.log')
-    if not os.path.exists(retrylogfile):
-        os.mknod(retrylogfile)
     with open(retrylogfile, 'a') as file:
         file.write(str(datetime.datetime.now()) + " " + log_line + '\n')
 
