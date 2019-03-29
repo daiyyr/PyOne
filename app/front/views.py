@@ -280,7 +280,7 @@ def AddFolder():
         result = False
         retdata={}
         retdata['result']=result
-        retdata['msg'] = password + "   " + password1
+        retdata['msg'] = str(password) + "   " + str(password1)
         return jsonify(retdata)
     result=CreateFolder(folder_name,grand_path,user)
     return jsonify({'result':result})
