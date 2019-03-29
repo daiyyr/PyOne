@@ -333,9 +333,9 @@ def server_to_one():
     md5_p=md5(path)
     password1 = request.cookies.get(md5_p)
     if(password != "" and password != password1):
-        ErrorLogger().print_r(str(password) + "    " + str(password1))
         return render_template('error.html',msg="error",code=500), 500
 
+    ErrorLogger().print_r("start to upload to Onedrive")
     try:
         session['login']='true'
         if remote_folder!='/':
@@ -355,9 +355,8 @@ def server_to_one():
                     yield "data:" + msg + "\n\n"
                     os.remove(filepath)
                     break
+        session.pop('login',None)
         return Response(read_status(), mimetype= 'text/event-stream')
     except:
-        return render_template('error.html',msg="error",code=500), 500
-    finally:
-        session=tf.Session()
         session.pop('login',None)
+        return render_template('error.html',msg="error",code=500), 500
