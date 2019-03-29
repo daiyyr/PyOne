@@ -172,7 +172,8 @@ function AddFolder() {
                         alert('Creating succeed');
                     }
                     else{
-                        alert('Creating failed');
+                        alert(data.message);
+                        //alert('Creating failed');
                     }
                     window.location.reload();
                 },
