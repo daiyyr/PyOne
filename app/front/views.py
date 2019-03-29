@@ -382,19 +382,16 @@ def delete():
         file=mon_db.items.find_one({'id':id})
         name=file['name']
         path=file['path'].replace(name,'')
-        password,_,cur=has_item(path,'.password')
+        if len(path.split('/'))>2 and path.split('/')[-1]=='':
+            path=path[:-1]
 
-        ErrorLogger().print_r("id: " + str(id))
-        ErrorLogger().print_r("path: " + str(path))
-        ErrorLogger().print_r("password: " + str(password) + "password1" + str(password1))
+        password,_,cur=has_item(path,'.password')
         if(password != "" and password != password1):
             infos['fail']+=1
             infos['status']=0
             infos['msg']="User authentication failed!"
             return jsonify(infos)
-
-        if len(path.split('/'))>2 and path.split('/')[-1]=='':
-            path=path[:-1]
+        
         key='has_item$#$#$#$#{}$#$#$#$#{}'.format(path,name)
         InfoLogger().print_r('delete key:{}'.format(key))
         redis_client.delete(key)
@@ -414,10 +411,8 @@ def Rename():
     file=mon_db.items.find_one({'id':fileid})
     name=file['name']
     path=file['path'].replace(name,'')
-
-    ErrorLogger().print_r("fileid: " + str(fileid))
-    ErrorLogger().print_r("path: " + str(path))
-
+    if len(path.split('/'))>2 and path.split('/')[-1]=='':
+        path=path[:-1]
     password,_,cur=has_item(path,'.password')
     md5_urp=md5('user_root_pass')
     password1 = request.cookies.get(md5_urp)
