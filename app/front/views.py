@@ -489,6 +489,7 @@ def setRetry(key, value):
     move(abs_path, retrykeyfile)
 
 def getRetry(key):
+    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
     if not os.path.exists(retrykeyfile):
         os.mknod(retrykeyfile)
     retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
