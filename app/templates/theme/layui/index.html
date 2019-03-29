@@ -2,19 +2,15 @@
 {% import 'theme/'+GetConfig('theme')+'/_macro.html' as macros %}
 
 
-<link rel="stylesheet" href="https://cdn.staticfile.org/mdui/0.4.2/css/mdui.min.css">
-<script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/mdui/0.4.2/js/mdui.min.js"></script>
-<script src="https://cdn.staticfile.org/layer/2.3/layer.js"></script>
-
 {%block content%}
 <div class="layui-container">
     <!-- Image mode -->
     <div class="layui-form">
         <div class="layui-form-item">
             <input type="checkbox" name="switch" title="Image mode" lay-filter="image_view" {%if image_mode==1%}checked{%endif%}>
-
-            <button class="mdui-btn mdui-btn-icon" onclick="AddFolder('{{path}}')" mdui-tooltip="{{'{'}}content: 'Create a folder'{{'}'}}"><i class="mdui-icon material-icons">&#xe2cc;</i> </button>
+            <button class="layui-btn layui-btn-sm" onclick="AddFolder('{{path}}')" >
+                <i class="layui-icon">&#xe654;</i> Create Folder
+            </button>
 
         </div>
     </div>
