@@ -492,7 +492,6 @@ def getRetry(key):
     retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
     if not os.path.exists(retrykeyfile):
         os.mknod(retrykeyfile)
-    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
     with open(retrykeyfile) as old_file:
         for line in old_file:
             if key == line.split(':')[0]: 
