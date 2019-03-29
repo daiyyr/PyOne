@@ -275,8 +275,8 @@ def AddFolder():
             grand_path=grand_path[1:]
 
     password,_,cur=has_item(path,'.password')
-    md5_p=md5(path)
-    password1 = request.cookies.get(md5_p)
+    md5_urp=md5('user_root_pass')
+    password1 = request.cookies.get(md5_urp)
     if(password != "" and password != password1):
         result = False
         retdata={}
@@ -291,8 +291,8 @@ def AddFolder():
 def upload_local():
     path = request.args.get('path')
     password,_,cur=has_item(path,'.password')
-    md5_p=md5(path)
-    password1 = request.cookies.get(md5_p)
+    md5_urp=md5('user_root_pass')
+    password1 = request.cookies.get(md5_urp)
     if(password != "" and password != password1):
         return render_template('error.html',msg="error",code=500), 500
 
@@ -308,8 +308,8 @@ def recv_upload():  # 接收前端上传的一个分片
     # pass 'path' failed
     # path=request.form.get('path')
     # password,_,cur=has_item(path,'.password')
-    # md5_p=md5(path)
-    # password1 = request.cookies.get(md5_p)
+    # md5_urp=md5('user_root_pass')
+    # password1 = request.cookies.get(md5_urp)
     # if(password != "" and password != password1):
     #     return render_template('error.html',msg="error",code=500), 500
 
@@ -330,8 +330,8 @@ def server_to_one():
 
     path = user + ":" + remote_folder
     password,_,cur=has_item(path,'.password')
-    md5_p=md5(path)
-    password1 = request.cookies.get(md5_p)
+    md5_urp=md5('user_root_pass')
+    password1 = request.cookies.get(md5_urp)
     if(password != "" and password != password1):
         return render_template('error.html',msg="error",code=500), 500
 
