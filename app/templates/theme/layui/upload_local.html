@@ -1,4 +1,5 @@
-{%extends 'admin/layout.html'%} {%block content%}
+{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+{%block content%}
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/webuploader/0.1.1/webuploader.css">
 <script src="https://cdn.jsdelivr.net/npm/webuploader@0.1.8/dist/webuploader.min.js"></script>
 <script type="text/javascript" src="/static/js/hashmap.js"></script>
