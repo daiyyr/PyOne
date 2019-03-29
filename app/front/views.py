@@ -362,3 +362,68 @@ def server_to_one():
         return render_template('error.html',msg="error",code=500), 500
     # finally:
         # session.pop('login',None)
+
+@front.route('/delete',methods=["POST"])
+def delete():
+    ids=request.form.get('id')
+    user=request.form.get('user')
+    if ids is None:
+        return jsonify({'msg':u'请选择要删除的文件','status':0})
+    ids=ids.split('##')
+    infos={}
+    infos['status']=1
+    infos['delete']=0
+    infos['fail']=0
+
+    md5_urp=md5('user_root_pass')
+    password1 = request.cookies.get(md5_urp)
+
+    for id in ids:
+        InfoLogger().print_r('delete {}'.format(id))
+        file=mon_db.items.find_one({'id':id})
+        name=file['name']
+        path=file['path'].replace(name,'')
+
+        password,_,cur=has_item(path,'.password')
+        if(password != "" and password != password1):
+            infos['fail']+=1
+            return jsonify(infos)
+
+        if len(path.split('/'))>2 and path.split('/')[-1]=='':
+            path=path[:-1]
+        key='has_item$#$#$#$#{}$#$#$#$#{}'.format(path,name)
+        InfoLogger().print_r('delete key:{}'.format(key))
+        redis_client.delete(key)
+        kc='{}:content'.format(id)
+        redis_client.delete(kc)
+        status=DeleteRemoteFile(id,user)
+        if status:
+            infos['delete']+=1
+        else:
+            infos['fail']+=1
+    return jsonify(infos)
+
+@front.route('/rename',methods=['POST'])
+def Rename():
+    fileid=request.form.get('fileid')
+
+    file=mon_db.items.find_one({'id':fileid})
+    name=file['name']
+    path=file['path'].replace(name,'')
+    password,_,cur=has_item(path,'.password')
+    md5_urp=md5('user_root_pass')
+    password1 = request.cookies.get(md5_urp)
+    if(password != "" and password != password1):
+        return jsonify({'result':False})
+
+    user=request.form.get('user')
+    new_name=request.form.get('new_name')
+    if new_name=='' or new_name is None:
+        return jsonify({'result':False})
+    else:
+        if new_name.startswith('/'):
+            new_name=new_name[1:]
+        if new_name.endswith('/'):
+            new_name=new_name[:-1]
+    result=ReName(fileid,new_name,user)
+    return jsonify({'result':result})

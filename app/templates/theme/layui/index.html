@@ -37,6 +37,7 @@
                         {{ macros.Arraw(endpoint=endpoint,name='Modified date',cur_type='lastModtime',sortby=sortby,order=order,path=path,class="layui-hide-xs") }}
                         {{ macros.Arraw(endpoint=endpoint,name='Type',cur_type='type',sortby=sortby,order=order,path=path,class="layui-hide-xs") }}
                         {{ macros.Arraw(endpoint=endpoint,name='Size',cur_type='size',sortby=sortby,order=order,path=path,class="layui-hide-xs") }}
+                        <td class="layui-hide-xs"></td>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,6 +53,7 @@
                         <td class="layui-hide-xs"></td>
                         <td class="layui-hide-xs"></td>
                         <td class="layui-hide-xs"></td>
+                        <td class="layui-hide-xs"></td>
                     </tr>
                     {%endif%}
 
@@ -64,6 +66,14 @@
                                 <td class="layui-hide-xs">{{data['lastModtime']}}</td>
                                 <td class="layui-hide-xs">{{data['type']}}</td>
                                 <td class="layui-hide-xs">{{data['size']}}</td>
+                                <td class="layui-hide-xs">
+                                    <button class="layui-btn layui-btn-sm" onclick="delProduct('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Delete folder'{{'}'}}">
+                                        <i class="layui-icon">&#xe640;</i>
+                                    </button>
+                                    <button class="layui-btn layui-btn-sm" onclick="Rename('{{data['id']}}')" mdui-tooltip="{{'{'}}content: 'Rename'{{'}'}}">
+                                        <i class="layui-icon">&#xe642;</i>
+                                    </button>
+                                </td>
                             </tr>
                         {%else%}
                             {%if image_mode==1%}
@@ -190,6 +200,70 @@ function AddFolder() {
 
 function uploadLocalFile(path) {
     window.open("{{url_for('front.upload_local')}}?path=" + path, '_blank');
+}
+
+function delProduct(id) {
+    if (!confirm("This item will be deleted from Onedrive!!! Are you sure?")) {
+        return;
+    }
+    $.ajax({
+        type: "POST",
+        url: "{{url_for('front.delete')}}",
+        dataType: 'json',
+        data: { id: id ,user:"{{cur_user}}"},
+        beforeSend: function(xhr) {
+            var index = layer.load(2, {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
+        },
+        success: function(result) {
+            if (result.status == 0) {
+                alert(result.msg);
+                window.location.reload();
+            } else {
+                alert('Deleting succeed!');
+                window.location.reload();
+            }
+        },
+        complete: function(xhr) {
+            $('#layui-layer-shade1').remove();
+        }
+
+    });
+}
+
+function Rename(fileid){
+    layer.prompt({
+        formType: 0,
+        title: 'Please enter new file name (including suffix) ',
+    },
+    function(value, index, elem) {
+        layer.close(index);
+        $.ajax({
+                type: "POST",
+                url: "{{url_for('front.Rename')}}",
+                data: { fileid: fileid,new_name:value,user:"{{cur_user}}" },
+                async: false,//使用同步的方式,true为异步方式
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    var index2 = layer.load(2, {
+                        shade: [0.1, '#fff'] //0.1透明度的白色背景
+                    });
+                },
+                success: function(data) {
+                    if(data.result){
+                        alert('Succeed to rename');
+                    }
+                    else{
+                        alert('Failed to rename');
+                    }
+                    window.location.reload();
+                },
+                complete: function(xhr) {
+                    $('#layui-layer-shade1').remove();
+                }
+            });
+    });
 }
 
 </script>
