@@ -7,6 +7,9 @@
     <div class="layui-form">
         <div class="layui-form-item">
             <input type="checkbox" name="switch" title="Image mode" lay-filter="image_view" {%if image_mode==1%}checked{%endif%}>
+
+            <button class="mdui-btn mdui-btn-icon" onclick="AddFolder('{{path}}')" mdui-tooltip="{{'{'}}content: 'Create a folder'{{'}'}}"><i class="mdui-icon material-icons">&#xe2cc;</i> </button>
+
         </div>
     </div>
     <!-- head -->
@@ -143,6 +146,40 @@ layui.use('form', function() {
         }
     });
 });
+
+function AddFolder() {
+    layer.prompt({
+        formType: 0,
+        title: 'Please enter folder name',
+    },
+    function(value, index, elem) {
+        layer.close(index);
+        $.ajax({
+                type: "POST",
+                url: "{{url_for('admin.AddFolder',path=path)}}",
+                data: { folder_name: value },
+                async: false,//使用同步的方式,true为异步方式
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    var index2 = layer.load(2, {
+                        shade: [0.1, '#fff'] //0.1透明度的白色背景
+                    });
+                },
+                success: function(data) {
+                    if(data.result){
+                        alert('Creating succeed');
+                    }
+                    else{
+                        alert('Creating failed');
+                    }
+                    window.location.reload();
+                },
+                complete: function(xhr) {
+                    $('#layui-layer-shade1').remove();
+                }
+            });
+    });
+}
 
 
 </script>
