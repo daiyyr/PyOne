@@ -71,8 +71,9 @@ def index(path=None):
     
     #ddos protection
     retry_key = ''.join(e for e in ('retry' + path) if e.isalnum())
-    retry = GetConfig(retry_key)
-    if(retry is None or retry == ""):
+    try:
+        retry = GetConfig(retry_key)
+    except:
         retry = 0
     retry = float(retry)
     if(retry == 5):
@@ -120,8 +121,9 @@ def index(path=None):
             resp.set_cookie(md5_p,ori_pass)
             return resp
     if password!=False:
-        retry = GetConfig(retry_key)
-        if(retry is None or retry == ""):
+        try:
+            retry = GetConfig(retry_key)
+        except:
             retry = 0
         retry = float(retry)
         retry += 1
