@@ -275,12 +275,13 @@ def AddFolder():
             grand_path=grand_path[1:]
 
     password,_,cur=has_item(path,'.password')
-    password1=request.form.get('password')
+    md5_p=md5(path)
+    password1 = request.cookies.get(md5_p)
     if(password != "" and password != password1):
         result = False
         retdata={}
         retdata['result']=result
-        retdata['msg'] = str(password) + "   " + str(password1)
+        # retdata['msg'] = str(password) + "   " + str(password1)
         return jsonify(retdata)
     result=CreateFolder(folder_name,grand_path,user)
     return jsonify({'result':result})
