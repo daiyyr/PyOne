@@ -336,7 +336,7 @@ def server_to_one():
         return render_template('error.html',msg="error",code=500), 500
 
     try:
-        session['login']='true'
+        # session['login']='true'
         if remote_folder!='/':
             remote_folder=remote_folder+'/'
         local_dir=os.path.join(config_dir,'upload')
@@ -355,9 +355,10 @@ def server_to_one():
                     yield "data:" + msg + "\n\n"
                     os.remove(filepath)
                     break
-        session.pop('login',None)
         return Response(read_status(), mimetype= 'text/event-stream')
     except Exception as e:
         exstr = traceback.format_exc()
         ErrorLogger().print_r(exstr)
         return render_template('error.html',msg="error",code=500), 500
+    # finally:
+        # session.pop('login',None)
