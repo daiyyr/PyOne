@@ -304,12 +304,14 @@ def upload_local():
 
 @front.route('/recv_upload', methods=['POST'])
 def recv_upload():  # 接收前端上传的一个分片
-    path=request.form.get('path')
-    password,_,cur=has_item(path,'.password')
-    md5_p=md5(path)
-    password1 = request.cookies.get(md5_p)
-    if(password != "" and password != password1):
-        return render_template('error.html',msg="error",code=500), 500
+
+    # pass 'path' failed
+    # path=request.form.get('path')
+    # password,_,cur=has_item(path,'.password')
+    # md5_p=md5(path)
+    # password1 = request.cookies.get(md5_p)
+    # if(password != "" and password != password1):
+    #     return render_template('error.html',msg="error",code=500), 500
 
     md5=request.form.get('fileMd5')
     name=request.form.get('name').encode('utf-8')
@@ -332,22 +334,28 @@ def server_to_one():
     password1 = request.cookies.get(md5_p)
     if(password != "" and password != password1):
         return render_template('error.html',msg="error",code=500), 500
-        
-    if remote_folder!='/':
-        remote_folder=remote_folder+'/'
-    local_dir=os.path.join(config_dir,'upload')
-    filepath=urllib.unquote(os.path.join(local_dir,filename))
-    _upload_session=Upload_for_server(filepath,remote_folder,user)
-    def read_status():
-        while 1:
-            try:
-                msg=_upload_session.next()['status']
-                yield "data:" + msg + "\n\n"
-            except Exception as e:
-                exstr = traceback.format_exc()
-                ErrorLogger().print_r(exstr)
-                msg='end'
-                yield "data:" + msg + "\n\n"
-                os.remove(filepath)
-                break
-    return Response(read_status(), mimetype= 'text/event-stream')
+
+    try:
+        session['login']='true'
+        if remote_folder!='/':
+            remote_folder=remote_folder+'/'
+        local_dir=os.path.join(config_dir,'upload')
+        filepath=urllib.unquote(os.path.join(local_dir,filename))
+        _upload_session=Upload_for_server(filepath,remote_folder,user)
+        def read_status():
+            while 1:
+                try:
+                    msg=_upload_session.next()['status']
+                    yield "data:" + msg + "\n\n"
+                except Exception as e:
+                    exstr = traceback.format_exc()
+                    ErrorLogger().print_r(exstr)
+                    msg='end'
+                    yield "data:" + msg + "\n\n"
+                    os.remove(filepath)
+                    break
+        return Response(read_status(), mimetype= 'text/event-stream')
+    except:
+        return render_template('error.html',msg="error",code=500), 500
+    finally:
+        session.pop('login',None)

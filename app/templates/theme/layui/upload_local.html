@@ -1,4 +1,4 @@
-{%extends 'theme/'+GetConfig('theme')+'/layout.html'%}
+{%extends 'admin/layout.html'%} 
 {%block content%}
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/webuploader/0.1.1/webuploader.css">
 <script src="https://cdn.jsdelivr.net/npm/webuploader@0.1.8/dist/webuploader.min.js"></script>
@@ -187,7 +187,7 @@
                 chunked : true,
                 chunkSize : 4 * 1024 * 1024,
 
-                path : "{{remote_folder}}",
+                // path : "{{remote_folder}}",
 
                 // accept : {
                 //     extensions : 'csv,doc,docx,odp,ods,odt,pot,potm,potx,pps,ppsx,ppsxm,ppt,pptm,pptx,rtf,xls,xlsx,bmp,jpg,jpeg,png,gif,mp4,webm,avi,mpg,mpeg,rm,rmvb,mov,wmv,mkv,asf,avi mpg,mpeg,rm,rmvb,mov,wmv,mkv,asf,ogg,mp3,wav,exe,iso,txt,md,rst',
@@ -344,6 +344,10 @@
     }
 
     $(document).ready(function(){
+
+        //hide left admin panel
+        $("#main-drawer").hide();
+
         var ckname='folder_mode';
         if(getCookie(ckname)!=null){
             if(getCookie(ckname)==0){
