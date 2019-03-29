@@ -47,46 +47,6 @@ def favicon():
     return resp
 
 
-def setRetry(key, value):
-    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
-    if not os.path.exists(retrykeyfile):
-        open(retrykeyfile, 'a').close()
-    #Create temp file
-    tempFile = os.path.join(config_dir,'logs/PyOne.password.retry.key.temp')
-    open(tempFile, 'a').close()
-    with open(tempFile,'w') as new_file:
-        found = False
-        with open(retrykeyfile) as old_file:
-            for line in old_file:
-                if key == line.split(':')[0]: 
-                    new_file.write(key + ":" + str(value) + "\n")
-                    found = True
-                else:
-                    new_file.write(line)
-            if not found:
-                new_file.write(key + ":" + str(value) + "\n")
-    #Remove original file
-    os.remove(retrykeyfile)
-    #Move new file
-    shutil.move(tempFile, retrykeyfile)
-
-
-def getRetry(key):
-    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
-    if not os.path.exists(retrykeyfile):
-        open(retrykeyfile, 'a').close()
-    with open(retrykeyfile) as old_file:
-        for line in old_file:
-            if key == line.split(':')[0]: 
-                return line.split(':')[1]
-    return ""
-
-def setRetryLog(log_line):
-    retrylogfile = os.path.join(config_dir,'logs/PyOne.password.retry.log')
-    with open(retrylogfile, 'a') as file:
-        file.write(str(datetime.datetime.now()) + " " + log_line + '\n')
-
-
 @front.route('/<path:path>',methods=['POST','GET'])
 @front.route('/',methods=['POST','GET'])
 @limiter.limit("200/minute;50/second")
@@ -508,3 +468,41 @@ def Rename():
     return jsonify({'result':result})
 
 
+def setRetry(key, value):
+    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
+    if not os.path.exists(retrykeyfile):
+        open(retrykeyfile, 'a').close()
+    #Create temp file
+    tempFile = os.path.join(config_dir,'logs/PyOne.password.retry.key.temp')
+    open(tempFile, 'a').close()
+    with open(tempFile,'w') as new_file:
+        found = False
+        with open(retrykeyfile) as old_file:
+            for line in old_file:
+                if key == line.split(':')[0]: 
+                    new_file.write(key + ":" + str(value) + "\n")
+                    found = True
+                else:
+                    new_file.write(line)
+            if not found:
+                new_file.write(key + ":" + str(value) + "\n")
+    #Remove original file
+    os.remove(retrykeyfile)
+    #Move new file
+    shutil.move(tempFile, retrykeyfile)
+
+
+def getRetry(key):
+    retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
+    if not os.path.exists(retrykeyfile):
+        open(retrykeyfile, 'a').close()
+    with open(retrykeyfile) as old_file:
+        for line in old_file:
+            if key == line.split(':')[0]: 
+                return line.split(':')[1]
+    return ""
+
+def setRetryLog(log_line):
+    retrylogfile = os.path.join(config_dir,'logs/PyOne.password.retry.log')
+    with open(retrylogfile, 'a') as file:
+        file.write(str(datetime.datetime.now()) + " " + log_line + '\n')
