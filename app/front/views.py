@@ -6,6 +6,11 @@ from ..extend import *
 from . import front
 import datetime
 
+from tempfile import mkstemp
+from shutil import move
+from os import fdopen, remove
+
+
 ################################################################################
 ###################################前台函数#####################################
 ################################################################################
@@ -45,11 +50,6 @@ def favicon():
     resp=MakeResponse(send_from_directory(os.path.join(config_dir, 'app/static/img'),'favicon.ico',mimetype='image/vnd.microsoft.icon'))
     return resp
 
-
-
-from tempfile import mkstemp
-from shutil import move
-from os import fdopen, remove
 
 def setRetry(key, value):
     retrykeyfile = ""
@@ -119,25 +119,29 @@ def index(path=None):
     data,total = FetchData(path=path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
     
     #ddos protection
-    retry_key = ''.join(e for e in ('retry' + path) if e.isalnum())
-    retry = getRetry(retry_key)
-    if retry == "":
-        retry = 0
-    retry = float(retry)
-    if(retry == 5):
-        retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
-        setRetry(retry_key, retry)
-    if(retry > 5):
-        last_try = datetime.datetime(1900, 1, 1, 0, 0, 0, 0) + datetime.timedelta(seconds=retry)
-        if((datetime.datetime.now() - last_try).total_seconds() > 60):
-            #unlock account
-            setRetry(retry_key, 0)
-        else:
-            #lock account for 7 days
+    try:
+        retry_key = ''.join(e for e in ('retry' + path) if e.isalnum())
+        retry = getRetry(retry_key)
+        if retry == "":
+            retry = 0
+        retry = float(retry)
+        if(retry == 5):
             retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
             setRetry(retry_key, retry)
-            return render_template('error.html',msg="Someone was trying your password. Your account has been locked for 7 days. Please contact admin.",code=500), 500
-    
+        if(retry > 5):
+            last_try = datetime.datetime(1900, 1, 1, 0, 0, 0, 0) + datetime.timedelta(seconds=retry)
+            if((datetime.datetime.now() - last_try).total_seconds() > 60):
+                #unlock account
+                setRetry(retry_key, 0)
+            else:
+                #lock account for 7 days
+                retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
+                setRetry(retry_key, retry)
+                return render_template('error.html',msg="Someone was trying your password. Your account has been locked for 7 days. Please contact admin.",code=500), 500
+    except:
+        exstr = traceback.format_exc()
+        ErrorLogger().print_r(exstr)
+
     #是否有密码
     password,_,cur=has_item(path,'.password')
     ori_pass = password
