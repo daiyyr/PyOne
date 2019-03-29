@@ -335,7 +335,6 @@ def server_to_one():
     if(password != "" and password != password1):
         return render_template('error.html',msg="error",code=500), 500
 
-    ErrorLogger().print_r("start to upload to Onedrive")
     try:
         session['login']='true'
         if remote_folder!='/':
@@ -343,6 +342,7 @@ def server_to_one():
         local_dir=os.path.join(config_dir,'upload')
         filepath=urllib.unquote(os.path.join(local_dir,filename))
         _upload_session=Upload_for_server(filepath,remote_folder,user)
+        ErrorLogger().print_r("front: " + filepath + ", " + remote_folder + ", " + user)
         def read_status():
             while 1:
                 try:
@@ -358,5 +358,4 @@ def server_to_one():
         session.pop('login',None)
         return Response(read_status(), mimetype= 'text/event-stream')
     except:
-        session.pop('login',None)
         return render_template('error.html',msg="error",code=500), 500

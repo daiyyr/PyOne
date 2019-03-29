@@ -116,6 +116,7 @@ def server_to_one():
     local_dir=os.path.join(config_dir,'upload')
     filepath=urllib.unquote(os.path.join(local_dir,filename))
     _upload_session=Upload_for_server(filepath,remote_folder,user)
+    ErrorLogger().print_r("admin: " + filepath + ", " + remote_folder + ", " + user)
     def read_status():
         while 1:
             try:
