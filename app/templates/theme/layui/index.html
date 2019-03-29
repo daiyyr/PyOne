@@ -158,7 +158,7 @@ function AddFolder() {
         layer.close(index);
         $.ajax({
                 type: "POST",
-                url: "{{url_for('admin.AddFolder',path=path)}}",
+                url: "{{url_for('front.AddFolder',path=path)}}",
                 data: { folder_name: value },
                 async: false,//使用同步的方式,true为异步方式
                 dataType: "json",
