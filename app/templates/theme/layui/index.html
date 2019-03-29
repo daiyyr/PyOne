@@ -11,6 +11,10 @@
             <button class="layui-btn layui-btn-sm" onclick="AddFolder('{{path}}')" >
                 <i class="layui-icon">&#xe654;</i> Create Folder
             </button>
+            
+            <button class="layui-btn layui-btn-sm" onclick="uploadLocalFile('{{path}}')" >
+                <i class="layui-icon">&#xe654;</i> Upload File
+            </button>
 
         </div>
     </div>
@@ -184,6 +188,9 @@ function AddFolder() {
     });
 }
 
+function uploadLocalFile(path) {
+    window.open("{{url_for('front.upload_local')}}?path=" + path, '_blank');
+}
 
 </script>
 {%endblock script%}

@@ -285,3 +285,19 @@ def AddFolder():
         return jsonify(retdata)
     result=CreateFolder(folder_name,grand_path,user)
     return jsonify({'result':result})
+
+
+@front.route('/upload_local',methods=['POST','GET'])
+def upload_local():
+    path = request.args.get('path')
+    password,_,cur=has_item(path,'.password')
+    md5_p=md5(path)
+    password1 = request.cookies.get(md5_p)
+    if(password != "" and password != password1):
+        return render_template('error.html',msg=exstr,code=500), 500
+
+    user,remote_folder=request.args.get('path').split(':')
+    # resp=MakeResponse(render_template('theme/{}/upload_local.html'.format(GetConfig('theme')),remote_folder=remote_folder,cur_user=user))
+    resp=MakeResponse(render_template('admin/manage/upload_local.html',remote_folder=remote_folder,cur_user=user))
+    return resp
+
