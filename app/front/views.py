@@ -4,6 +4,7 @@ from flask_sqlalchemy import Pagination
 from ..utils import *
 from ..extend import *
 from . import front
+import datetime
 
 ################################################################################
 ###################################前台函数#####################################
@@ -67,6 +68,26 @@ def index(path=None):
     print('sortby:{}, order:{}'.format(sortby,order))
     action=request.args.get('action','download')
     data,total = FetchData(path=path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
+    
+    #ddos protection
+    retry = GetConfig('retry' + path)
+    if(retry is None or retry == ""):
+        retry = 0
+    retry = float(retry)
+    if(retry == 5):
+        retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
+        set('retry' + path, retry)
+    if(retry > 5):
+        last_try = datetime.datetime(1900, 1, 1, 0, 0, 0, 0) + datetime.timedelta(seconds=retry)
+        if((datetime.datetime.now() - last_try).total_seconds() > 60):
+            #unlock account
+            set('retry' + path, 0)
+        else:
+            #lock account for 7 days
+            retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
+            set('retry' + path, retry)
+            return render_template('error.html',msg="Someone was trying your password. Your account has been locked for 7 days. Please contact admin.",code=500), 500
+    
     #是否有密码
     password,_,cur=has_item(path,'.password')
     ori_pass = password
@@ -98,6 +119,13 @@ def index(path=None):
             resp.set_cookie(md5_p,ori_pass)
             return resp
     if password!=False:
+        retry = GetConfig('retry' + path)
+        if(retry is None or retry == ""):
+            retry = 0
+        retry = float(retry)
+        retry += 1
+        set('retry' + path,retry)
+
         if (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=password) and has_verify_==False:
             if total=='files' and GetConfig('encrypt_file')=="no":
                 return show(data['id'],user,action)
