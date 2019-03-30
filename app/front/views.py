@@ -199,6 +199,15 @@ def index(path=None):
             #     return show(data['id'],user,action)
             resp=MakeResponse(render_template('theme/{}/password.html'.format(GetConfig('theme')),path=path,cur_user=user))
             return resp
+            
+    ErrorLogger().print_r(
+        "path: " + path 
+        + ", has_verify_: " + str(has_verify_) 
+        + ", password: " + password
+        + ", request.cookies.get(md5_p): " + str(request.cookies.get(md5_p)) 
+        + ", md5(password): " + str(md5(password))
+    )
+
     if total=='files':
         return show(data['id'],user,action)
     readme,ext_r=GetReadMe(path)
