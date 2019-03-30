@@ -6,7 +6,7 @@ Additional functions:
 
 User management (set up multi-line password for drive root folder, then set each line as password for each sub folder. Give one line of password to one user. Then each user can only access the corresponding sub folder of drive root)
 
-DDos protection (lock & unlock account)
+DDos protection (lock & unlock account, cyphertext cookies)
 
 Login attempt log
 

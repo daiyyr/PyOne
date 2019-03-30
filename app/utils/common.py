@@ -359,6 +359,10 @@ def has_verify(path):
             vp=request.cookies.get(md5_p) # ciphertext
             if md5(passwd)==vp:
                 verify=True
+            else:
+                if cur:
+                    # find a parent folder with password, and user has no cookies for it
+                    return False
             if check_path.split('/')[-1]!='':
                 tmp_path='/'.join(check_path.split('/')[:-1])
                 if '/' not in tmp_path:
