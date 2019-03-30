@@ -396,7 +396,7 @@ def recv_upload():  # 接收前端上传的一个分片
     #     return render_template('error.html',msg="error",code=500), 500
 
     try:
-        session['login']='true'
+        # session['login']='true'
         md5=request.form.get('fileMd5')
         name=request.form.get('name').encode('utf-8')
         chunk_id=request.form.get('chunk',0,type=int)
@@ -410,10 +410,39 @@ def recv_upload():  # 接收前端上传的一个分片
     #     session.pop('login',None)
 
 
+@front.route('/checkChunk', methods=['POST'])
+def checkChunk():
+    fileName=request.form.get('name').encode('utf-8')
+    chunk=request.form.get('chunk',0,type=int)
+    filename = u'./upload/{}-{}'.format(fileName, chunk)
+    if os.path.exists(filename):
+        exists=True
+    else:
+        exists=False
+    return jsonify({'ifExist':exists})
+
+@front.route('/mergeChunks', methods=['POST'])
+def mergeChunks():
+    fileName=request.form.get('fileName').encode('utf-8')
+    md5=request.form.get('fileMd5')
+    chunk = 0  # 分片序号
+    with open(u'./upload/{}'.format(fileName), 'wb') as target_file:  # 创建新文件
+        while True:
+            try:
+                filename = u'./upload/{}-{}'.format(fileName, chunk)
+                source_file = open(filename, 'rb')  # 按序打开每个分片
+                target_file.write(source_file.read())  # 读取分片内容写入新文件
+                source_file.close()
+            except IOError as msg:
+                break
+            chunk += 1
+            os.remove(filename)  # 删除该分片，节约空间
+    return jsonify({'upload':True})
+
 @front.route('/to_one',methods=['GET'])
 def server_to_one():
-    session.pop('login',None)
-    
+    # session.pop('login',None)
+
     user=request.args.get('user')
     filename=request.args.get('filename').encode('utf-8')
     remote_folder=request.args.get('remote_folder').encode('utf-8')
@@ -449,8 +478,8 @@ def server_to_one():
         exstr = traceback.format_exc()
         ErrorLogger().print_r(exstr)
         return render_template('error.html',msg="error",code=500), 500
-    finally:
-        session.pop('login',None)
+    # finally:
+    #     session.pop('login',None)
 
 @front.route('/delete',methods=["POST"])
 def delete():
