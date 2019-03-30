@@ -121,41 +121,42 @@ def index(path=None):
                 if value.get('client_id')!='':
                     drive_root_path = '/{}:'.format(user)
                     drive_root_password,_,cur=has_item(drive_root_path,'.password')
-                    for line in drive_root_password.splitlines():
-                        if line != '' and password1 == line:
-                            data,total = FetchData(path=drive_root_path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
-                            for i in range(len(data) - 1, -1, -1):
-                                if data[i]['type']=='folder':
-                                    sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
-                                    # testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + str(_sub_cur)
-                                    if sub_password!=False:
-                                        if sub_password != password1 and _sub_cur:
-                                            del data[i]
-                                        #directly go into sub folder
-                                        if sub_password == password1:
-                                            resp=MakeResponse(redirect(url_for('.index',path=data[i]['path'])))
-                                            
-                                            #insert cookies for root pass
-                                            md5_sub_p=md5(data[i]['path'])
-                                            resp.delete_cookie(md5_sub_p)
-                                            resp.set_cookie(md5_sub_p,sub_password)
+                    if drive_root_password != False:
+                        for line in drive_root_password.splitlines():
+                            if line != '' and password1 == line:
+                                data,total = FetchData(path=drive_root_path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
+                                for i in range(len(data) - 1, -1, -1):
+                                    if data[i]['type']=='folder':
+                                        sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
+                                        # testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + str(_sub_cur)
+                                        if sub_password!=False:
+                                            if sub_password != password1 and _sub_cur:
+                                                del data[i]
+                                            #directly go into sub folder
+                                            if sub_password == password1:
+                                                resp=MakeResponse(redirect(url_for('.index',path=data[i]['path'])))
+                                                
+                                                #insert cookies for root pass
+                                                md5_sub_p=md5(data[i]['path'])
+                                                resp.delete_cookie(md5_sub_p)
+                                                resp.set_cookie(md5_sub_p,sub_password)
 
-                                            #insert cookies for sub folder pass
-                                            drive_root_pass,_,_sub_cur=has_item(drive_root_path,'.password')
-                                            md5_drive_root_path = md5(drive_root_path)
-                                            resp.delete_cookie(md5_drive_root_path)
-                                            resp.set_cookie(md5_drive_root_path,drive_root_pass)
+                                                #insert cookies for sub folder pass
+                                                drive_root_pass,_,_sub_cur=has_item(drive_root_path,'.password')
+                                                md5_drive_root_path = md5(drive_root_path)
+                                                resp.delete_cookie(md5_drive_root_path)
+                                                resp.set_cookie(md5_drive_root_path,drive_root_pass)
 
-                                            #insert user_root_path
-                                            md5_urp=md5('user_root_pass')
-                                            resp.delete_cookie(md5_urp)
-                                            resp.set_cookie(md5_urp,password1)
+                                                #insert user_root_path
+                                                md5_urp=md5('user_root_pass')
+                                                resp.delete_cookie(md5_urp)
+                                                resp.set_cookie(md5_urp,password1)
 
-                                            find_it_in_default_drive = True
-                                            setRetry(retry_key,0)
-                                            return resp
-                                else:
-                                    del data[i]
+                                                find_it_in_default_drive = True
+                                                setRetry(retry_key,0)
+                                                return resp
+                                    else:
+                                        del data[i]
         except Exception as e:
             exstr = traceback.format_exc()
             return render_template('error.html',msg=exstr,code=500), 500
