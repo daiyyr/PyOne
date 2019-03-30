@@ -1,6 +1,6 @@
 #-*- coding=utf-8 -*-
 from base_view import *
-
+import os
 
 
 ###
@@ -25,7 +25,7 @@ def login():
 @admin.route('/logout',methods=['GET','POST'])
 def logout():
     session.pop('login',None)
-    return redirect('/')
+    return redirect('/')    
 
 @admin.route('/reload',methods=['GET','POST'])
 def reload():
@@ -45,6 +45,18 @@ def setPass():
     else:
         data={'msg':'Original password is incorrect!'}
     return jsonify(data)
+
+
+@admin.route('/unlock',methods=['POST'])
+def unlock():
+    try:
+        retrykeyfile = os.path.join(config_dir,'logs/PyOne.password.retry.key')
+        open(retrykeyfile, 'w').close()
+        data={'msg':'All accounts have been unlocked!'}
+    except:
+        data={'msg':'Failed to unlock accounts!'}
+    return jsonify(data)
+
 
 @admin.route('/UpdatePyOne')
 def UpdatePyOne():
