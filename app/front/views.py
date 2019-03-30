@@ -76,7 +76,11 @@ def index(path=None):
     
     #ddos protection
     try:
-        retry_key = ''.join(e for e in ('retry' + path) if e.isalnum())
+        try:
+            ip = request.headers['X-Forwarded-For'].split(',')[0]
+        except:
+            ip = request.remote_addr
+        retry_key = ''.join(e for e in (ip + 'retry' + path) if e.isalnum())
         retry = getRetry(retry_key)
         if retry == "":
             retry = 0
@@ -86,14 +90,14 @@ def index(path=None):
             setRetry(retry_key, retry)
         if(retry > 5):
             last_try = datetime.datetime(1900, 1, 1, 0, 0, 0, 0) + datetime.timedelta(seconds=retry)
-            if((datetime.datetime.now() - last_try).total_seconds() > 60 * 60 * 24 * 7 ):
+            if((datetime.datetime.now() - last_try).total_seconds() > 60 * 60 * 24 * 30 ):
                 #unlock account
                 setRetry(retry_key, 0)
             else:
-                #lock account for 7 days
+                #lock account for 30 days
                 retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
                 setRetry(retry_key, retry)
-                return render_template('error.html',msg="Someone was trying your password. Your account has been locked for 7 days. Please contact admin.",code=403), 403
+                return render_template('error.html',msg="Login attempts exceeded. Your IP has been locked for 30 days. Please contact admin.",code=403), 403
     except:
         exstr = traceback.format_exc()
         ErrorLogger().print_r(exstr)

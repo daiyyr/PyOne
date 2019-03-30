@@ -18,14 +18,14 @@ def login():
         setRetry(retry_key, retry)
     if(retry > 5):
         last_try = datetime.datetime(1900, 1, 1, 0, 0, 0, 0) + datetime.timedelta(seconds=retry)
-        if((datetime.datetime.now() - last_try).total_seconds() > 60 * 60 * 24 * 7 ):
+        if((datetime.datetime.now() - last_try).total_seconds() > 60 * 60 * 24 * 30 ):
             #unlock account
             setRetry(retry_key, 0)
         else:
-            #lock account for 7 days
+            #lock account for 30 days
             retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
             setRetry(retry_key, retry)
-            return render_template('error.html',msg="Someone was trying Admin password. Admin has been locked for 7 days. Please contact the IT team.",code=403), 403
+            return render_template('error.html',msg="Someone was trying Admin password. Admin has been locked for 30 days. Please contact the IT team.",code=403), 403
 
     if request.method=='POST':
         password1=request.form.get('password')
