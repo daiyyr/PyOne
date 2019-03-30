@@ -32,6 +32,7 @@ def login():
         if password1==GetConfig('password'):
             setRetry(retry_key,0)
             session['login']='true'
+            session['access_control_panel']='true'
             if not os.path.exists(os.path.join(config_dir,'.install')):
                 resp=MakeResponse(redirect(url_for('admin.install',step=0,user='A')))
                 return resp
@@ -50,7 +51,7 @@ def login():
             setRetryLog("path: " + "Admin!!!!!!" + ", password: " +  password1 + ", IP: " + ip)
             resp=MakeResponse(render_template('admin/login.html'))
         return resp
-    if session.get('login'):
+    if session.get('login') and session.get('access_control_panel'):
         return redirect(url_for('admin.setting'))
     resp=MakeResponse(render_template('admin/login.html'))
     return resp
@@ -58,6 +59,7 @@ def login():
 @admin.route('/logout',methods=['GET','POST'])
 def logout():
     session.pop('login',None)
+    session.pop('access_control_panel',None)
     return redirect('/')    
 
 @admin.route('/reload',methods=['GET','POST'])

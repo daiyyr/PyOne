@@ -369,7 +369,7 @@ def AddFolder():
 
 @front.route('/upload_local',methods=['POST','GET'])
 def upload_local():
-    session['login']='true'
+    # session['login']='true'
 
     path = request.args.get('path')
     password,_,cur=has_item(path,'.password')
@@ -386,7 +386,6 @@ def upload_local():
 
 @front.route('/recv_upload', methods=['POST'])
 def recv_upload():  # 接收前端上传的一个分片
-    session['login']='true'
 
     # pass 'path' failed
     # path=request.form.get('path')
@@ -396,13 +395,19 @@ def recv_upload():  # 接收前端上传的一个分片
     # if(password != "" and md5(password) != password1):
     #     return render_template('error.html',msg="error",code=500), 500
 
-    md5=request.form.get('fileMd5')
-    name=request.form.get('name').encode('utf-8')
-    chunk_id=request.form.get('chunk',0,type=int)
-    filename = '{}-{}'.format(name,chunk_id)
-    upload_file = request.files['file']
-    upload_file.save(u'./upload/{}'.format(filename))
-    return jsonify({'upload_part':True})
+    try:
+        session['login']='true'
+        md5=request.form.get('fileMd5')
+        name=request.form.get('name').encode('utf-8')
+        chunk_id=request.form.get('chunk',0,type=int)
+        filename = '{}-{}'.format(name,chunk_id)
+        upload_file = request.files['file']
+        upload_file.save(u'./upload/{}'.format(filename))
+        return jsonify({'upload_part':True})
+    except:
+        return jsonify({'upload_part':False})
+    finally:
+        session.pop('login',None)
 
 
 @front.route('/to_one',methods=['GET'])
@@ -419,7 +424,7 @@ def server_to_one():
         return render_template('error.html',msg="error",code=500), 500
 
     try:
-        session['login']='true'
+        # session['login']='true'
         if remote_folder!='/':
             remote_folder=remote_folder+'/'
         local_dir=os.path.join(config_dir,'upload')
@@ -442,8 +447,8 @@ def server_to_one():
         exstr = traceback.format_exc()
         ErrorLogger().print_r(exstr)
         return render_template('error.html',msg="error",code=500), 500
-    finally:
-        session.pop('login',None)
+    # finally:
+        # session.pop('login',None)
 
 @front.route('/delete',methods=["POST"])
 def delete():
