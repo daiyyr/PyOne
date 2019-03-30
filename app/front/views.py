@@ -129,14 +129,15 @@ def index(path=None):
             resp.set_cookie(md5_p,ori_pass)
             return resp
     if password!=False:
-        retry = getRetry(retry_key)
-        if retry == "":
-            retry = 0
-        retry = float(retry)
-        retry += 1
-        setRetry(retry_key,retry)
-        setRetryLog("path: " + path + ", password: " +  password1)
         if (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=password) and has_verify_==False:
+            if request.method=="POST":
+                retry = getRetry(retry_key)
+                if retry == "":
+                    retry = 0
+                retry = float(retry)
+                retry += 1
+                setRetry(retry_key,retry)
+                setRetryLog("path: " + path + ", password: " +  password1)
             if total=='files' and GetConfig('encrypt_file')=="no":
                 return show(data['id'],user,action)
             resp=MakeResponse(render_template('theme/{}/password.html'.format(GetConfig('theme')),path=path,cur_user=user))
