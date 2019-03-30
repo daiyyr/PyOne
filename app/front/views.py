@@ -138,7 +138,11 @@ def index(path=None):
                 retry = float(retry)
                 retry += 1
                 setRetry(retry_key,retry)
-                setRetryLog("path: " + path + ", password: " +  password1)
+                try:
+                    ip = request.headers['X-Forwarded-For'].split(',')[0]
+                except:
+                    ip = request.remote_addr
+                setRetryLog("path: " + path + ", password: " +  password1 + ", IP: " + ip)
             if total=='files' and GetConfig('encrypt_file')=="no":
                 return show(data['id'],user,action)
             resp=MakeResponse(render_template('theme/{}/password.html'.format(GetConfig('theme')),path=path,cur_user=user))
