@@ -369,6 +369,8 @@ def AddFolder():
 
 @front.route('/upload_local',methods=['POST','GET'])
 def upload_local():
+    session['login']='true'
+
     path = request.args.get('path')
     password,_,cur=has_item(path,'.password')
     md5_urp=md5('user_root_pass')
@@ -384,6 +386,7 @@ def upload_local():
 
 @front.route('/recv_upload', methods=['POST'])
 def recv_upload():  # 接收前端上传的一个分片
+    session['login']='true'
 
     # pass 'path' failed
     # path=request.form.get('path')
