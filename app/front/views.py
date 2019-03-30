@@ -412,6 +412,8 @@ def recv_upload():  # 接收前端上传的一个分片
 
 @front.route('/to_one',methods=['GET'])
 def server_to_one():
+    session.pop('login',None)
+    
     user=request.args.get('user')
     filename=request.args.get('filename').encode('utf-8')
     remote_folder=request.args.get('remote_folder').encode('utf-8')
