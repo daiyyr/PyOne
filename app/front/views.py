@@ -93,7 +93,7 @@ def index(path=None):
                 #lock account for 7 days
                 retry = (datetime.datetime.now() - datetime.datetime(1900, 1, 1, 0, 0, 0, 0)).total_seconds()
                 setRetry(retry_key, retry)
-                return render_template('error.html',msg="Someone was trying your password. Your account has been locked for 7 days. Please contact admin.",code=500), 500
+                return render_template('error.html',msg="Someone was trying your password. Your account has been locked for 7 days. Please contact admin.",code=403), 403
     except:
         exstr = traceback.format_exc()
         ErrorLogger().print_r(exstr)

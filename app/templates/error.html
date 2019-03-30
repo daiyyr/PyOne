@@ -72,6 +72,10 @@
                 </ul>
             </div>
         </div>
+        {%endif%}
+        {%if code==403%}
+        <h2>Forbidden!</h2>
+        <h2>{{msg|safe}}</h2>
         {%else%}
         <h2>Sorry! The page you visit does not exist!</h2>
         {%endif%}
