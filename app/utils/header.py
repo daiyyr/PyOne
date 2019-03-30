@@ -172,8 +172,8 @@ def GetToken(Token_file='token.json',user=GetConfig('default_pan')):
             token=ReFreshToken(refresh_token,user)
             token['expires_on']=str(time.time()+3599)
             if token.get('access_token'):
-                    with open(token_path,'w') as f:
-                        json.dump(token,f,ensure_ascii=False)
+                with open(token_path,'w') as f:
+                    json.dump(token,f,ensure_ascii=False)
         return token.get('access_token')
     else:
         return False

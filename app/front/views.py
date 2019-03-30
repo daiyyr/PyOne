@@ -23,8 +23,10 @@ def before_request():
         ua = request.headers.get('User-Agent')
     except:
         ua="null"
+    if ua is None:
+        ua = 'null'
     if sum([i.lower() in ua.lower() for i in bad_ua])>0:
-        return redirect('http://www.baidu.com')
+        return redirect('http://www.google.com')
     # print '{}:{}:{}'.format(request.endpoint,ip,ua)
     referrer=request.referrer if request.referrer is not None else 'no-referrer'
 
