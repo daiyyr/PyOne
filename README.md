@@ -12,7 +12,7 @@ Login attempt log
 
 
 
-# PyOne - OneDrive exploer, based on Python and MongoDB
+# PyOne - OneDrive explorer, based on Python and MongoDB
 
 Demo：[https://pyone.me](https://pyone.me)
 

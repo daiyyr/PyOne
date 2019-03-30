@@ -156,7 +156,7 @@ def index(path=None):
     pagination=Pagination(query=None,page=page, per_page=50, total=total, items=None)
 
     try:
-        # if path is root, directly go go sub folder
+        # if path is root, directly go to sub folder
         if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
             md5_urp=md5('user_root_pass')
             user_root_pass = request.cookies.get(md5_urp)
@@ -175,6 +175,7 @@ def index(path=None):
                             md5_sub_p=md5(data[i]['path'])
                             resp.delete_cookie(md5_sub_p)
                             resp.set_cookie(md5_sub_p,sub_password)
+
                             find_it_in_default_drive = True
                             return resp
                 else:
@@ -200,6 +201,12 @@ def index(path=None):
                                         md5_sub_p=md5(data[i]['path'])
                                         resp.delete_cookie(md5_sub_p)
                                         resp.set_cookie(md5_sub_p,sub_password)
+
+                                        another_root_pass,_,_sub_cur=has_item(every_drive_root_path,'.password')
+                                        md5_another_drive_root_path = md5(every_drive_root_path)
+                                        resp.delete_cookie(md5_another_drive_root_path)
+                                        resp.set_cookie(md5_another_drive_root_path,another_root_pass)
+
                                         find_it_in_default_drive = True
                                         return resp
                             else:
