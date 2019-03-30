@@ -121,6 +121,7 @@ def index(path=None):
                 if value.get('client_id')!='':
                     drive_root_path = '/{}:'.format(user)
                     drive_root_password,_,cur=has_item(drive_root_path,'.password')
+                    return render_template('error.html',msg="drive_root_path: " + drive_root_path + ", path: " + path,code=500), 500
                     if drive_root_password != False:
                         for line in drive_root_password.splitlines():
                             if line != '' and password1 == line:
