@@ -12,12 +12,13 @@
 </style>
 <div class="mdui-container-fluid">
     <div class="mdui-typo">
-        <h1>实时日志</h1>
+        <h1>Logs</h1>
     </div>
     <div class="mdui-row">
         <div class="mdui-tab" mdui-tab>
           <a href="{{url_for('admin.logs',logname='running')}}" class="mdui-ripple{%if logname=='running'%} mdui-tab-active{%endif%}">Running logs</a>
           <a href="{{url_for('admin.logs',logname='error')}}" class="mdui-ripple{%if logname=='error'%} mdui-tab-active{%endif%}">Error logs</a>
+          <a href="{{url_for('admin.logs',logname='failing_login')}}" class="mdui-ripple{%if logname=='failing_login'%} mdui-tab-active{%endif%}">Login attempt logs</a>
         </div>
     </div>
     <hr>

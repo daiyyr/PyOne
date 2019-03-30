@@ -84,7 +84,8 @@ def stream():
     cmd_dict={
         'upgrade':"cd {} && git pull origin master && sh update.sh".format(config_dir),
         'running_log':'tail -30f {}/logs/PyOne.{}.log'.format(config_dir,'running'),
-        'error_log':'tail -30f {}/logs/PyOne.{}.log'.format(config_dir,'error')
+        'error_log':'tail -30f {}/logs/PyOne.{}.log'.format(config_dir,'error'),
+        'failing_login_log':'tail -30f {}/logs/PyOne.{}.log'.format(config_dir,'password.retry')
     }
     command=cmd_dict[request.args.get('command')]
     def generate():
