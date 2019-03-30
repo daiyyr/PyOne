@@ -86,7 +86,7 @@ def index(path=None):
             setRetry(retry_key, retry)
         if(retry > 5):
             last_try = datetime.datetime(1900, 1, 1, 0, 0, 0, 0) + datetime.timedelta(seconds=retry)
-            if((datetime.datetime.now() - last_try).total_seconds() > 60):
+            if((datetime.datetime.now() - last_try).total_seconds() > 60 * 60 * 24 * 7 ):
                 #unlock account
                 setRetry(retry_key, 0)
             else:
@@ -124,6 +124,7 @@ def index(path=None):
                 return render_template('error.html',msg=exstr,code=500), 500
 
         if password1==password:
+            setRetry(retry_key,0)
             resp=MakeResponse(redirect(url_for('.index',path=path)))
             resp.delete_cookie(md5_p)
             resp.set_cookie(md5_p,ori_pass)
