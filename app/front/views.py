@@ -416,7 +416,7 @@ def server_to_one():
         return render_template('error.html',msg="error",code=500), 500
 
     try:
-        # session['login']='true'
+        session['login']='true'
         if remote_folder!='/':
             remote_folder=remote_folder+'/'
         local_dir=os.path.join(config_dir,'upload')
@@ -439,8 +439,8 @@ def server_to_one():
         exstr = traceback.format_exc()
         ErrorLogger().print_r(exstr)
         return render_template('error.html',msg="error",code=500), 500
-    # finally:
-        # session.pop('login',None)
+    finally:
+        session.pop('login',None)
 
 @front.route('/delete',methods=["POST"])
 def delete():

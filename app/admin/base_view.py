@@ -46,7 +46,7 @@ def set(key,value,user=GetConfig('default_pan')):
 ############视图函数
 @admin.before_request
 def before_request():
-    if request.endpoint.startswith('admin') and request.endpoint!='admin.login': #and session.get('login') is None: #and request.endpoint!='admin.install'
+    if request.endpoint.startswith('admin') and request.endpoint!='admin.login' and session.get('login') is None: #and request.endpoint!='admin.install'
         return redirect(url_for('admin.login'))
 
 
