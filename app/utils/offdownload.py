@@ -1,5 +1,6 @@
 #-*- coding=utf-8 -*-
 from header import *
+import shutil
 from upload import *
 
 def download_and_upload(url,remote_dir,user,gid=None):
@@ -65,6 +66,8 @@ def download_and_upload(url,remote_dir,user,gid=None):
         item['status']=1
         mon_db.down_db.insert_one(item)
     while 1:
+        if mon_db.down_db.find_one({'gid':gid}) is None:
+            break
         a=json.loads(p.tellStatus(gid))[0]["result"]
         if a.get('followedBy'):
             old_status={}
@@ -109,7 +112,7 @@ def download_and_upload(url,remote_dir,user,gid=None):
                     new_value['up_status']=u'准备上传'
                     mon_db.down_db.find_one_and_update({'gid':gid,'idx':idx},{'$set':new_value})
                     upload_status(gid,idx,remote_dir,user)
-                elif t['up_status']=='上传成功！':
+                elif t['up_status'] in ['上传成功！','上传失败，已经超过重试次数','远程文件已存在','创建实例失败！'] or t['up_status'].startswith('本地文件不存在'):
                     complete+=1
                 else:
                     continue
@@ -139,6 +142,7 @@ def download_and_upload(url,remote_dir,user,gid=None):
             elif a['status']=='paused':
                 new_value['down_status']=u'暂停下载'
                 mon_db.down_db.find_one_and_update({'gid':gid,'idx':idx},{'$set':new_value})
+                complete+=1
             else:
                 InfoLogger().print_r('下载出错')
                 new_value['down_status']=u'下载出错'
@@ -146,7 +150,7 @@ def download_and_upload(url,remote_dir,user,gid=None):
                 mon_db.down_db.find_one_and_update({'gid':gid,'idx':idx},{'$set':new_value})
                 complete+=1
         # time.sleep(2)
-        if complete==total:
+        if complete>=total:
             InfoLogger().print_r('{} complete'.format(gid))
             break
 
@@ -395,6 +399,12 @@ def DBMethod(action,**kwargs):
                 if action in ['pauseAll','pause']:
                     new_value['down_status']='暂停下载'
                 else:
+                    it=mon_db.down_db.find_one({'gid':gid})
+                    user=it['user']
+                    remote_dir=it['remote_dir']
+                    cmd=u'nohup python {} download_and_upload "{}" "{}" {} {} &'.format(os.path.join(config_dir,'function.py'),1,remote_dir,user,gid)
+                    InfoLogger().print_r(cmd)
+                    subprocess.Popen(cmd,shell=True)
                     new_value['down_status']='开始下载'
                 mon_db.down_db.update_many({'gid':gid},{'$set':new_value})
                 info['msg']='更改状态成功'
@@ -420,17 +430,30 @@ def DBMethod(action,**kwargs):
         result=[]
         for gid in kwargs['gids']:
             info={'gid':gid}
-            task=mon_db.down_db.find_one({'gid':gid})
-            if task['down_status']=='100.0%' and 'partition upload success' in task['up_status']:
-                info['msg']='正在上传的任务，无法更改状态'
-            else:
-                mon_db.down_db.delete_many(info)
-                info['msg']='删除任务成功'
+            tasks=mon_db.down_db.find(info)
+            for task in tasks:
+                parent=task['name'].split('/')[0]
+                parent_filepath=os.path.join(config_dir,'upload/{}'.format(parent))
+                aria2_file=os.path.join(config_dir,'upload/{}.aria2'.format(parent))
+                InfoLogger().print_r('删除任务：{}; 文件夹：{}；文件名：{}；aria2文件：{}'.format(task['name'],parent_filepath,task['localpath'],aria2_file))
+                if task['down_status']=='100.0%' and 'partition upload success' in task['up_status']:
+                    info['msg']='正在上传的任务，无法更改状态'
+                else:
+                    info['msg']='删除任务成功'
+                try:
+                    os.remove(task['localpath'])
+                except Exception as e:
+                    ErrorLogger().print_r('未能成功删除本地文件.{}'.format(e))
+                    info['msg']='删除任务成功。'
             try:
-                os.delete_many(task['localpath'])
-            except:
-                ErrorLogger().print_r('未能成功删除本地文件')
-                info['msg']='删除任务成功。但是未能成功删除本地文件'
+                shutil.rmtree(parent_filepath)
+            except Exception as e:
+                ErrorLogger().print_r('未能成功删除本地文件.{}'.format(e))
+            try:
+                os.remove(aria2_file)
+            except Exception as e:
+                ErrorLogger().print_r('未能成功删除本地文件.{}'.format(e))
+            mon_db.down_db.delete_many(info)
             result.append(info)
     elif action=='restart':
         result=[]

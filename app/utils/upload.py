@@ -43,7 +43,9 @@ def _upload(filepath,remote_path,user=GetConfig('default_pan')): #remote_path li
         ErrorLogger().print_r(u'upload fail!{}'.format(exstr))
         ErrorLogger().print_r(r.content)
 
-def _upload_part(uploadUrl, filepath,filesize, offset, length,trytime=1):
+def _upload_part(uploadUrl, filepath,filesize, offset, length,trytime=1,request_session=None):
+    if request_session is not None:
+        browser=request_session
     offset,length=map(int,(offset,length))
     if offset>filesize:
         InfoLogger().print_r('offset must smaller than file size')
@@ -54,6 +56,7 @@ def _upload_part(uploadUrl, filepath,filesize, offset, length,trytime=1):
     filebin=header._file_content(filepath,offset,length)
     headers={}
     # headers['Authorization']='bearer {}'.format(token)
+    headers['Content-Type']='application/octet-stream'
     headers['Content-Length']=str(length)
     headers['Content-Range']='bytes {}-{}/{}'.format(offset,endpos,filesize)
     headers.update(default_headers)
@@ -115,12 +118,13 @@ def CreateUploadSession(path,user=GetConfig('default_pan')):
         return False
 
 def UploadSession(uploadUrl,filesize, filepath,user):
-    length=1024*1024*3.25
+    length=10 * 1024 * 1024
     offset=0
     trytime=1
     # filesize=header._filesize(filepath)
+    request_session=requests.Session()
     while 1:
-        result=_upload_part(uploadUrl, filepath,filesize, offset, length,trytime=trytime)
+        result=_upload_part(uploadUrl, filepath,filesize, offset, length,trytime=trytime,request_session=request_session)
         code=result['code']
         #上传完成
         if code==0:
@@ -151,6 +155,7 @@ def UploadSession(uploadUrl,filesize, filepath,user):
 def Upload_for_server(filepath,remote_path=None,user=GetConfig('default_pan')):
     token=GetToken(user=user)
     headers={'Authorization':'bearer {}'.format(token),'Content-Type':'application/json'}
+    headers.update(default_headers)
     if remote_path is None:
         remote_path=os.path.basename(filepath)
     if remote_path.endswith('/'):
@@ -161,7 +166,7 @@ def Upload_for_server(filepath,remote_path=None,user=GetConfig('default_pan')):
     remote_path=convert2unicode(remote_path.replace('//','/'))
     filesize=header._filesize(filepath)
     InfoLogger().print_r('local file path:{}, remote file path:{}'.format(filepath,remote_path))
-    if filesize<1024*1024*3.25:
+    if filesize<4 * 1024 * 1024:
         for msg in _upload(filepath,remote_path,user):
             yield msg
     else:
@@ -181,6 +186,7 @@ def Upload_for_server(filepath,remote_path=None,user=GetConfig('default_pan')):
 def Upload(filepath,remote_path=None,user=GetConfig('default_pan')):
     token=GetToken(user=user)
     headers={'Authorization':'bearer {}'.format(token),'Content-Type':'application/json'}
+    headers.update(default_headers)
     if remote_path is None:
         remote_path=os.path.basename(filepath)
     if remote_path.endswith('/'):
@@ -190,7 +196,7 @@ def Upload(filepath,remote_path=None,user=GetConfig('default_pan')):
     remote_path=remote_path.replace('//','/')
     filesize=header._filesize(filepath)
     InfoLogger().print_r('local file path:{}, remote file path:{}'.format(filepath,remote_path))
-    if filesize<1024*1024*3.25:
+    if filesize<4 * 1024 * 1024:
         for msg in _upload(filepath,remote_path,user):
             1
     else:
@@ -219,7 +225,7 @@ def ContinueUpload(filepath,uploadUrl,user):
     if time.time()>expires_on:
         yield {'status':'alright expired!'}
     else:
-        length=1024*1024*3.25
+        length=10 * 1024 * 1024
         trytime=1
         filesize=header._filesize(filepath)
         while 1:
