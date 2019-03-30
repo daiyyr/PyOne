@@ -369,7 +369,7 @@ def AddFolder():
 
 @front.route('/upload_local',methods=['POST','GET'])
 def upload_local():
-    # session['login']='true'
+    session['login']='true'
 
     path = request.args.get('path')
     password,_,cur=has_item(path,'.password')
@@ -406,8 +406,8 @@ def recv_upload():  # 接收前端上传的一个分片
         return jsonify({'upload_part':True})
     except:
         return jsonify({'upload_part':False})
-    finally:
-        session.pop('login',None)
+    # finally:
+    #     session.pop('login',None)
 
 
 @front.route('/to_one',methods=['GET'])
@@ -424,7 +424,7 @@ def server_to_one():
         return render_template('error.html',msg="error",code=500), 500
 
     try:
-        # session['login']='true'
+        session['login']='true'
         if remote_folder!='/':
             remote_folder=remote_folder+'/'
         local_dir=os.path.join(config_dir,'upload')
