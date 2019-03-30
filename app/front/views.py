@@ -118,8 +118,8 @@ def index(path=None):
                 for user,value in users.items():
                     if value.get('client_id')!='':
                         drive_root_path = '/{}:'.format(user)
-                        password,_,cur=has_item(drive_root_path,'.password')
-                        for line in password.splitlines():
+                        drive_root_password,_,cur=has_item(drive_root_path,'.password')
+                        for line in drive_root_password.splitlines():
                             if line != '' and password1 == line:
                                 data,total = FetchData(path=drive_root_path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
                                 for i in range(len(data) - 1, -1, -1):
@@ -164,7 +164,7 @@ def index(path=None):
 
     if password!=False:
         if ( (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=password) 
-                    and has_verify_==False
+                    and has_verify_==False and not user_try_to_access_root
             ) or  user_try_to_access_root:
             if request.method=="POST":
                 retry = getRetry(retry_key)
