@@ -48,7 +48,10 @@ def set(key,value,user=GetConfig('default_pan')):
 def before_request():
     if request.endpoint.startswith('admin') \
         and request.endpoint!='admin.login' \
-        and (session.get('login') is None or session.get('access_control_panel') is None ): #and request.endpoint!='admin.install'
+        and (   \
+                session.get('login') is None \
+                # or session.get('access_control_panel') is None \
+         ): #and request.endpoint!='admin.install'
         return redirect(url_for('admin.login'))
 
 
