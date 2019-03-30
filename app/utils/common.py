@@ -346,18 +346,18 @@ def has_item(path,name):
 def has_verify(path):
     verify=False
     md5_p=md5(path)
-    passwd,fid,cur=has_item(path,'.password')
+    passwd,fid,cur=has_item(path,'.password') # plaintext
     if fid and cur:
-        vp=request.cookies.get(md5_p)
-        if passwd==vp:
+        vp=request.cookies.get(md5_p) # ciphertext
+        if md5(passwd)==vp:
             verify=True
     else:
         check_path=path
         while 1:
-            passwd,fid,cur=has_item(check_path,'.password')
+            passwd,fid,cur=has_item(check_path,'.password') # plaintext
             md5_p=md5(check_path)
-            vp=request.cookies.get(md5_p)
-            if passwd==vp:
+            vp=request.cookies.get(md5_p) # ciphertext
+            if md5(passwd)==vp:
                 verify=True
             if check_path.split('/')[-1]!='':
                 tmp_path='/'.join(check_path.split('/')[:-1])

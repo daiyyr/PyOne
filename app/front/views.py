@@ -108,11 +108,12 @@ def index(path=None):
 
     #deal with root password
     if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
-        if request.method=="POST":
-            password1=request.form.get('password')
-        else:
-            password1=GetCookie(key='user_root_pass',default='')
         user_try_to_access_root = True
+        if request.method=="POST":
+            password1=request.form.get('password') #plaintext 
+        else:
+            md5_urp=md5('user_root_pass')
+            password1=GetCookie(key=md5_urp,default='') #ciphertext 
         try:
             #go through all drives
             key='users'
@@ -140,18 +141,18 @@ def index(path=None):
                                                 #insert cookies for root pass
                                                 md5_sub_p=md5(data[i]['path'])
                                                 resp.delete_cookie(md5_sub_p)
-                                                resp.set_cookie(md5_sub_p,sub_password)
+                                                resp.set_cookie(md5_sub_p,md5(sub_password))
 
                                                 #insert cookies for sub folder pass
                                                 drive_root_pass,_,_sub_cur=has_item(drive_root_path,'.password')
                                                 md5_drive_root_path = md5(drive_root_path)
                                                 resp.delete_cookie(md5_drive_root_path)
-                                                resp.set_cookie(md5_drive_root_path,drive_root_pass)
+                                                resp.set_cookie(md5_drive_root_path,md5(drive_root_pass))
 
                                                 #insert user_root_path
                                                 md5_urp=md5('user_root_pass')
                                                 resp.delete_cookie(md5_urp)
-                                                resp.set_cookie(md5_urp,password1)
+                                                resp.set_cookie(md5_urp,md5(password1))
 
                                                 find_it_in_default_drive = True
                                                 setRetry(retry_key,0)
@@ -170,12 +171,16 @@ def index(path=None):
                 setRetry(retry_key,0)
                 resp=MakeResponse(redirect(url_for('.index',path=path)))
                 resp.delete_cookie(md5_p)
-                resp.set_cookie(md5_p,ori_pass)
+                resp.set_cookie(md5_p,md5(ori_pass))
                 return resp
 
     if password!=False:
-        if ( (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=password) 
-                    and has_verify_==False and not user_try_to_access_root
+        md5_urp=md5('user_root_pass')
+        if (
+                not user_try_to_access_root 
+                and (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=md5(password))
+                and md5(password) != GetCookie(key=md5_urp,default='')
+                and has_verify_==False 
             ) or  user_try_to_access_root:
             if request.method=="POST":
                 retry = getRetry(retry_key)
@@ -189,8 +194,9 @@ def index(path=None):
                 except:
                     ip = request.remote_addr
                 setRetryLog("path: " + path + ", password: " +  password1 + ", IP: " + ip)
-            if total=='files' and GetConfig('encrypt_file')=="no":
-                return show(data['id'],user,action)
+            # prevent anonymous user access files, even not encrypt_file
+            # if total=='files' and GetConfig('encrypt_file')=="no":
+            #     return show(data['id'],user,action)
             resp=MakeResponse(render_template('theme/{}/password.html'.format(GetConfig('theme')),path=path,cur_user=user))
             return resp
     if total=='files':
@@ -342,7 +348,7 @@ def AddFolder():
     password,_,cur=has_item(path,'.password')
     md5_urp=md5('user_root_pass')
     password1 = request.cookies.get(md5_urp)
-    if(password != "" and password != password1):
+    if(password != "" and md5(password) != password1):
         result = False
         retdata={}
         retdata['result']=result
@@ -358,7 +364,7 @@ def upload_local():
     password,_,cur=has_item(path,'.password')
     md5_urp=md5('user_root_pass')
     password1 = request.cookies.get(md5_urp)
-    if(password != "" and password != password1):
+    if(password != "" and md5(password) != password1):
         return render_template('error.html',msg="error",code=500), 500
 
     user,remote_folder=request.args.get('path').split(':')
@@ -375,7 +381,7 @@ def recv_upload():  # 接收前端上传的一个分片
     # password,_,cur=has_item(path,'.password')
     # md5_urp=md5('user_root_pass')
     # password1 = request.cookies.get(md5_urp)
-    # if(password != "" and password != password1):
+    # if(password != "" and md5(password) != password1):
     #     return render_template('error.html',msg="error",code=500), 500
 
     md5=request.form.get('fileMd5')
@@ -397,7 +403,7 @@ def server_to_one():
     password,_,cur=has_item(path,'.password')
     md5_urp=md5('user_root_pass')
     password1 = request.cookies.get(md5_urp)
-    if(password != "" and password != password1):
+    if(password != "" and md5(password) != password1):
         return render_template('error.html',msg="error",code=500), 500
 
     try:
@@ -451,7 +457,7 @@ def delete():
             path=path[:-1]
 
         password,_,cur=has_item(path,'.password')
-        if(password != "" and password != password1):
+        if(password != "" and md5(password) != password1):
             infos['fail']+=1
             infos['status']=0
             infos['msg']="User authentication failed!"
@@ -481,7 +487,7 @@ def Rename():
     password,_,cur=has_item(path,'.password')
     md5_urp=md5('user_root_pass')
     password1 = request.cookies.get(md5_urp)
-    if(password != "" and password != password1):
+    if(password != "" and md5(password) != password1):
         return jsonify({'result':False})
 
     user=request.form.get('user')
