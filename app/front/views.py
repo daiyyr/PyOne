@@ -181,6 +181,7 @@ def index(path=None):
                     del data[i]
             if not find_it_in_default_drive:
                 #go through all drives
+                key='users'
                 users=json.loads(redis_client.get(key))
                 for user,value in users.items():
                     if value.get('client_id')!='':
