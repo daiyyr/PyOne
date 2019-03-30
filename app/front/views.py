@@ -134,7 +134,6 @@ def index(path=None):
         # retry += 1
         # setRetry(retry_key,retry)
         # setRetryLog("path: " + path + ", password: " +  password1)
-
         if (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=password) and has_verify_==False:
             if total=='files' and GetConfig('encrypt_file')=="no":
                 return show(data['id'],user,action)
