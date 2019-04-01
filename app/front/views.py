@@ -7,6 +7,10 @@ from . import front
 import datetime
 import os
 import shutil
+import socket
+import requests
+import json
+from collections import namedtuple
 
 ################################################################################
 ###################################前台函数#####################################
@@ -109,6 +113,53 @@ def index(path=None):
     has_verify_=has_verify(path)
     user_try_to_access_root = False
     find_it_in_default_drive = False
+    first_drive_client_id = ''
+    first_drive_client_secret = ''
+    server_ip = socket.gethostbyname(socket.gethostname())
+
+    #receive microsoft Code
+    microsoft_code = request.args.get('code')
+    if microsoft_code is not None:
+        url = 'login.microsoftonline.com/common/oauth2/v2.0/token'
+        payload = {
+            "Host": "login.microsoftonline.com",
+            "Connection": "keep-alive",
+            # "Content-Length": 129,
+            "Origin": "login.microsoftonline.com",
+            "X-Requested-With": "XMLHttpRequest",
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "*/*",
+            "Referer": "login.microsoftonline.com",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4",
+            "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.3",
+            "Cookie": "",
+            "client_id":first_drive_client_id,
+            "client_secret":first_drive_client_secret,
+            "scope":"profile",
+            "grant_type":"authorization_code",
+            "code":microsoft_code,
+            "redirect_uri":"http://"+server_ip+"/34567"
+        }
+        # Adding empty header as parameters are being sent in payload
+        headers = {}
+        r = requests.post(url, data=payload, headers=headers)
+        ErrorLogger().print_r(r.content)
+        x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+
+        #call microsoft graph to get mail
+        url = 'graph.microsoft.com/v1.0/me'
+        headers = {
+            "Host": "graph.microsoft.com",
+            "Authorization": "Bearer " + x.access_token
+        }
+        r = requests.get(url, headers=headers)
+        ErrorLogger().print_r(r.content)
+        x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+
+        session["microsof_authorised"] = "true"
+        session["microsof_user_id"] = x.mail
 
     #deal with root password
     if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
@@ -122,32 +173,39 @@ def index(path=None):
             #go through all drives
             key='users'
             users=json.loads(redis_client.get(key))
+            drive_number = 0
             for user,value in users.items():
+                drive_number += 1
                 if value.get('client_id')!='':
+                    if drive_number == 1:
+                        first_drive_client_id = value.get('client_id')
+                        first_drive_client_secret = value.get('client_secret')
                     drive_root_path = '{}:/'.format(user)
                     drive_root_password,_,cur=has_item(drive_root_path,'.password')
                     # return render_template('error.html',msg="drive_root_path: " + drive_root_path + ", path: " + path,code=500), 500
                     if drive_root_password != False:
                         for line in drive_root_password.splitlines():
-                            if line != '' and password1 == line:
+                            if (line != '' and password1 == line) or session["microsof_authorised"] == "true":
                                 data,total = FetchData(path=drive_root_path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
                                 for i in range(len(data) - 1, -1, -1):
                                     if data[i]['type']=='folder':
                                         sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
                                         # testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + str(_sub_cur)
                                         if sub_password!=False:
-                                            if sub_password != password1 and _sub_cur:
+                                            if sub_password != password1 and _sub_cur and session["microsof_authorised"] != "true":
                                                 del data[i]
                                             #directly go into sub folder
-                                            if sub_password == password1:
+                                            if sub_password == password1 or session["microsof_user_id"] == data[i]['name']:
+                                                if session["microsof_authorised"] == "true":
+                                                    password1 = line
                                                 resp=MakeResponse(redirect(url_for('.index',path=data[i]['path'])))
                                                 
-                                                #insert cookies for root pass
+                                                #insert cookies for sub folder pass
                                                 md5_sub_p=md5(data[i]['path'])
                                                 resp.delete_cookie(md5_sub_p)
                                                 resp.set_cookie(md5_sub_p,md5(sub_password))
 
-                                                #insert cookies for sub folder pass
+                                                #insert cookies for root pass
                                                 drive_root_pass,_,_sub_cur=has_item(drive_root_path,'.password')
                                                 md5_drive_root_path = md5(drive_root_path)
                                                 resp.delete_cookie(md5_drive_root_path)
@@ -201,7 +259,11 @@ def index(path=None):
             # prevent anonymous user access files, even not encrypt_file
             # if total=='files' and GetConfig('encrypt_file')=="no":
             #     return show(data['id'],user,action)
-            resp=MakeResponse(render_template('theme/{}/password.html'.format(GetConfig('theme')),path=path,cur_user=user))
+            resp=MakeResponse(render_template('theme/{}/password.html'.format(GetConfig('theme')),
+            path=None,
+            cur_user=user,
+            client_id=first_drive_client_id,
+            server_ip = server_ip))
             return resp
 
     # ErrorLogger().print_r(
