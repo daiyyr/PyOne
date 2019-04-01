@@ -185,18 +185,18 @@ def index(path=None):
                     # return render_template('error.html',msg="drive_root_path: " + drive_root_path + ", path: " + path,code=500), 500
                     if drive_root_password != False:
                         for line in drive_root_password.splitlines():
-                            if (line != '' and password1 == line) or session["microsof_authorised"] == "true":
+                            if (line != '' and password1 == line) or session.get('microsof_authorised') == "true":
                                 data,total = FetchData(path=drive_root_path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
                                 for i in range(len(data) - 1, -1, -1):
                                     if data[i]['type']=='folder':
                                         sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
                                         # testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + str(_sub_cur)
                                         if sub_password!=False:
-                                            if sub_password != password1 and _sub_cur and session["microsof_authorised"] != "true":
+                                            if sub_password != password1 and _sub_cur and session.get('microsof_authorised') != "true":
                                                 del data[i]
                                             #directly go into sub folder
-                                            if sub_password == password1 or session["microsof_user_id"] == data[i]['name']:
-                                                if session["microsof_authorised"] == "true":
+                                            if sub_password == password1 or session.get('microsof_user_id') == data[i]['name']:
+                                                if session.get('microsof_authorised') == "true":
                                                     password1 = line
                                                 resp=MakeResponse(redirect(url_for('.index',path=data[i]['path'])))
                                                 
