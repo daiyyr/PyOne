@@ -129,7 +129,7 @@ def index(path=None):
                     first_drive_client_id = value.get('client_id')
                     first_drive_client_secret = value.get('client_secret')
                     break
-            url = 'login.microsoftonline.com/common/oauth2/v2.0/token'
+            url = 'http://login.microsoftonline.com/common/oauth2/v2.0/token'
             payload = {
                 "Host": "login.microsoftonline.com",
                 "Connection": "keep-alive",
@@ -159,7 +159,7 @@ def index(path=None):
             x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
 
             #call microsoft graph to get mail
-            url = 'graph.microsoft.com/v1.0/me'
+            url = 'http://graph.microsoft.com/v1.0/me'
             headers = {
                 "Host": "graph.microsoft.com",
                 "Authorization": "Bearer " + x.access_token
