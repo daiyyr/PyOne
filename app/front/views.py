@@ -140,7 +140,9 @@ def index(path=None):
             "scope":"offline_access+openid+profile+User.Read",
             "grant_type":"authorization_code",
             "code":microsoft_code,
-            "redirect_uri":urllib.quote("http://" + server_host, safe='')
+            # "redirect_uri":urllib.quote("http://" + server_host, safe='')
+            "redirect_uri":urllib.quote(redirect_uri)
+            
         }
         # Adding empty header as parameters are being sent in payload
         headers = {}
@@ -263,7 +265,8 @@ def index(path=None):
             path=None,
             cur_user=user,
             client_id=first_drive_client_id,
-            server_host = urllib.quote("http://" + server_host, safe='')))
+            # server_host = urllib.quote("http://" + server_host, safe='')))
+            server_host = urllib.quote(redirect_uri)))
             return resp
 
     # ErrorLogger().print_r(
