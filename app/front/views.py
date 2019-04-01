@@ -118,50 +118,58 @@ def index(path=None):
     server_host = request.host
 
     #receive microsoft Code
-    microsoft_code = request.args.get('code')
-    if microsoft_code is not None:
-        url = 'login.microsoftonline.com/common/oauth2/v2.0/token'
-        payload = {
-            "Host": "login.microsoftonline.com",
-            "Connection": "keep-alive",
-            # "Content-Length": 129,
-            "Origin": "login.microsoftonline.com",
-            "X-Requested-With": "XMLHttpRequest",
-            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Accept": "*/*",
-            "Referer": "login.microsoftonline.com",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4",
-            "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.3",
-            "Cookie": "",
-            "client_id":first_drive_client_id,
-            "client_secret":first_drive_client_secret,
-            "scope":"offline_access+openid+profile+User.Read",
-            "grant_type":"authorization_code",
-            "code":microsoft_code,
-            # "redirect_uri":urllib.quote("http://" + server_host, safe='')
-            "redirect_uri":urllib.quote(redirect_uri)
-            
-        }
-        # Adding empty header as parameters are being sent in payload
-        headers = {}
-        r = requests.post(url, data=payload, headers=headers)
-        ErrorLogger().print_r(r.content)
-        x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+    if request.method=="POST":
+        # microsoft_code = request.args.get('code')
+        microsoft_code = request.form.get('password')
+        if microsoft_code is not None:
+            key='users'
+            users=json.loads(redis_client.get(key))
+            for user,value in users.items():
+                if value.get('client_id')!='':
+                    first_drive_client_id = value.get('client_id')
+                    first_drive_client_secret = value.get('client_secret')
+                    break
+            url = 'login.microsoftonline.com/common/oauth2/v2.0/token'
+            payload = {
+                "Host": "login.microsoftonline.com",
+                "Connection": "keep-alive",
+                # "Content-Length": 129,
+                "Origin": "login.microsoftonline.com",
+                "X-Requested-With": "XMLHttpRequest",
+                "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "*/*",
+                "Referer": "login.microsoftonline.com",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4",
+                "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.3",
+                "Cookie": "",
+                "client_id":first_drive_client_id,
+                "client_secret":first_drive_client_secret,
+                "scope":"offline_access+openid+profile+User.Read",
+                "grant_type":"authorization_code",
+                "code":microsoft_code,
+                # "redirect_uri":urllib.quote("http://" + server_host, safe='')
+                "redirect_uri":urllib.quote(redirect_uri)
+            }
+            # Adding empty header as parameters are being sent in payload
+            headers = {}
+            r = requests.post(url, data=payload, headers=headers)
+            ErrorLogger().print_r(r.content)
+            x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
 
-        #call microsoft graph to get mail
-        url = 'graph.microsoft.com/v1.0/me'
-        headers = {
-            "Host": "graph.microsoft.com",
-            "Authorization": "Bearer " + x.access_token
-        }
-        r = requests.get(url, headers=headers)
-        ErrorLogger().print_r(r.content)
-        x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+            #call microsoft graph to get mail
+            url = 'graph.microsoft.com/v1.0/me'
+            headers = {
+                "Host": "graph.microsoft.com",
+                "Authorization": "Bearer " + x.access_token
+            }
+            r = requests.get(url, headers=headers)
+            ErrorLogger().print_r(r.content)
+            x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
 
-        session["microsof_authorised"] = "true"
-        session["microsof_user_id"] = x.mail
+            session["microsof_authorised"] = "true"
+            session["microsof_user_id"] = x.mail
 
     #deal with root password
     if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
