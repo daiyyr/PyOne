@@ -155,7 +155,7 @@ def index(path=None):
             # Adding empty header as parameters are being sent in payload
             headers = {}
             r = requests.post(url, data=payload, headers=headers)
-            ErrorLogger().print_r(r.content)
+            # ErrorLogger().print_r(r.content)
             x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
 
             #call microsoft graph to get mail
@@ -166,7 +166,7 @@ def index(path=None):
             }
             r = requests.get(url, headers=headers)
             ErrorLogger().print_r(r.content)
-            x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+            x = json.loads(r.content.replace("@odata.context", ""), object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
 
             session["microsof_authorised"] = "true"
             session["microsof_user_id"] = x.mail
