@@ -115,7 +115,7 @@ def index(path=None):
     find_it_in_default_drive = False
     first_drive_client_id = ''
     first_drive_client_secret = ''
-    server_ip = socket.gethostbyname(socket.gethostname())
+    server_host = request.host
 
     #receive microsoft Code
     microsoft_code = request.args.get('code')
@@ -263,7 +263,7 @@ def index(path=None):
             path=None,
             cur_user=user,
             client_id=first_drive_client_id,
-            server_ip = server_ip))
+            server_host = urllib.quote("http://" + server_host, safe='')))
             return resp
 
     # ErrorLogger().print_r(
