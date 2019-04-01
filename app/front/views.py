@@ -140,7 +140,7 @@ def index(path=None):
             "scope":"offline_access+openid+profile+User.Read",
             "grant_type":"authorization_code",
             "code":microsoft_code,
-            "redirect_uri":"http://"+server_ip+"/34567"
+            "redirect_uri":"http://"+server_host
         }
         # Adding empty header as parameters are being sent in payload
         headers = {}
