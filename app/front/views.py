@@ -167,7 +167,7 @@ def index(path=None):
                 }
                 r = requests.get(url, headers=headers)
                 # ErrorLogger().print_r(r.content)
-                x = json.loads(r)
+                x = json.loads(r.content)
 
                 session["microsof_authorised"] = "true"
                 session["microsof_user_id"] = x["mail"]
