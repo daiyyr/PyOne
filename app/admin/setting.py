@@ -145,7 +145,7 @@ def user():
                 drive_root_password,root_pass_id,cur=has_item(drive_root_path,'.password')
                 if drive_root_password is not None and cur:
                     root_pass_file_not_exist = True
-            data,total = FetchData(path=drive_root_path,page=1,per_page=50000,dismiss=True)
+            data,total = FetchData(path='{}:/'.format(user),page=1,per_page=50000,dismiss=True)
             for i in range(len(data) - 1, -1, -1):
                 if data[i]['type']=='folder':
                     if account == data[i]['name']:
