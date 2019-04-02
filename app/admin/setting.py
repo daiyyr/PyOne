@@ -137,7 +137,7 @@ def user():
         users=json.loads(redis_client.get("users"))
         drive_root_password = None
         drive_root_path = ""
-        root_pass_file_not_exist = False
+        root_pass_file_exist = False
         root_pass_id = None
         if(account == ""):
             flash('Invalid account!')
@@ -149,7 +149,7 @@ def user():
                 drive_root_path = '{}:/'.format(user)
                 drive_root_password,root_pass_id,cur=has_item(drive_root_path,'.password')
                 if drive_root_password is not None and cur:
-                    root_pass_file_not_exist = True
+                    root_pass_file_exist = True
             data,total = FetchData(path='{}:/'.format(user),page=1,per_page=50000,dismiss=True)
             for i in range(len(data) - 1, -1, -1):
                 if data[i]['type']=='folder':
@@ -180,26 +180,13 @@ def user():
                 rootpassfile = os.path.join(drive_root_path,'.password')
 
                 #edit or create root .password
-                if root_pass_file_not_exist:
+                if root_pass_file_exist:
+                    EditFile(fileid=root_pass_id,content=drive_root_password,user=user)
+                else:
                     if path.split(':')[-1]=='':
                         path=path.split(':')[0]+':/'
                     user,n_path=path.split(':')
-
-                    ErrorLogger().print_r(
-                        "n_path: " + n_path 
-                        + ", drive_root_password: " + str(drive_root_password) 
-                        + ", user: " + user
-                    )
-
                     CreateFile(filename='.password',path=n_path,content=drive_root_password,user=user)
-                else:
-
-                    ErrorLogger().print_r(
-                        "n_path: " + n_path 
-                        + ", drive_root_password: " + str(drive_root_password) 
-                        + ", user: " + user
-                    )
-                    EditFile(fileid=root_pass_id,content=drive_root_password,user=user)
             
                 #create sub folder's .password
                 path = os.path.join(drive_root_path, folder_name)
