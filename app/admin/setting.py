@@ -130,7 +130,7 @@ def user():
     users=json.loads(redis_client.get("users"))
     for user,value in users.items():
         if value.get('client_id')!='':
-            drivelist.append(user
+            drivelist.append(
                 (
                     user,
                     value.get('other_name')
