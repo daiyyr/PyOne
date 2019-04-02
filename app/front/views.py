@@ -147,7 +147,7 @@ def index(path=None):
                     "Cookie": "",
                     "client_id":first_drive_client_id,
                     "client_secret":first_drive_client_secret,
-                    "scope":"https://graph.microsoft.com/user.read",
+                    "scope":"https://graph.microsoft.com",
                     "grant_type":"authorization_code",
                     "code":microsoft_code,
                     # "redirect_uri": "http://" + server_host

@@ -118,9 +118,10 @@ def GetThemeList():
     theme_dir=os.path.join(config_dir,'app/templates/theme')
     lists=os.listdir(theme_dir)
     for l in lists:
-        p=os.path.join(theme_dir,l)
-        if os.path.isdir(p):
-            tlist.append(l)
+        if l == "layui":
+            p=os.path.join(theme_dir,l)
+            if os.path.isdir(p):
+                tlist.append(l)
     return tlist
 
 def get_existing_drive():
