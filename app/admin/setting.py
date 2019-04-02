@@ -139,6 +139,11 @@ def user():
         drive_root_path = ""
         root_pass_file_not_exist = False
         root_pass_id = None
+        if(account == ""):
+            flash('Invalid account!')
+            resp=MakeResponse(render_template('admin/setting/user.html'))
+            return resp
+            
         for user,value in users.items():
             if user == drive:
                 drive_root_path = '{}:/'.format(user)
