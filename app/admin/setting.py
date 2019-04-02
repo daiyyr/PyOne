@@ -184,8 +184,21 @@ def user():
                     if path.split(':')[-1]=='':
                         path=path.split(':')[0]+':/'
                     user,n_path=path.split(':')
+
+                    ErrorLogger().print_r(
+                        "n_path: " + n_path 
+                        + ", drive_root_password: " + str(drive_root_password) 
+                        + ", user: " + user
+                    )
+
                     CreateFile(filename='.password',path=n_path,content=drive_root_password,user=user)
                 else:
+
+                    ErrorLogger().print_r(
+                        "n_path: " + n_path 
+                        + ", drive_root_password: " + str(drive_root_password) 
+                        + ", user: " + user
+                    )
                     EditFile(fileid=root_pass_id,content=drive_root_password,user=user)
             
                 #create sub folder's .password
