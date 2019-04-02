@@ -159,6 +159,8 @@ def index(path=None):
                 # ErrorLogger().print_r(r.content)
                 x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
 
+                InfoLogger().print_r("token: " + r.content)
+
                 #call microsoft graph to get mail
                 url = 'https://graph.microsoft.com/v1.0/me'
                 headers = {

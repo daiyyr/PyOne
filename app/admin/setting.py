@@ -195,7 +195,6 @@ def user():
 
         #edit or create root .password
         if root_pass_file_exist:
-            ErrorLogger().print_r("root pass: " + drive_root_password)
             EditFile(fileid=root_pass_id,content=drive_root_password,user=user)
             wait_time = 0
             check_data = False
@@ -211,7 +210,6 @@ def user():
             if path.split(':')[-1]=='':
                 path=path.split(':')[0]+':/'
             user,n_path=path.split(':')
-            ErrorLogger().print_r("root pass: " + drive_root_password)
             CreateFile(filename='.password',path=n_path,content=drive_root_password,user=user)
             wait_time = 0
             check_data = False
@@ -228,7 +226,6 @@ def user():
         if path.split(':')[-1]=='':
             path=path.split(':')[0]+':/'
         user,n_path=path.split(':')
-        ErrorLogger().print_r("sub pass: " + new_password)
         CreateFile(filename='.password',path=n_path,content=new_password,user=user)
         wait_time = 0
         check_data = False
