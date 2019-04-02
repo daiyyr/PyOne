@@ -23,8 +23,8 @@
 
         <h4>Drive</h4>
         <select class="mdui-select" name="drive" mdui-select>
-          {%for t in drivelist%}
-            <option value="{{t}}">{{t}}</option>
+          {%for d in drivelist%}
+            <option value="{{d[0]}}">{{d[1]}}</option>
           {%endfor%}
         </select>
 
@@ -44,7 +44,7 @@
 
 
     <div class="mdui-typo">
-        <h1> To delete a user, symply delete the folder with the name of user's Microsoft account in <a href="{{url_for('admin.manage')}}">File Management</a> <small></small></h1>
+        <h1> To delete a user, symply delete the folder with the same name as the user's Microsoft account in <a href="{{url_for('admin.manage')}}">File Management</a> <small></small></h1>
     </div>
 
 </div>

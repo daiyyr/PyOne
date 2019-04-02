@@ -1,5 +1,7 @@
 #-*- coding=utf-8 -*-
 from base_view import *
+import uuid
+import os
 
 ########admin
 @admin.route('/',methods=['GET','POST'])
@@ -128,23 +130,64 @@ def user():
     users=json.loads(redis_client.get("users"))
     for user,value in users.items():
         if value.get('client_id')!='':
-            drivelist.append(user)
+            drivelist.append(user
+                (
+                    user,
+                    value.get('other_name')
+                )
+            )
     if request.method=='POST':
-        tj_code=request.form.get('tj_code','')
-        headCode=request.form.get('headCode','')
-        footCode=request.form.get('footCode','')
-        cssCode=request.form.get('cssCode','')
-        #redis
-        set('tj_code',tj_code)
-        set('headCode',headCode)
-        set('footCode',footCode)
-        set('cssCode',cssCode)
-        # reload()
-        redis_client.set('tj_code',tj_code)
-        redis_client.set('headCode',headCode)
-        redis_client.set('footCode',footCode)
-        redis_client.set('cssCode',cssCode)
-        flash('Updating succeed')
+        # Search the selected dirve, if user's folder exists, do nothing. If not:
+        # Add folder with MS account name in the selected drive;
+        # Add a new line in root .password as random password;
+        # Add the same password in .password under user's folder.
+        drive = request.form.get('drive','')
+        account = request.form.get('email','')
+        user_folder_exist = False
+        users=json.loads(redis_client.get("users"))
+        drive_root_password = ""
+        drive_root_path = ""
+        for user,value in users.items():
+            if user == drive:
+                drive_root_path = '{}:/'.format(user)
+                drive_root_password,_,cur=has_item(drive_root_path,'.password')
+                data,total = FetchData(path=drive_root_path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
+                for i in range(len(data) - 1, -1, -1):
+                    if data[i]['type']=='folder':
+                        if account == data[i]['name']:
+                            user_folder_exist = True
+                            break
+
+                break
+        if user_folder_exist:
+            flash('Failed! User already exists.')
+        else:
+            folder_name=account
+            path=drive_root_path
+            user,grand_path=path.split(':')
+            if grand_path=='' or grand_path is None:
+                grand_path='/'
+            else:
+                if grand_path.startswith('/'):
+                    grand_path=grand_path[1:]
+            result=CreateFolder(folder_name,grand_path,user)
+            if not result:
+                flash('Creating failed!')
+            else:
+                new_password = str(uuid.uuid4()).replace("-","")[:16]
+                if drive_root_password is None:
+                    drive_root_password = new_password
+                else:
+                    drive_root_password = drive_root_password + '\n' + new_password
+                rootpassfile = os.path.join(drive_root_path,'.password')
+                with open(rootpassfile,'w') as new_file:
+                    new_file.write(drive_root_password)
+                
+                folderpassfile = os.path.join(drive_root_path, folder_name, '.password')
+                with open(folderpassfile,'w') as new_file:
+                    new_file.write(new_password)
+
+                flash('New user have been added!')
         resp=MakeResponse(
             render_template('admin/setting/user.html',
             drivelist = drivelist
