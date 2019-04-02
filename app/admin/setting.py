@@ -152,7 +152,7 @@ def user():
                     "drive_root_password: " + str(drive_root_password)
                     + ", cur: " + str(cur) 
                 )
-                if drive_root_password is not None and cur:
+                if drive_root_password is not None and drive_root_password != False:
                     root_pass_file_exist = True
             data,total = FetchData(path='{}:/'.format(user),page=1,per_page=50000,dismiss=True)
             for i in range(len(data) - 1, -1, -1):
