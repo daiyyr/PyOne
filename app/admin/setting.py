@@ -153,7 +153,7 @@ def user():
                         break
 
         if user_folder_exist:
-            flash('Failed! User already exists.')
+            flash('Failed! User '+account+' already exists.')
         else:
             folder_name=account
             path=drive_root_path
@@ -191,7 +191,7 @@ def user():
                 user,n_path=path.split(':')
                 CreateFile(filename='.password',path=n_path,content=new_password,user=user)
 
-                flash('New user have been added!')
+                flash('User '+account+' have been added!')
 
         resp=MakeResponse(render_template('admin/setting/user.html'))
         return resp
