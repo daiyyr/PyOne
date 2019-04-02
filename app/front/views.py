@@ -256,12 +256,14 @@ def index(path=None):
 
     if password!=False:
         md5_urp=md5('user_root_pass')
-        if (
-                not user_try_to_access_root 
-                and (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=md5(password))
-                and md5(password) != GetCookie(key=md5_urp,default='')
-                and has_verify_==False 
-            ) or  user_try_to_access_root:
+        if  \
+                (
+                not user_try_to_access_root \
+                and (not request.cookies.get(md5_p) or request.cookies.get(md5_p)!=md5(password)) \
+                and has_verify_==False\
+                )   \
+                or user_try_to_access_root\
+                or md5(password) != GetCookie(key=md5_urp,default=''):
             if request.method=="POST":
                 retry = getRetry(retry_key)
                 if retry == "":
@@ -682,5 +684,6 @@ def setRetryLog(log_line):
 def user_logout():
     session.pop('microsof_authorised',None)
     session.pop('microsof_user_id',None)
+
     return jsonify({'result':True})
     
