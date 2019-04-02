@@ -172,6 +172,8 @@ def index(path=None):
                 session["microsof_authorised"] = "true"
                 session["microsof_user_id"] = x["mail"]
             except:
+                exstr = traceback.format_exc()
+                ErrorLogger().print_r(exstr)
                 return render_template('error.html',msg="Authorization failed",code=403), 403
 
     #deal with root password
