@@ -198,51 +198,51 @@ def index(path=None):
             password1=GetCookie(key=md5_urp,default='') #ciphertext 
         try:
             #go through all drives
-            key='users'
-            users=json.loads(redis_client.get(key))
-            drive_number = 0
-            for user,value in users.items():
-                drive_number += 1
-                if value.get('client_id')!='':
-                    if drive_number == 1:
-                        first_drive_client_id = value.get('client_id')
-                        first_drive_client_secret = value.get('client_secret')
-                    drive_root_path = '{}:/'.format(user)
-                    data,total = FetchData(path=drive_root_path,page=1,per_page=50000,dismiss=True)
-                    for i in range(len(data) - 1, -1, -1):
-                        if data[i]['type']=='folder':
-                            sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
-                            # testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + str(_sub_cur)
-                            if sub_password!=False:
-                                if sub_password != password1 and _sub_cur and session.get('microsof_authorised') != "true":
-                                    del data[i]
-                                #directly go into sub folder
-                                if sub_password == password1 or session.get('microsof_user_id') == data[i]['name']:
-                                    password1 = sub_password
-                                    resp=MakeResponse(redirect(url_for('.index',path=data[i]['path'])))
-                                    
-                                    #insert cookies for sub folder pass
-                                    md5_sub_p=md5(data[i]['path'])
-                                    resp.delete_cookie(md5_sub_p)
-                                    resp.set_cookie(md5_sub_p,md5(sub_password))
+            if session.get('microsof_authorised') == "true":
+                users=json.loads(redis_client.get("users"))
+                drive_number = 0
+                for user,value in users.items():
+                    drive_number += 1
+                    if value.get('client_id')!='':
+                        if drive_number == 1:
+                            first_drive_client_id = value.get('client_id')
+                            first_drive_client_secret = value.get('client_secret')
+                        drive_root_path = '{}:/'.format(user)
+                        data,total = FetchData(path=drive_root_path,page=1,per_page=50000,dismiss=True)
+                        for i in range(len(data) - 1, -1, -1):
+                            if data[i]['type']=='folder':
+                                sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
+                                # testing += '; sub_folder_pass_' + data[i]['path'] + ':' + sub_password + ',sub_cur:' + str(_sub_cur)
+                                if sub_password!=False:
+                                    if sub_password != password1 and _sub_cur and session.get('microsof_authorised') != "true":
+                                        del data[i]
+                                    #directly go into sub folder
+                                    if sub_password == password1 or session.get('microsof_user_id') == data[i]['name']:
+                                        password1 = sub_password
+                                        resp=MakeResponse(redirect(url_for('.index',path=data[i]['path'])))
+                                        
+                                        #insert cookies for sub folder pass
+                                        md5_sub_p=md5(data[i]['path'])
+                                        resp.delete_cookie(md5_sub_p)
+                                        resp.set_cookie(md5_sub_p,md5(sub_password))
 
-                                    #insert cookies for root pass
-                                    drive_root_pass,_,_sub_cur=has_item(drive_root_path,'.password')
-                                    md5_drive_root_path = md5(drive_root_path)
-                                    resp.delete_cookie(md5_drive_root_path)
-                                    resp.set_cookie(md5_drive_root_path,md5(drive_root_pass))
+                                        #insert cookies for root pass
+                                        drive_root_pass,_,_sub_cur=has_item(drive_root_path,'.password')
+                                        md5_drive_root_path = md5(drive_root_path)
+                                        resp.delete_cookie(md5_drive_root_path)
+                                        resp.set_cookie(md5_drive_root_path,md5(drive_root_pass))
 
-                                    #insert user_root_path
-                                    md5_urp=md5('user_root_pass')
-                                    resp.delete_cookie(md5_urp)
-                                    resp.set_cookie(md5_urp,md5(password1))
-                                    InfoLogger().print_r("set user root pass: " + password1)
+                                        #insert user_root_path
+                                        md5_urp=md5('user_root_pass')
+                                        resp.delete_cookie(md5_urp)
+                                        resp.set_cookie(md5_urp,md5(password1))
+                                        InfoLogger().print_r("set user root pass: " + password1)
 
-                                    find_it_in_default_drive = True
-                                    setRetry(retry_key,0)
-                                    return resp
-                        else:
-                            del data[i]
+                                        find_it_in_default_drive = True
+                                        setRetry(retry_key,0)
+                                        return resp
+                            else:
+                                del data[i]
         except Exception as e:
             exstr = traceback.format_exc()
             return render_template('error.html',msg=exstr,code=500), 500
