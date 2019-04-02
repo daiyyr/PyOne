@@ -169,7 +169,7 @@ def user():
                 flash('Creating failed!')
             else:
                 new_password = str(uuid.uuid4()).replace("-","")[:16]
-                if drive_root_password is None:
+                if drive_root_password is None or not drive_root_password:
                     drive_root_password = new_password
                 else:
                     drive_root_password = drive_root_password + '\n' + new_password
