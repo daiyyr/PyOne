@@ -124,19 +124,20 @@ def index(path=None):
         resp=MakeResponse(redirect(url_for('.index',path=None)))
         return resp
 
+    if session.get('microsof_authorised') != "true":
+        users=json.loads(redis_client.get("users"))
+        for _,value in users.items():
+            if value.get('client_id')!='':
+                first_drive_client_id = value.get('client_id')
+                first_drive_client_secret = value.get('client_secret')
+                break
+
     #receive microsoft Code
     if request.method=="POST":
         # microsoft_code = request.args.get('code')
         microsoft_code = request.form.get('password')
         if microsoft_code is not None:
             try:
-                key='users'
-                users=json.loads(redis_client.get(key))
-                for user,value in users.items():
-                    if value.get('client_id')!='':
-                        first_drive_client_id = value.get('client_id')
-                        first_drive_client_secret = value.get('client_secret')
-                        break
                 url = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
                 payload = {
                     "Host": "login.microsoftonline.com",
@@ -200,13 +201,8 @@ def index(path=None):
             #go through all drives
             if session.get('microsof_authorised') == "true":
                 users=json.loads(redis_client.get("users"))
-                drive_number = 0
                 for user,value in users.items():
-                    drive_number += 1
                     if value.get('client_id')!='':
-                        if drive_number == 1:
-                            first_drive_client_id = value.get('client_id')
-                            first_drive_client_secret = value.get('client_secret')
                         drive_root_path = '{}:/'.format(user)
                         data,total = FetchData(path=drive_root_path,page=1,per_page=50000,dismiss=True)
                         for i in range(len(data) - 1, -1, -1):
