@@ -143,7 +143,7 @@ def user():
             flash('Invalid account!')
             resp=MakeResponse(render_template('admin/setting/user.html'))
             return resp
-            
+
         for user,value in users.items():
             if user == drive:
                 drive_root_path = '{}:/'.format(user)
@@ -181,7 +181,6 @@ def user():
 
                 #edit or create root .password
                 if root_pass_file_not_exist:
-                    path=request.form.get('path')
                     if path.split(':')[-1]=='':
                         path=path.split(':')[0]+':/'
                     user,n_path=path.split(':')
