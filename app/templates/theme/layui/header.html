@@ -1,5 +1,5 @@
 <div class="layui-container">
-    <div class="layui-header" >
+    <div class="layui-header" style="background-color: #393D49;" >
         <ul class="layui-nav" lay-filter="" >
 
             <!-- {%for user in get_od_user()%}
@@ -7,10 +7,6 @@
             <li class="layui-nav-item {%if cur_user==user[0]%}layui-this{%endif%}"><a href="{{user[2]}}">{{user[1]}}</a></li>
             {%endif%}
             {%endfor%} -->
-
-            <li class="layui-nav-item "></li>
-
-
         </ul>
         <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right" id="logout_div">
             <li class="layui-nav-item" lay-unselect="">
