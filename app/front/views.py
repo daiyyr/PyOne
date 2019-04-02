@@ -180,7 +180,8 @@ def index(path=None):
                 return render_template('error.html',msg="Authorization failed",code=403), 403
 
     #deal with root password
-    InfoLogger().print_r("user login: " + session.get('microsof_user_id'))
+    if request.method=="POST":
+        InfoLogger().print_r("user login: " + str(session.get('microsof_user_id')))
     if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
         user_try_to_access_root = True
         if request.method=="POST":
