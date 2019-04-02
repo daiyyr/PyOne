@@ -2,6 +2,8 @@
 from base_view import *
 import uuid
 import os
+import time
+
 
 ########admin
 @admin.route('/',methods=['GET','POST'])
@@ -148,10 +150,7 @@ def user():
             if user == drive:
                 drive_root_path = '{}:/'.format(user)
                 drive_root_password,root_pass_id,cur=has_item(drive_root_path,'.password')
-                ErrorLogger().print_r(
-                    "drive_root_password: " + str(drive_root_password)
-                    + ", cur: " + str(cur) 
-                )
+
                 if drive_root_password is not None and drive_root_password != False:
                     root_pass_file_exist = True
             data,total = FetchData(path='{}:/'.format(user),page=1,per_page=50000,dismiss=True)
@@ -163,42 +162,83 @@ def user():
 
         if user_folder_exist:
             flash('Failed! User '+account+' already exists.')
+            return MakeResponse(render_template('admin/setting/user.html'))
+        
+        folder_name=account
+        path=drive_root_path
+        user,grand_path=path.split(':')
+        if grand_path=='' or grand_path is None:
+            grand_path='/'
         else:
-            folder_name=account
-            path=drive_root_path
-            user,grand_path=path.split(':')
-            if grand_path=='' or grand_path is None:
-                grand_path='/'
-            else:
-                if grand_path.startswith('/'):
-                    grand_path=grand_path[1:]
-            result=CreateFolder(folder_name,grand_path,user)
-            if not result:
-                flash('Creating failed!')
-            else:
-                new_password = str(uuid.uuid4()).replace("-","")[:16]
-                if drive_root_password is None or not drive_root_password:
-                    drive_root_password = new_password
-                else:
-                    drive_root_password = drive_root_password + '\n' + new_password
+            if grand_path.startswith('/'):
+                grand_path=grand_path[1:]
+        result=CreateFolder(folder_name,grand_path,user)
+        if not result:
+            flash('Creating user folder failed!')
+            return MakeResponse(render_template('admin/setting/user.html'))
 
-                #edit or create root .password
-                if root_pass_file_exist:
-                    EditFile(fileid=root_pass_id,content=drive_root_password,user=user)
-                else:
-                    if path.split(':')[-1]=='':
-                        path=path.split(':')[0]+':/'
-                    user,n_path=path.split(':')
-                    CreateFile(filename='.password',path=n_path,content=drive_root_password,user=user)
-            
-                #create sub folder's .password
-                path = os.path.join(drive_root_path, folder_name)
-                if path.split(':')[-1]=='':
-                    path=path.split(':')[0]+':/'
-                user,n_path=path.split(':')
-                CreateFile(filename='.password',path=n_path,content=new_password,user=user)
+        check_data=mon_db.items.find_one({'path': os.path.join(drive_root_path,folder_name)})
+        wait_time = 0
+        while not check_data:
+            time.sleep(0.1)
+            wait_time += 0.1
+            check_data=mon_db.items.find_one({'path':os.path.join(drive_root_path, folder_name)})
+            if wait_time >= 20:
+                flash('Creating user folder failed!')
+                return MakeResponse(render_template('admin/setting/user.html'))
 
-                flash('Succeed! User '+account+' have been created!')
+        new_password = str(uuid.uuid4()).replace("-","")[:16]
+        if drive_root_password is None or not drive_root_password:
+            drive_root_password = new_password
+        else:
+            drive_root_password = drive_root_password + '\n' + new_password
+
+        #edit or create root .password
+        if root_pass_file_exist:
+            EditFile(fileid=root_pass_id,content=drive_root_password,user=user)
+            wait_time = 0
+            check_data = False
+            while not check_data:
+                time.sleep(0.1)
+                wait_time += 0.1
+                check_data=mon_db.items.find_one({'id':root_pass_id})
+                if wait_time >= 20:
+                    flash('Editing root password failed!')
+                    return MakeResponse(render_template('admin/setting/user.html'))
+
+        else:
+            if path.split(':')[-1]=='':
+                path=path.split(':')[0]+':/'
+            user,n_path=path.split(':')
+            CreateFile(filename='.password',path=n_path,content=drive_root_password,user=user)
+            wait_time = 0
+            check_data = False
+            while not check_data:
+                time.sleep(0.1)
+                wait_time += 0.1
+                check_data=mon_db.items.find_one({'path':os.path.join(drive_root_path, '.password')})
+                if wait_time >= 20:
+                    flash('Creating root password failed!')
+                    return MakeResponse(render_template('admin/setting/user.html'))
+    
+        #create sub folder's .password
+        path = os.path.join(drive_root_path, folder_name)
+        if path.split(':')[-1]=='':
+            path=path.split(':')[0]+':/'
+        user,n_path=path.split(':')
+        CreateFile(filename='.password',path=n_path,content=new_password,user=user)
+        wait_time = 0
+        check_data = False
+        while not check_data:
+            time.sleep(0.1)
+            wait_time += 0.1
+            check_data=mon_db.items.find_one({'path':os.path.join(path, '.password')})
+            if wait_time >= 20:
+                flash('Creating user folder password failed!')
+                return MakeResponse(render_template('admin/setting/user.html'))
+
+
+        flash('Succeed! User '+account+' have been created!')
 
         resp=MakeResponse(render_template('admin/setting/user.html'))
         return resp
