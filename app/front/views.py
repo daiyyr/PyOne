@@ -201,7 +201,7 @@ def index(path=None):
                     if drive_root_password != False:
                         for line in drive_root_password.splitlines():
                             if (line != '' and password1 == line) or session.get('microsof_authorised') == "true":
-                                data,total = FetchData(path=drive_root_path,page=page,per_page=50,sortby=sortby,order=order,dismiss=True)
+                                data,total = FetchData(path=drive_root_path,page=1,per_page=50000,dismiss=True)
                                 for i in range(len(data) - 1, -1, -1):
                                     if data[i]['type']=='folder':
                                         sub_password,_,_sub_cur=has_item(data[i]['path'],'.password')
