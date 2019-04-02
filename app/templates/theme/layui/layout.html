@@ -72,7 +72,7 @@
     function user_logout(){
       $.ajax({
           type: "POST",
-          url: "{{url_for('front.logout')}}",
+          url: "{{url_for('front.user_logout')}}",
           data: { },
           async: false,//使用同步的方式,true为异步方式
           dataType: "json",
