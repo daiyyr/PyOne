@@ -1,6 +1,6 @@
 #-*- coding=utf-8 -*-
 from base_view import *
-
+import subprocess
 
 
 
@@ -190,6 +190,10 @@ def delete():
                 infos['fail']+=1
         else:
             infos['fail']+=1
+    
+    cmd="python -u {} UpdateFile {}".format(os.path.join(config_dir,'function.py'),'new')
+    subprocess.Popen(cmd,shell=True)
+
     return jsonify(infos)
 
 
