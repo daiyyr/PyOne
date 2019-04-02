@@ -4,13 +4,50 @@
 <div class="mdui-container-fluid">
 
     <div class="mdui-typo">
-      <h1> Step 1. Create a Microsoft account for a new user<small>If you would like to use a exist Microsoft account, jump to step 2</small></h1>
+        <h1> 
+            Step 1. Create a Microsoft account for a new user
+            <br/>
+            <small>If you would like to use a exist Microsoft account, jump to step 2</small>
+        </h1>
+        <a style="background-color: #448aff!important; color: white;" href="https://account.microsoft.com/" target="_blank" class="mdui-btn mdui-color-theme-accent mdui-ripple"><i class="mdui-icon material-icons">&#xe89e;</i> Create Microsoft account</a>
     </div>
     <br/>
     <br/>
+
+
     <div class="mdui-typo">
-            <h1> Step 2. Create user's folder<small></small></h1>
-          </div>
+        <h1> Step 2. Create user's folder<small></small></h1>
+    </div>
+
+    <form action="{{url_for('admin.user')}}" method="POST" enctype="multipart/form-data">
+
+        <h4>Drive</h4>
+        <select class="mdui-select" name="drive" mdui-select>
+          {%for t in drivelist%}
+            <option value="{{t}}">{{t}}</option>
+          {%endfor%}
+        </select>
+
+        <div class="mdui-textfield">
+            <h4>Microsoft account (email address)</h4>
+            <input class="mdui-textfield-input" type="text" name="email" value=""/>
+        </div>
+        
+        <button type="submit" class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right">
+            <i class="mdui-icon material-icons">&#xe161;</i> Add
+        </button>
+
+    </form>
+
+    <br/>
+    <br/>
+
+
+    <div class="mdui-typo">
+        <h1> To delete a user, symply delete the folder with the name of user's Microsoft account in <a href="{{url_for('admin.manage')}}">File Management</a> <small></small></h1>
+    </div>
+
+
     <form action="{{url_for('admin.setting')}}" method="POST" enctype="multipart/form-data">
 
         <div class="mdui-textfield">

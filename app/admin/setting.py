@@ -124,6 +124,11 @@ def setCode():
 
 @admin.route('/user',methods=['GET','POST'])
 def user():
+    drivelist=[]
+    users=json.loads(redis_client.get("users"))
+    for user,value in users.items():
+        if value.get('client_id')!='':
+            drivelist.append(user)
     if request.method=='POST':
         tj_code=request.form.get('tj_code','')
         headCode=request.form.get('headCode','')
@@ -140,7 +145,12 @@ def user():
         redis_client.set('footCode',footCode)
         redis_client.set('cssCode',cssCode)
         flash('Updating succeed')
-        resp=MakeResponse(render_template('admin/setting/user.html'))
+        resp=MakeResponse(
+            render_template('admin/setting/user.html',
+            drivelist = drivelist
+            ))
         return resp
-    resp=MakeResponse(render_template('admin/setting/user.html'))
+    resp=MakeResponse(render_template('admin/setting/user.html',
+            drivelist = drivelist
+            ))
     return resp
