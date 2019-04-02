@@ -152,7 +152,6 @@ def user():
                         user_folder_exist = True
                         break
 
-                break
         if user_folder_exist:
             flash('Failed! User already exists.')
         else:
