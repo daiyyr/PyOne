@@ -157,9 +157,9 @@ def index(path=None):
                 headers = {}
                 r = requests.post(url, data=payload, headers=headers)
                 # ErrorLogger().print_r(r.content)
+                InfoLogger().print_r("token: " + r.content)
                 x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
 
-                InfoLogger().print_r("token: " + r.content)
 
                 #call microsoft graph to get mail
                 url = 'https://graph.microsoft.com/v1.0/me'
@@ -169,6 +169,7 @@ def index(path=None):
                 }
                 r = requests.get(url, headers=headers)
                 # ErrorLogger().print_r(r.content)
+                InfoLogger().print_r("MS profile: " + r.content)
                 x = json.loads(r.content)
 
                 session["microsof_authorised"] = "true"
@@ -179,6 +180,7 @@ def index(path=None):
                 return render_template('error.html',msg="Authorization failed",code=403), 403
 
     #deal with root password
+    InfoLogger().print_r("user login: " + session.get('microsof_user_id'))
     if len(path.split(':')) == 1 or path.split(':')[1].strip()=='/':
         user_try_to_access_root = True
         if request.method=="POST":
