@@ -60,6 +60,7 @@ app.jinja_env.globals['GetConfig']=GetConfig
 app.jinja_env.globals['config_dir']=config_dir
 app.jinja_env.globals['GetThemeList']=GetThemeList
 app.jinja_env.globals['get_od_user']=get_od_user
+app.jinja_env.globals['get_existing_drive']=get_existing_drive
 
 ################################################################################
 #####################################启动#######################################

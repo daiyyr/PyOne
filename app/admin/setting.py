@@ -126,16 +126,6 @@ def setCode():
 
 @admin.route('/user',methods=['GET','POST'])
 def user():
-    drivelist=[]
-    users=json.loads(redis_client.get("users"))
-    for user,value in users.items():
-        if value.get('client_id')!='':
-            drivelist.append(
-                (
-                    user,
-                    value.get('other_name')
-                )
-            )
     if request.method=='POST':
         # Search the selected dirve, if user's folder exists, do nothing. If not:
         # Add folder with MS account name in the selected drive;
@@ -203,13 +193,9 @@ def user():
                 CreateFile(filename='.password',path=n_path,content=new_password,user=user)
 
                 flash('New user have been added!')
-                
-        resp=MakeResponse(
-            render_template('admin/setting/user.html',
-            drivelist = drivelist
-            ))
+
+        resp=MakeResponse(render_template('admin/setting/user.html'))
         return resp
-    resp=MakeResponse(render_template('admin/setting/user.html',
-            drivelist = drivelist
-            ))
+
+    resp=MakeResponse(render_template('admin/setting/user.html'))
     return resp

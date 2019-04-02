@@ -123,6 +123,19 @@ def GetThemeList():
             tlist.append(l)
     return tlist
 
+def get_existing_drive():
+    drivelist=[]
+    users=json.loads(redis_client.get("users"))
+    for user,value in users.items():
+        if value.get('client_id')!='':
+            drivelist.append(
+                (
+                    user,
+                    value.get('other_name')
+                )
+            )
+    return drivelist
+
 
 def open_json(filepath):
     token=False
