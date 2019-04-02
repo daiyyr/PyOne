@@ -191,7 +191,7 @@ def user():
                 user,n_path=path.split(':')
                 CreateFile(filename='.password',path=n_path,content=new_password,user=user)
 
-                flash('User '+account+' have been added!')
+                flash('Succeed! User '+account+' have been created!')
 
         resp=MakeResponse(render_template('admin/setting/user.html'))
         return resp
