@@ -119,20 +119,8 @@ def index(path=None):
 
     if request.method != "POST" and (session.get('microsof_authorised') is None or session.get('microsof_authorised') == False):
         users=json.loads(redis_client.get('users'))
-        for user,value in users.items():
-            if value.get('client_id')!='':
-                first_drive_client_id = value.get('client_id')
-                first_drive_client_secret = value.get('client_secret')
-                break
-        InfoLogger().print_r("redirect to root")
-        resp=MakeResponse(render_template('theme/{}/password.html'.format(GetConfig('theme')),
-            path=None,
-            cur_user=user,
-            client_id=first_drive_client_id,
-            # server_host = urllib.quote("http://" + server_host, safe='')))
-            server_host = urllib.quote(redirect_uri)))
+        resp=MakeResponse(redirect(url_for('.index',path=None)))
         return resp
-
 
     #receive microsoft Code
     if request.method=="POST":
