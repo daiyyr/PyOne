@@ -148,6 +148,10 @@ def user():
             if user == drive:
                 drive_root_path = '{}:/'.format(user)
                 drive_root_password,root_pass_id,cur=has_item(drive_root_path,'.password')
+                ErrorLogger().print_r(
+                    "drive_root_password: " + drive_root_password 
+                    + ", cur: " + str(cur) 
+                )
                 if drive_root_password is not None and cur:
                     root_pass_file_exist = True
             data,total = FetchData(path='{}:/'.format(user),page=1,per_page=50000,dismiss=True)
@@ -177,7 +181,6 @@ def user():
                     drive_root_password = new_password
                 else:
                     drive_root_password = drive_root_password + '\n' + new_password
-                rootpassfile = os.path.join(drive_root_path,'.password')
 
                 #edit or create root .password
                 if root_pass_file_exist:
