@@ -161,7 +161,7 @@ def index(path=None):
                 x = json.loads(r.content, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
 
 
-                #call microsoft graph to get mail
+                #call microsoft graph to get userPrincipalName
                 url = 'https://graph.microsoft.com/v1.0/me'
                 headers = {
                     "Host": "graph.microsoft.com",
@@ -173,7 +173,7 @@ def index(path=None):
                 x = json.loads(r.content)
 
                 session["microsof_authorised"] = "true"
-                session["microsof_user_id"] = x["mail"]
+                session["microsof_user_id"] = x["userPrincipalName"]
             except:
                 exstr = traceback.format_exc()
                 ErrorLogger().print_r(exstr)
