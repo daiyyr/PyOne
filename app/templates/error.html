@@ -52,7 +52,9 @@
         </div>
     </div>
     <div class="detail">
-        {%if code==500%}
+
+
+        <!-- {%if code==500%}
         <h2>Sorry, something wrong with this page</h2>
         <p class="en">Sorry，Source WebSite is going wrong and it cannot be accessed temporarily</p>
         <div class="msg_list">
@@ -72,12 +74,14 @@
                 </ul>
             </div>
         </div>
-        {%endif%}
+        {%endif%} -->
+
+
         {%if code==403%}
         <h2>Forbidden!</h2>
         <h2>{{msg|safe}}</h2>
         {%else%}
-        <h2>Sorry! The page you visit does not exist!</h2>
+        <h2>The page does not exist</h2>
         {%endif%}
     </div>
 </body>
