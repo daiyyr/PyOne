@@ -1,6 +1,6 @@
 <div class="layui-container">
-    <div class="layui-header" style="display:none">
-        <ul class="layui-nav" lay-filter="">
+    <div class="layui-header" >
+        <ul class="layui-nav" lay-filter="" style="display: none">
             {%for user in get_od_user()%}
             {%if user[1]!='Add drive'%}
             <li class="layui-nav-item {%if cur_user==user[0]%}layui-this{%endif%}"><a href="{{user[2]}}">{{user[1]}}</a></li>
@@ -11,6 +11,10 @@
             <li class="layui-nav-item" lay-unselect="">
                 <button class="layui-btn layui-btn-sm" onclick="py_search();" style="display: none">
                     <i class="layui-icon">&#xe615;</i> Searching
+                </button>
+
+                <button class="layui-btn layui-btn-sm" onclick="user_logout();">
+                    <i class="layui-icon">&#xe64d;</i> Logout
                 </button>
             </li>
         </ul>

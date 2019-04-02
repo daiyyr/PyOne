@@ -69,6 +69,24 @@
         });
     }
 
+    function user_logout(){
+      $.ajax({
+          type: "POST",
+          url: "{{url_for('front.logout')}}",
+          data: { },
+          async: false,//使用同步的方式,true为异步方式
+          dataType: "json",
+          success: function(data) {
+              window.location.reload();
+          },
+          complete: function(xhr) {
+              $('#layui-layer-shade1').remove();
+          }
+      });
+    }
+
+    
+
     function copyUrl(eid) {
         var Url=document.getElementById(eid);
         Url.select();

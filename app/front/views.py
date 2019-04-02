@@ -117,6 +117,22 @@ def index(path=None):
     first_drive_client_secret = ''
     server_host = request.host
 
+    if request.method != "POST" and (session.get('microsof_authorised') is None or session.get('microsof_authorised') == False):
+        users=json.loads(redis_client.get('users'))
+        for user,value in users.items():
+            if value.get('client_id')!='':
+                first_drive_client_id = value.get('client_id')
+                first_drive_client_secret = value.get('client_secret')
+                break
+        resp=MakeResponse(render_template('theme/{}/password.html'.format(GetConfig('theme')),
+            path=None,
+            cur_user=user,
+            client_id=first_drive_client_id,
+            # server_host = urllib.quote("http://" + server_host, safe='')))
+            server_host = urllib.quote(redirect_uri)))
+        return resp
+
+
     #receive microsoft Code
     if request.method=="POST":
         # microsoft_code = request.args.get('code')
@@ -677,3 +693,12 @@ def setRetryLog(log_line):
     retrylogfile = os.path.join(config_dir,'logs/PyOne.password.retry.log')
     with open(retrylogfile, 'a') as file:
         file.write(str(datetime.datetime.now()) + " " + log_line + '\n')
+
+
+@front.route('/user_logout',methods=['POST'])
+def user_logout():
+    session.pop('microsof_authorised',None)
+    session.pop('microsof_user_id',None)
+    return jsonify({'result':True})
+    
+    
