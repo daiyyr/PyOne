@@ -124,6 +124,7 @@ def index(path=None):
                 first_drive_client_id = value.get('client_id')
                 first_drive_client_secret = value.get('client_secret')
                 break
+        InfoLogger().print_r("redirect to root")
         resp=MakeResponse(render_template('theme/{}/password.html'.format(GetConfig('theme')),
             path=None,
             cur_user=user,
@@ -700,5 +701,4 @@ def user_logout():
     session.pop('microsof_authorised',None)
     session.pop('microsof_user_id',None)
     return jsonify({'result':True})
-    
     
