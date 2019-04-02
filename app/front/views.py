@@ -242,6 +242,7 @@ def index(path=None):
                                                 md5_urp=md5('user_root_pass')
                                                 resp.delete_cookie(md5_urp)
                                                 resp.set_cookie(md5_urp,md5(password1))
+                                                InfoLogger().print_r("set user root pass: " + password1)
 
                                                 find_it_in_default_drive = True
                                                 setRetry(retry_key,0)
