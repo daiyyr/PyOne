@@ -1,0 +1,276 @@
+{%extends 'admin/layout.html'%}
+
+{%block content%}
+<div class="mdui-container-fluid">
+
+    <div class="mdui-typo">
+      <h1> Step 1. Create a Microsoft account for a new user<small>If you would like to use a exist Microsoft account, jump to step 2</small></h1>
+    </div>
+    <br/>
+    <br/>
+    <div class="mdui-typo">
+            <h1> Step 2. Create user's folder<small></small></h1>
+          </div>
+    <form action="{{url_for('admin.setting')}}" method="POST" enctype="multipart/form-data">
+
+        <div class="mdui-textfield">
+          <h4>Icon</h4>
+          <img src="/favicon.ico" style="width: 20px;height: 20px;">
+          <input class="mdui-textfield-input" type="file" name="favicon" accept="image/vnd.microsoft.icon"/>
+        </div>
+
+        <h4>Theme</h4>
+        <select class="mdui-select" name="theme" mdui-select>
+          {%for t in GetThemeList()%}
+            <option value="{{t}}"{%if GetConfig('theme')==t%} selected{%endif%}>{{t}}</option>
+          {%endfor%}
+        </select>
+
+        <div class="mdui-textfield">
+          <h4>Site name</h4>
+          <input class="mdui-textfield-input" type="text" name="title" value="{{GetConfig('title')}}"/>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>Site prefix(default：index of)</h4>
+          <input class="mdui-textfield-input" type="text" name="title_pre" value="{{GetConfig('title_pre')}}"/>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>Download URL timeout(seconds)</h4>
+          <input class="mdui-textfield-input" type="text" name="downloadUrl_timeout" value="{{GetConfig('downloadUrl_timeout')}}"/>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>Allow site(if not limit：no-referrer；if only allow 3pp.me：3pp.me; seperate domain names by ,)</h4>
+          <input class="mdui-textfield-input" type="text" name="allow_site" value="{{GetConfig('allow_site')}}"/>
+        </div>
+
+        <h4>Default sort</h4>
+        <select class="mdui-select" name="default_sort" mdui-select>
+            <option value="lastModtime"{%if GetConfig('default_sort')=='lastModtime'%} selected{%endif%}>Modify datetime</option>
+            <option value="name"{%if GetConfig('default_sort')=='name'%} selected{%endif%}>file name</option>
+            <option value="type"{%if GetConfig('default_sort')=='type'%} selected{%endif%}>file type</option>
+            <option value="size"{%if GetConfig('default_sort')=='size'%} selected{%endif%}>file size</option>
+        </select>
+
+        <h4>Order</h4>
+        <select class="mdui-select" name="order_m" mdui-select>
+            <option value="desc"{%if GetConfig('order_m')=='desc'%} selected{%endif%}>Descending</option>
+            <option value="asc"{%if GetConfig('order_m')=='asc'%} selected{%endif%}>Ascending</option>
+        </select>
+
+        <div class="mdui-textfield">
+          <h4>Aria2</h4>
+          <div class="mdui-panel" mdui-panel>
+              <div class="mdui-panel-item">
+                <div class="mdui-panel-item-header">click to config</div>
+                <div class="mdui-panel-item-body">
+                  <h5>Aria2 protocal</h5>
+                  <select class="mdui-select" name="ARIA2_SCHEME" mdui-select>
+                    <option value="http"{%if GetConfig('ARIA2_SCHEME')=='http'%} selected{%endif%}>http</option>
+                    <option value="https"{%if GetConfig('ARIA2_SCHEME')=='https'%} selected{%endif%}>https</option>
+                  </select>
+                  <h5>IP(default localhost)</h5>
+                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="ARIA2_HOST" placeholder="Please enter aria2 host" value="{{GetConfig('ARIA2_HOST')}}" />
+                  <h5>Host</h5>
+                  <input class="mdui-textfield-input" type="text" name="ARIA2_PORT" placeholder="Please enter aria2 port" value="{{GetConfig('ARIA2_PORT')}}" />
+                  <h5>Key</h5>
+                  <input class="mdui-textfield-input" type="text" name="ARIA2_SECRET" placeholder="Please aria2 key" value="{{GetConfig('ARIA2_SECRET')}}" />
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>MongoDB</h4>
+          <div class="mdui-panel" mdui-panel>
+              <div class="mdui-panel-item">
+                <div class="mdui-panel-item-header">click to config</div>
+                <div class="mdui-panel-item-body">
+                  <h5>IP (Default localhost)</h5>
+                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="MONGO_HOST" placeholder="Please enter MongoDB IP" value="{{GetConfig('MONGO_HOST')}}" />
+                  <h5>Port</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_PORT" placeholder="Please enter MongoDB port" value="{{GetConfig('MONGO_PORT')}}" />
+                  <h5>Database (modification is not advised)</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_DB" placeholder="Please enter database name" value="{{GetConfig('MONGO_DB')}}" />
+                  <h5>User (if appliable)</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_USER" placeholder="Please enter user name" value="{{GetConfig('MONGO_USER')}}" />
+                  <h5>Password (if appliable)</h5>
+                  <input class="mdui-textfield-input" type="text" name="MONGO_PASSWORD" placeholder="Please enter password" value="{{GetConfig('MONGO_PASSWORD')}}" />
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>Redis</h4>
+          <div class="mdui-panel" mdui-panel>
+              <div class="mdui-panel-item">
+                <div class="mdui-panel-item-header">click to config</div>
+                <div class="mdui-panel-item-body">
+                  <h5>IP (Default localhost)</h5>
+                  <input class="mdui-textfield-input" type="text" readonly="readonly" name="REDIS_HOST" placeholder="Please enter Redis IP" value="{{GetConfig('REDIS_HOST')}}" />
+                  <h5>Port</h5>
+                  <input class="mdui-textfield-input" type="text" name="REDIS_PORT" placeholder="Please enter Redis port" value="{{GetConfig('REDIS_PORT')}}" />
+                  <h5>Database (modification is not advised)</h5>
+                  <input class="mdui-textfield-input" type="text" name="REDIS_DB" placeholder="Please enter database" value="{{GetConfig('REDIS_DB')}}" />
+                  <h5>Password (if appliable)</h5>
+                  <input class="mdui-textfield-input" type="text" name="REDIS_PASSWORD" placeholder="Please enter password" value="{{GetConfig('REDIS_PASSWORD')}}" />
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>Display encrypt files being searched (if checked，search result shows encrypt file names, encrypt folder names and file names under encrypt folders)</h4>
+          <label class="mdui-switch">
+            <input type="checkbox" name="show_secret" {%if GetConfig('show_secret')=='on'%}checked{%endif%}/>
+            <i class="mdui-switch-icon"></i>
+          </label>
+        </div>
+
+        <div class="mdui-textfield">
+          <h4>Auto encrypt files under encrypt folders</h4>
+          <label class="mdui-switch">
+            <input type="checkbox" name="encrypt_file" {%if GetConfig('encrypt_file')=='on'%}checked{%endif%}/>
+            <i class="mdui-switch-icon"></i>
+          </label>
+        </div>
+       <button type="submit" class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right">
+        <i class="mdui-icon material-icons">&#xe161;</i> Save
+       </button>
+    </form>
+</div>
+<div class="mdui-fab-wrapper" id="exampleFab">
+  <button class="mdui-fab mdui-ripple mdui-color-theme-accent">
+    <!-- Default显示的图标 -->
+    <i class="mdui-icon material-icons">add</i>
+
+    <!-- 在拨号菜单开始打开时，平滑切换到该图标，若不需要切换图标，则可以省略该元素 -->
+    <i class="mdui-icon mdui-fab-opened material-icons">add</i>
+  </button>
+  <div class="mdui-fab-dial">
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-pink" href="{{url_for('admin.logout')}}" mdui-tooltip="{content: 'Logout'}"><i class="mdui-icon material-icons">&#xe8ac;</i></a>  
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-green" href="javascript:void(0);" onclick="unlock();" mdui-tooltip="{content: 'Unlock all accounts'}"><i class="mdui-icon material-icons">&#xe898;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red" href="{{url_for('admin.reload')}}" mdui-tooltip="{content: 'Reboot'}"><i class="mdui-icon material-icons">&#xe5d5;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-orange" href="javascript:void(0);" onclick="uninstall();" mdui-tooltip="{content: 'Uninstall PyOne'}"><i class="mdui-icon material-icons">&#xe16c;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue" href="javascript:void(0);" onclick="ChangePass();" mdui-tooltip="{content: 'Change password'}"><i class="mdui-icon material-icons">&#xe63f;</i></a>
+    <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-purple" href="javascript:void(0);" onclick="UpdatePyOne();" mdui-tooltip="{content: 'Upgrade PyOne'}"><i class="mdui-icon material-icons">&#xe031;</i></a>
+  </div>
+</div>
+<script type="text/javascript">
+
+    var inst = new mdui.Fab('#exampleFab');
+
+    function UpdatePyOne() {
+        layer.confirm('Confirm to upgrade PyOne？',
+            function(index){
+                layer.close(index);
+                layer.open({
+                    type: 2,
+                    shade: false,
+                    area: ['50%','400px'],
+                    maxmin: true,
+                    content: '{{url_for("admin.UpdatePyOne")}}',
+                    zIndex: layer.zIndex, //重点1
+                    success: function(layero){
+                        layer.setTop(layero); //重点2
+                    }
+                });
+        });
+    }
+
+    function ChangePass() {
+        layer.prompt({
+              formType: 0,
+              title: 'Please enter new password',
+        }, function(value1, index, elem){
+              layer.close(index);
+              layer.prompt({
+                    formType: 0,
+                    title: 'Please enter original password for certification',
+              }, function(value2, index, elem){
+                    layer.close(index);
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url_for('admin.setPass')}}",
+                        data:{new_password:value1,old_password:value2},
+                        dataType: "json",
+                        success: function(data) {
+                            layer.msg(data.msg, {icon: 1});
+                        }
+                    });
+              });
+        });
+    }
+
+    function unlock() {
+      layer.confirm('Confirm to unlock all accounts？',
+        function(index){
+              layer.close(index);
+              $.ajax({
+                  type: "POST",
+                  url: "{{url_for('admin.unlock')}}",
+                  data:{},
+                  dataType: "json",
+                  success: function(data) {
+                      layer.msg(data.msg, {icon: 1});
+                  }
+              });
+        });
+    }
+
+    function uninstall() {
+        layer.confirm('Confirm to uninstall PyOne？',
+            {
+                icon: 3,
+                title:'Uninstall',
+                success: function (layero, index) {
+                    var msg = 'Confirm';
+                    var i = 5;
+                    var timer = null;
+                    $(".layui-layer-btn0").addClass("layui-btn-disabled");
+                    var fn = function () {
+                        layero.find(".layui-layer-btn0").text(msg + '(' + i + ')');
+                        if (!i) {
+                            $(".layui-layer-btn0").removeClass("layui-btn-disabled");
+                            layero.find(".layui-layer-btn0").text(msg);
+                            clearInterval(timer);
+                        }
+                        i--;
+                    };
+                    timer = setInterval(fn, 1000);
+                    fn();
+                },
+            },
+            function(index){
+                layer.close(index);
+                layer.msg('Deleting mongodb data...', {icon: 1});
+                uninstall_action('mongodb');
+                uninstall_action('redis');
+                uninstall_action('directory');
+                $.ajax({
+                    type: "POST",
+                    url: "{{url_for('admin.uninstall')}}",
+                    data:{type:'done'},
+                    dataType: "json",
+                    success: function(data) {
+                        layer.alert(data.msg, {icon: 1});
+                    }
+            });
+        });
+    }
+    function uninstall_action(type){
+        $.ajax({
+            type: "POST",
+            url: "{{url_for('admin.uninstall')}}",
+            data:{type:type},
+            dataType: "json",
+            success: function(data) {
+                layer.msg(data.msg, {icon: 1});
+            }
+        });
+    }
+</script>
+{%endblock content%}

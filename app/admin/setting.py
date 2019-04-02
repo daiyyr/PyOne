@@ -120,3 +120,27 @@ def setCode():
         return resp
     resp=MakeResponse(render_template('admin/setCode/setCode.html'))
     return resp
+
+
+@admin.route('/user',methods=['GET','POST'])
+def user():
+    if request.method=='POST':
+        tj_code=request.form.get('tj_code','')
+        headCode=request.form.get('headCode','')
+        footCode=request.form.get('footCode','')
+        cssCode=request.form.get('cssCode','')
+        #redis
+        set('tj_code',tj_code)
+        set('headCode',headCode)
+        set('footCode',footCode)
+        set('cssCode',cssCode)
+        # reload()
+        redis_client.set('tj_code',tj_code)
+        redis_client.set('headCode',headCode)
+        redis_client.set('footCode',footCode)
+        redis_client.set('cssCode',cssCode)
+        flash('Updating succeed')
+        resp=MakeResponse(render_template('admin/setting/user.html'))
+        return resp
+    resp=MakeResponse(render_template('admin/setting/user.html'))
+    return resp
