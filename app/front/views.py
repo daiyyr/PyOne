@@ -117,7 +117,9 @@ def index(path=None):
     first_drive_client_secret = ''
     server_host = request.host
 
-    if request.method != "POST" and (session.get('microsof_authorised') is None or session.get('microsof_authorised') == False):
+    if (request.method != "POST" 
+            and (session.get('microsof_authorised') is None or session.get('microsof_authorised') == False) # not login
+            and (not (len(path.split(':')) == 1 or path.split(':')[1].strip()=='/'))): #not root
         users=json.loads(redis_client.get('users'))
         resp=MakeResponse(redirect(url_for('.index',path=None)))
         return resp
