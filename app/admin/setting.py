@@ -149,7 +149,7 @@ def user():
                 drive_root_path = '{}:/'.format(user)
                 drive_root_password,root_pass_id,cur=has_item(drive_root_path,'.password')
                 ErrorLogger().print_r(
-                    "drive_root_password: " + drive_root_password 
+                    "drive_root_password: " + str(drive_root_password)
                     + ", cur: " + str(cur) 
                 )
                 if drive_root_password is not None and cur:
