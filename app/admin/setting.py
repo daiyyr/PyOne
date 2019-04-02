@@ -145,12 +145,16 @@ def user():
         account = request.form.get('email','')
         user_folder_exist = False
         users=json.loads(redis_client.get("users"))
-        drive_root_password = ""
+        drive_root_password = None
         drive_root_path = ""
+        root_pass_file_not_exist = False
+        root_pass_id = None
         for user,value in users.items():
             if user == drive:
                 drive_root_path = '{}:/'.format(user)
-                drive_root_password,_,cur=has_item(drive_root_path,'.password')
+                drive_root_password,root_pass_id,cur=has_item(drive_root_path,'.password')
+                if drive_root_password is not None and cur:
+                    root_pass_file_not_exist = True
                 data,total = FetchData(path=drive_root_path,page=1,per_page=50000,dismiss=True)
                 for i in range(len(data) - 1, -1, -1):
                     if data[i]['type']=='folder':
@@ -180,14 +184,26 @@ def user():
                 else:
                     drive_root_password = drive_root_password + '\n' + new_password
                 rootpassfile = os.path.join(drive_root_path,'.password')
-                with open(rootpassfile,'w') as new_file:
-                    new_file.write(drive_root_password)
-                
-                folderpassfile = os.path.join(drive_root_path, folder_name, '.password')
-                with open(folderpassfile,'w') as new_file:
-                    new_file.write(new_password)
+
+                #edit or create root .password
+                if root_pass_file_not_exist:
+                    path=request.form.get('path')
+                    if path.split(':')[-1]=='':
+                        path=path.split(':')[0]+':/'
+                    user,n_path=path.split(':')
+                    CreateFile(filename='.password',path=n_path,content=drive_root_password,user=user)
+                else:
+                    EditFile(fileid=root_pass_id,content=drive_root_password,user=user)
+            
+                #create sub folder's .password
+                path = os.path.join(drive_root_path, folder_name)
+                if path.split(':')[-1]=='':
+                    path=path.split(':')[0]+':/'
+                user,n_path=path.split(':')
+                CreateFile(filename='.password',path=n_path,content=new_password,user=user)
 
                 flash('New user have been added!')
+                
         resp=MakeResponse(
             render_template('admin/setting/user.html',
             drivelist = drivelist
