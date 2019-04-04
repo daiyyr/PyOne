@@ -135,8 +135,7 @@ def index(path=None):
         first_drive_client_id = get_my_client_id()
         first_drive_client_secret = get_my_client_secret()
 
-    #receive microsoft Code
-    if request.method=="POST":
+        #receive microsoft Code
         microsoft_code = request.args.get('code')
         if microsoft_code is None or microsoft_code == False or microsoft_code == "":
             microsoft_code = request.form.get('password')
@@ -291,13 +290,13 @@ def index(path=None):
             # server_host = urllib.quote(redirect_uri)))
             return resp
 
-    ErrorLogger().print_r(
-        "path: " + path 
-        + ", has_verify_: " + str(has_verify_) 
-        + ", password: " + password
-        + ", request.cookies.get(md5_p): " + str(request.cookies.get(md5_p)) 
-        + ", md5(password): " + str(md5(password))
-    )
+    # ErrorLogger().print_r(
+    #     "path: " + path 
+    #     + ", has_verify_: " + str(has_verify_) 
+    #     + ", password: " + password
+    #     + ", request.cookies.get(md5_p): " + str(request.cookies.get(md5_p)) 
+    #     + ", md5(password): " + str(md5(password))
+    # )
 
 
     if total=='files':
