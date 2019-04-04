@@ -1,5 +1,5 @@
 #-*- coding=utf-8 -*-
-from flask import render_template,redirect,abort,make_response,jsonify,request,url_for,Response,send_from_directory,session
+from flask import render_template,redirect,abort,make_response,jsonify,request,url_for,Response,send_from_directory,session,flash
 from flask_sqlalchemy import Pagination
 from ..utils import *
 from ..extend import *
