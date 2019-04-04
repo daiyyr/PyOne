@@ -5,7 +5,7 @@ from config import config
 from extend import *
 
 def create_app():
-    app = Flask(__name__, static_url_path='/root/PyOne/static')
+    app = Flask(__name__)
     app.config.from_object(config)
     config.init_app(app)
     app.wsgi_app = ProxyFix(app.wsgi_app)
