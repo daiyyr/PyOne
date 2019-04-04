@@ -355,6 +355,8 @@ def has_verify(path):
         check_path=path
         while 1:
             passwd,fid,cur=has_item(check_path,'.password') # plaintext
+            if passwd is None or passwd == False:
+                passwd = ""
             md5_p=md5(check_path)
             vp=request.cookies.get(md5_p) # ciphertext
             if md5(passwd)==vp:
