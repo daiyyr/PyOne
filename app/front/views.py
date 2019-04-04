@@ -115,7 +115,8 @@ def index(path=None):
     find_it_in_default_drive = False
     first_drive_client_id = ''
     first_drive_client_secret = ''
-    server_host = request.host
+    # server_host = request.host
+    server_host = "www.one.drv.nz"
 
     if (request.method != "POST" 
             and (session.get('microsof_authorised') is None or session.get('microsof_authorised') == False) # not login
@@ -125,17 +126,20 @@ def index(path=None):
         return resp
 
     if session.get('microsof_authorised') != "true":
-        users=json.loads(redis_client.get("users"))
-        for _,value in users.items():
-            if value.get('client_id')!='':
-                first_drive_client_id = value.get('client_id')
-                first_drive_client_secret = value.get('client_secret')
-                break
+        # users=json.loads(redis_client.get("users"))
+        # for _,value in users.items():
+        #     if value.get('client_id')!='':
+        #         first_drive_client_id = value.get('client_id')
+        #         first_drive_client_secret = value.get('client_secret')
+        #         break
+        first_drive_client_id = get_my_client_id()
+        first_drive_client_secret = get_my_client_secret()
 
     #receive microsoft Code
     if request.method=="POST":
-        # microsoft_code = request.args.get('code')
-        microsoft_code = request.form.get('password')
+        microsoft_code = request.args.get('code')
+        if microsoft_code is None or microsoft_code == False or microsoft_code == "":
+            microsoft_code = request.form.get('password')
         if microsoft_code is not None:
             try:
                 url = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
@@ -158,8 +162,8 @@ def index(path=None):
                     "scope":"https://graph.microsoft.com/user.read",
                     "grant_type":"authorization_code",
                     "code":microsoft_code,
-                    # "redirect_uri": "http://" + server_host
-                    "redirect_uri": redirect_uri
+                    "redirect_uri": "https://" + server_host
+                    # "redirect_uri": redirect_uri
                 }
                 # Adding empty header as parameters are being sent in payload
                 headers = {}
@@ -283,8 +287,8 @@ def index(path=None):
             path=None,
             cur_user=user,
             client_id=first_drive_client_id,
-            # server_host = urllib.quote("http://" + server_host, safe='')))
-            server_host = urllib.quote(redirect_uri)))
+            server_host = urllib.quote("https://" + server_host, safe='')))
+            # server_host = urllib.quote(redirect_uri)))
             return resp
 
     ErrorLogger().print_r(
@@ -687,3 +691,23 @@ def user_logout():
 
     return jsonify({'result':True})
     
+
+def get_my_client_id():
+    retrykeyfile = os.path.join(config_dir,'ms_app_info')
+    if not os.path.exists(retrykeyfile):
+        open(retrykeyfile, 'a').close()
+    with open(retrykeyfile) as old_file:
+        for line in old_file:
+            if "client_id" == line.split(':')[0]: 
+                return line.split(':')[1].replace("\r","").replace("\n","")
+    return ""
+
+def get_my_client_secret():
+    retrykeyfile = os.path.join(config_dir,'ms_app_info')
+    if not os.path.exists(retrykeyfile):
+        open(retrykeyfile, 'a').close()
+    with open(retrykeyfile) as old_file:
+        for line in old_file:
+            if "client_secret" == line.split(':')[0]: 
+                return line.split(':')[1].replace("\r","").replace("\n","")
+    return ""
