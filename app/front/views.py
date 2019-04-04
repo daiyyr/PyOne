@@ -139,7 +139,7 @@ def index(path=None):
         microsoft_code = request.args.get('code')
         if microsoft_code is None or microsoft_code == False or microsoft_code == "":
             microsoft_code = request.form.get('password')
-        if microsoft_code is not None:
+        if microsoft_code is not None and microsoft_code != False and microsoft_code != "":
             try:
                 url = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
                 payload = {
