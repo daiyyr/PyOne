@@ -246,6 +246,7 @@ def index(path=None):
                 flash('Your MS account has not been registered with PyOne. Please contact Administrator')
         except Exception as e:
             exstr = traceback.format_exc()
+            ErrorLogger().print_r(exstr)
             return render_template('error.html',msg=exstr,code=500), 500
 
     #not root folder
