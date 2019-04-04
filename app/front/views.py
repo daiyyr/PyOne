@@ -243,6 +243,7 @@ def index(path=None):
                                         return resp
                             else:
                                 del data[i]
+                flash('Your MS account has not been registered with PyOne. Please contact Administrator')
         except Exception as e:
             exstr = traceback.format_exc()
             return render_template('error.html',msg=exstr,code=500), 500
