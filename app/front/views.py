@@ -58,7 +58,7 @@ def favicon():
 @front.route('/',methods=['POST','GET'])
 @limiter.limit("200/minute;50/second")
 def index(path=None):
-    if path is None:
+    if path is None or path==False:
         path='{}:/'.format(GetConfig('default_pan'))
     path=urllib.unquote(path).replace('&action=play','')
     if not os.path.exists(os.path.join(config_dir,'.install')):
