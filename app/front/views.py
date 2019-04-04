@@ -125,7 +125,8 @@ def index(path=None):
         resp=MakeResponse(redirect(url_for('.index',path=None)))
         return resp
 
-    if session.get('microsof_authorised') != "true":
+    # if session.get('microsof_authorised') != "true":
+    if True:
         # users=json.loads(redis_client.get("users"))
         # for _,value in users.items():
         #     if value.get('client_id')!='':
